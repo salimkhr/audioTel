@@ -102,15 +102,18 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <td>12/10/2017</td>
-                        <td>20:00</td>
-                        <td>21:00</td>
-                        <td>01:00</td>
-                        <td>0625896369</td>
-                        <td>058963</td>
-                        <td><a href="#">Lara Croft</a></td>
-                        <td><a href="#" role="button" class="btn btn-success btn-rounded"><i class="fa fa-play fa-fw"></i></a></td>
-                        <td>12$</td>
+                        @foreach ($appels as $appel)
+                            <tr>
+                                <td>{{date_format(date_create($appel->debut), 'd/m/Y H:i:s')}}</td>
+                                <td>{{date_format(date_create($appel->fin), 'd/m/Y H:i:s')}}</td>
+                                <td>{{date_diff(date_create($appel->debut),date_create($appel->fin))->format('%I:%S')}}</td>
+                                <td>{{$appel->appellant}}</td>
+                                <td>@isset($appel->hotesse){{$appel->hotesse->tel}}@endisset</td>
+                                <td>@isset($appel->hotesse){{$appel->hotesse->name}}@endisset</td>
+                                <td><button class="btn btn-success" @if($appel->file == "NULL") disabled @else id="btn-{{$appel->file}}" @endif><i class="fa fa-play" onclick="play('{{$appel->file}}')"></i></button></td>
+                                <td>{{date_diff(date_create($appel->debut),date_create($appel->fin))->format('%S')}}</td>
+                            </tr>
+                        @endforeach
                         </tbody>
                     </table>
                 </div>
@@ -155,4 +158,24 @@
             <!-- END CONTENT FRAME RIGHT -->
         </div>
     </div>
+    @foreach ($appels as $appel)
+        {{$appel->file}}
+        @if($appel->file != "NULL")
+            <audio id="audio-{{$appel->file}}" src="{{url(elixir("audio/log_appel/".$appel->file.".mp3"))}}" onended="stop('{{$appel->file}}')"></audio>
+        @endif
+    @endforeach
+@endsection
+@section('script')
+    <script>
+        function play(file) {
+            console.log($("#"+file));
+            $("#btn-"+file).prop('disabled', true);
+            $("#audio-"+file).get(0).play();
+        }
+
+        function stop(file) {
+            console.log($("#"+file));
+            $("#btn-"+file).prop('disabled', false);
+        }
+    </script>
 @endsection

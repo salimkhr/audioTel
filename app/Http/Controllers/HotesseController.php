@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Hotesse;
+use App\Appel;
 use App\Http\Requests\HotesseRequest;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class HotesseController extends Controller
 {
@@ -15,7 +17,7 @@ class HotesseController extends Controller
      */
     public function index()
     {
-        return view('hotesse.index');
+        return view('hotesse.index')->with("hotesses",Hotesse::all())->with("appels",Appel::where("hotesse_id","=",Auth::guard('web')->id())->get());
     }
 
     public function hotesse()

@@ -75,4 +75,68 @@
         </div>
     </div>
     <!-- END WIDGETS -->
+    <div class="row">
+        <div class="col-sm-9">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Default</h3>
+                    <ul class="panel-controls">
+                        <li><a href="#" class="panel-collapse"><span class="fa fa-angle-down"></span></a></li>
+                        <li><a href="#" class="panel-refresh"><span class="fa fa-refresh"></span></a></li>
+                        <li><a href="#" class="panel-remove"><span class="fa fa-times"></span></a></li>
+                    </ul>
+                </div>
+                <div class="panel-body">
+                    <table class="table datatable">
+                        <thead>
+                        <tr>
+                            <th>début</th>
+                            <th>fin</th>
+                            <th>Durée</th>
+                            <th>appelant</th>
+                            <th>appelé</th>
+                            <th>Hôtesse</th>
+                            <th>Enregistrement</th>
+                            <th>CA</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @foreach ($appels as $appel)
+                            <tr>
+                            <td>{{date_format(date_create($appel->debut), 'd/m/Y H:i:s')}}</td>
+                            <td>{{date_format(date_create($appel->fin), 'd/m/Y H:i:s')}}</td>
+                            <td>{{date_diff(date_create($appel->debut),date_create($appel->fin))->format('%I:%S')}}</td>
+                            <td>{{$appel->appellant}}</td>
+                            <td>@isset($appel->hotesse){{$appel->hotesse->tel}}@endisset</td>
+                            <td>@isset($appel->hotesse){{$appel->hotesse->name}}@endisset</td>
+                            <td><button class="btn btn-success" @if($appel->file == "NULL") disabled @else id="btn-{{$appel->file}}" @endif><i class="fa fa-play" onclick="play('{{$appel->file}}')"></i></button></td>
+                            <td></td>
+                            </tr>
+                        @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- END DEFAULT DATATABLE -->
+        </div>
+    </div>
+    @foreach ($appels as $appel)
+        @if($appel->file != "NULL")
+            <audio id="audio-{{$appel->file}}" src="{{url(elixir("audio/log_appel/".$appel->file.".mp3"))}}" onended="stop('{{$appel->file}}')"></audio>
+        @endif
+    @endforeach
+@endsection
+@section('script')
+    <script>
+        function play(file) {
+            console.log($("#"+file));
+            $("#btn-"+file).prop('disabled', true);
+            $("#audio-"+file).get(0).play();
+        }
+
+        function stop(file) {
+            console.log($("#"+file));
+            $("#btn-"+file).prop('disabled', false);
+        }
+    </script>
 @endsection
