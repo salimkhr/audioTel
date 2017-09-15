@@ -17,4 +17,9 @@ class Appel extends Model
     {
         return $this->belongsTo('App\Hotesse');
     }
+
+    public function tarif()
+    {
+        return $this->belongsTo('App\Tarif',"pays");
+    }
 }

@@ -12,7 +12,7 @@
     <!-- END META SECTION -->
 
     <!-- CSS INCLUDE -->
-    <link rel="stylesheet" type="text/css" id="theme" href="{{url(elixir('css/theme-brown.css'))}}"/>
+    <link rel="stylesheet" type="text/css" id="theme" href="{{url(elixir('css/theme-default.css'))}}"/>
     <!-- EOF CSS INCLUDE -->
 </head>
 <body>
@@ -211,19 +211,21 @@
 <!-- END js/plugins -->
 
 <!-- START THIS PAGE js/plugins-->
+<script type="text/javascript" src="{{url(elixir('js/plugins/owl/owl.carousel.min.js'))}}"></script>
 <script type='text/javascript' src="{{url(elixir('js/plugins/icheck/icheck.min.js'))}}"></script>
 <script type="text/javascript" src="{{url(elixir('js/plugins/mcustomscrollbar/jquery.mCustomScrollbar.min.js'))}}"></script>
 <script type="text/javascript" src="{{url(elixir('js/plugins/scrolltotop/scrolltopcontrol.js'))}}"></script>
 <script type="text/javascript" src="{{url(elixir('js/plugins/datatables/jquery.dataTables.min.js'))}}"></script>
 
-<script type="text/javascript" src="{{url(elixir('js/plugins/morris/raphael-min.js'))}}"></script>
+
+<!--<script type="text/javascript" src="{{url(elixir('js/plugins/morris/raphael-min.js'))}}"></script>
 <script type="text/javascript" src="{{url(elixir('js/plugins/morris/morris.min.js'))}}"></script>
 <script type="text/javascript" src="{{url(elixir('js/plugins/rickshaw/d3.v3.js'))}}"></script>
 <script type="text/javascript" src="{{url(elixir('js/plugins/rickshaw/rickshaw.min.js'))}}"></script>
 <script type='text/javascript' src="{{url(elixir('js/plugins/jvectormap/jquery-jvectormap-1.2.2.min.js'))}}"></script>
 <script type='text/javascript' src="{{url(elixir('js/plugins/jvectormap/jquery-jvectormap-world-mill-en.js'))}}"></script>
-<script type='text/javascript' src="{{url(elixir('js/plugins/bootstrap/bootstrap-datepicker.js'))}}"></script>
-<script type="text/javascript" src="{{url(elixir('js/plugins/owl/owl.carousel.min.js'))}}"></script>
+<script type='text/javascript' src="{{url(elixir('js/plugins/bootstrap/bootstrap-datepicker.js'))}}"></script>-->
+
 
 <script type="text/javascript" src="{{url(elixir('js/plugins/moment.min.js'))}}"></script>
 <script type="text/javascript" src="{{url(elixir('js/plugins/daterangepicker/daterangepicker.js'))}}"></script>

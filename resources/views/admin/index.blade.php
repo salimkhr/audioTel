@@ -26,12 +26,12 @@
         <div class="col-md-3">
 
             <!-- START WIDGET REGISTRED -->
-            <div class="widget widget-default widget-item-icon" onclick="location.href='#';">
+            <div class="widget @if($nbHotesseCo >2) widget-default  @else widget-danger @endif widget-item-icon" onclick="location.href='#';"><!---->
                 <div class="widget-item-left">
                     <span class="fa fa-user"></span>
                 </div>
                 <div class="widget-data">
-                    <div class="widget-int num-count">375</div>
+                    <div class="widget-int num-count">{{$nbHotesseCo}}</div>
                     <div class="widget-title">Hotesse</div>
                     <div class="widget-subtitle">connectées en ce moment</div>
                 </div>
@@ -42,24 +42,7 @@
             <!-- END WIDGET REGISTRED -->
 
         </div>
-        <div class="col-md-3">
-
-            <!-- START WIDGET MESSAGES -->
-            <div class="widget widget-default widget-item-icon" onclick="location.href='#';">
-                <div class="widget-item-left">
-                    <span class="fa fa fa-clock-o"></span>
-                </div>
-                <div class="widget-data">
-                    <div class="widget-int num-count">48</div>
-                    <div class="widget-title">Minute</div>
-                    <div class="widget-subtitle">d'appel aujourd'hui</div>
-                </div>
-                <div class="widget-controls">
-                    <a href="#" class="widget-control-right widget-remove" data-toggle="tooltip" data-placement="top" title="Remove Widget"><span class="fa fa-times"></span></a>
-                </div>
-            </div>
-            <!-- END WIDGET MESSAGES -->
-        </div>
+        <div class="col-md-3"></div>
         <div class="col-md-3">
 
             <!-- START WIDGET CLOCK -->
@@ -90,7 +73,6 @@
                     <table class="table datatable">
                         <thead>
                         <tr>
-                            <th>Date</th>
                             <th>début</th>
                             <th>fin</th>
                             <th>Durée</th>
@@ -111,7 +93,7 @@
                                 <td>@isset($appel->hotesse){{$appel->hotesse->tel}}@endisset</td>
                                 <td>@isset($appel->hotesse){{$appel->hotesse->name}}@endisset</td>
                                 <td><button class="btn btn-success" @if($appel->file == "NULL") disabled @else id="btn-{{$appel->file}}" @endif><i class="fa fa-play" onclick="play('{{$appel->file}}')"></i></button></td>
-                                <td>{{date_diff(date_create($appel->debut),date_create($appel->fin))->format('%S')}}</td>
+                                <td>@isset($appel->tarif->prixMinute){{date_diff(date_create($appel->debut),date_create($appel->fin))->format('%i')*$appel->tarif->prixMinute}}@endisset</td>
                             </tr>
                         @endforeach
                         </tbody>
@@ -127,18 +109,18 @@
                     <a href="#" class="list-group-item">
                         <div class="list-group-status
                         @switch($hotesse->co)
-                            @case(1)
-                                    status-away
-                                @break
-                            @case(2)
-                                    status-online
-                            @break
-                            @case(3)
-                                    status-away
-                            @break
-                            @default
-                                    status-offline
-                        @endswitch">
+                        @case(1)
+                                status-away
+@break
+                        @case(2)
+                                status-online
+@break
+                        @case(3)
+                                status-away
+@break
+                        @default
+                                status-offline
+@endswitch">
                         </div>
                         <img src="assets/images/users/user.jpg" class="pull-left" alt="{{$hotesse["name"]}}" title="{{$hotesse["name"]}}">
                         <span class="contacts-title">{{$hotesse["name"]}}</span>
@@ -159,7 +141,6 @@
         </div>
     </div>
     @foreach ($appels as $appel)
-        {{$appel->file}}
         @if($appel->file != "NULL")
             <audio id="audio-{{$appel->file}}" src="{{url(elixir("audio/log_appel/".$appel->file.".mp3"))}}" onended="stop('{{$appel->file}}')"></audio>
         @endif

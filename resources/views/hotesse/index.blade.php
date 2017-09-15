@@ -110,7 +110,7 @@
                             <td>@isset($appel->hotesse){{$appel->hotesse->tel}}@endisset</td>
                             <td>@isset($appel->hotesse){{$appel->hotesse->name}}@endisset</td>
                             <td><button class="btn btn-success" @if($appel->file == "NULL") disabled @else id="btn-{{$appel->file}}" @endif><i class="fa fa-play" onclick="play('{{$appel->file}}')"></i></button></td>
-                            <td></td>
+                            <td>{{date_diff(date_create($appel->debut),date_create($appel->fin))->format('%S')}}</td>
                             </tr>
                         @endforeach
                         </tbody>
