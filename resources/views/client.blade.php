@@ -1,8 +1,16 @@
-@extends('layouts.admin')
+@extends('layouts.base')
 @section('title')Admin @endsection
 
 @section('breadcrumb')
-    <li><a href="{{route('admin')}}">Admin</a></li>
+    <li>
+        <a href="{{route('home')}}">
+            @if(Auth::guard("web_admin")->id())
+                Admin
+            @else
+                Hotesse
+            @endif
+        </a>
+    </li>
     <li class="active">Client</li>
 @endsection
 
@@ -24,15 +32,15 @@
                     <table class="table table-striped table-hover datatable">
                         <thead>
                         <tr>
-                            <th>Nom</th>
-                            <th>Role</th>
+                            <th>Code</th>
+                            <th>Solde</th>
                         </tr>
                         </thead>
                         <tbody>
-                        @foreach ($admins as $admin)
+                        @foreach ($clients as $client)
                             <tr>
-                                <td>{{$admin->name}}</td>
-                                <td>{{$admin->role}}</td>
+                                <td>{{$client->code}}</td>
+                                <td>{{$client->solde}}€</td>
                             </tr>
                         @endforeach
                         </tbody>

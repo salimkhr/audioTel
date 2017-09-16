@@ -3,37 +3,63 @@
 namespace App\Http\Controllers;
 
 use App\Admin;
-use App\Appel;
-use App\Hotesse;
+use App\Http\Requests\AdminRequest;
 use Illuminate\Support\Facades\Auth;
 
 
 class AdminController extends Controller
 {
+    public function __construct()
+    {
+        if(Auth::user() == null)
+            Auth::shouldUse("web_admin");
+
+        $this->middleware('auth');
+    }
+
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
-    {
-        $appelToday = Appel::where("admin_id","=",Auth::guard("web_admin")->id())->whereDate('debut',date("Y-m-d"))->get();
-
-        $dureeAppel=0;
-        foreach($appelToday as $appel)
-        {
-            $dureeAppel+=date_diff(date_create($appel->debut),date_create($appel->fin))->format('%i');
-        }
-
-        return view('admin.index')->with("hotesses",Hotesse::all())
-        ->with("nbHotesseCo",Hotesse::where("co",">","0")->where("admin_id","=",Auth::guard("web_admin")->id())->get()->count())
-        ->with("dureeAppel",$dureeAppel)
-        ->with("appels",Appel::where("admin_id","=",Auth::guard("web_admin")->id())->get());
-    }
-
 
     public function admin()
     {
-       return view('admin.admin')->with("admins",Admin::all());
+        return view('admin')->with("admins",Admin::all());
+    }
+
+    public function getFormAdmin($id=null)
+    {
+            return isset($id) ? view('admin.new')->with("admin", Admin::find($id)) : view('admin.new')->with("admin", new Admin());
+    }
+
+    public function postFormAdmin(AdminRequest $request,$id=null)
+    {
+        if(isset($id))
+            $admin = Admin::find($id);
+        else
+        {
+            $admin = new Admin;
+            $admin->password=hash("sha512",$request->input('password'));
+        }
+
+        $admin->name=$request->input('name');
+        $admin->save();
+
+        return redirect()->route('admin');
+    }
+
+    public function activeAdmin($id)
+    {
+        $admin=Admin::find($id);
+        $admin->active =! $admin->active;
+        $admin->save();
+        return redirect()->route('hotesse');
+    }
+
+    public function deleteAdmin($id)
+    {
+        Admin::find($id)->delete();
+        return redirect()->route('hotesse');
     }
 }

@@ -11,36 +11,34 @@
 |
 */
 
-Route::get('/', function () {
-    return redirect('/login');
-});
-Route::get('/hotesse', 'HotesseController@index')->name('hotesse');
+use Illuminate\Support\Facades\Auth;
 
-Route::get('/admin', 'AdminController@index')->name('admin');
+Route::get('/hotesse', 'HotesseController@hotesse')->name('hotesse');
+Route::get('/hotesse/update/{id}', 'HotesseController@getFormHotesse')->name('getUpdateHotesse');
+Route::post('/hotesse/update/{id}', 'HotesseController@postFormHotesse')->name('postUpdateHotesse');
+Route::get('/hotesse/new', 'HotesseController@getFormHotesse')->name('getNewHotesse');
+Route::post('/hotesse/new', 'HotesseController@postFormHotesse')->name('postNewHotesse');
+Route::post('/hotesse/active/{id}', 'HotesseController@activeHotesse')->name('activeHotesse');
+Route::get('/hotesse/delete/{id}', 'HotesseController@deleteHotesse')->name('deleteHotesse');
 
-Route::get('/admin/hotesse', 'HotesseController@hotesse')->name('hotesseAdmin');
-Route::get('/admin/hotesse/new', 'HotesseController@getFormHotesse')->name('getNewHotesse');
-Route::post('/admin/hotesse/new','HotesseController@postFormHotesse')->name('postNewHotesse');
-Route::get('/admin/hotesse/update/{id}', 'HotesseController@getFormHotesse')->name('getUpdateHotesse');
-Route::post('/admin/hotesse/update/{id}','HotesseController@postFormHotesse')->name('postUpdateHotesse');
-Route::get('/admin/hotesse/delete/{id}','HotesseController@deleteHotesse')->name('deleteHotesse');
-Route::get('/admin/hotesse/active/{id}','HotesseController@activeHotesse')->name('activeHotesse');
-
-
-Route::get('/admin/code', 'CodeController@code')->name('codeAdmin');
-Route::get('/admin/code/new', 'CodeController@getFormCode')->name('getNewCode');
+Route::get('/code', 'CodeController@code')->name('code');
+Route::get('/code/new', 'CodeController@getFormCode')->name('getNewCode');
 Route::post('/admin/code/new','CodeController@postFormCode')->name('postNewCode');
-Route::get('/admin/code/update/{id}', 'CodeController@getFormCode')->name('getUpdateCode');
-Route::post('/admin/code/update/{id}','CodeController@postFormCode')->name('postUpdateCode');
-Route::get('/admin/code/active/{id}','CodeController@activeCode')->name('activeCode');
-Route::get('/admin/code/delete/{id}','CodeController@deleteCode')->name('deleteCode');
+Route::get('/code/update/{id}', 'CodeController@getFormCode')->name('getUpdateCode');
+Route::post('/code/update/{id}','CodeController@postFormCode')->name('postUpdateCode');
+Route::get('/code/active/{id}','CodeController@activeCode')->name('activeCode');
+Route::get('/code/delete/{id}','CodeController@deleteCode')->name('deleteCode');
 
-Route::get('/admin/client', 'ClientController@client')->name('clientAdmin');
-Route::get('/admin/admin', 'AdminController@admin')->name('adminAdmin');
+Route::get('/client', 'ClientController@client')->name('client');
 
-Route::post('/logout/', 'Auth\LoginController@logout')->name('logout');
+Route::get('/admin', 'AdminController@admin')->name('admin');
+Route::get('/admin/new', 'AdminController@getFormAdmin')->name('getNewAdmin');
+Route::post('/admin/new', 'AdminController@postFormAdmin')->name('postNewAdmin');
+Route::get('/admin/active/{id}','AdminController@activeAdmin')->name('activeAdmin');
+Route::get('/admin/delete/{id}','AdminController@activeAdmin')->name('deleteAdmin');
+
+Route::get('/logout/', 'Auth\LoginController@logout')->name('logout');
 Route::get('/logoutAdmin/', 'Auth\LoginAdminController@logout')->name('logoutAdmin');
 
-Route::get('/loginAdmin/', 'Auth\LoginAdminController@showLoginForm')->name('FormloginAdmin');
-Route::post('/loginAdmin/', 'Auth\LoginAdminController@login')->name('loginAdmin');
+Route::get('/','HomeController@index')->name('home');
 Auth::routes();

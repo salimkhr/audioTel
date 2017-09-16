@@ -1,8 +1,16 @@
-@extends('layouts.admin')
+@extends('layouts.base')
 @section('title')Admin @endsection
 
 @section('breadcrumb')
-    <li><a href="{{route('admin')}}">Admin</a></li>
+    <li>
+        <a href="{{route('home')}}">
+            @if(Auth::guard("web_admin")->id())
+                Admin
+            @else
+                Hotesse
+            @endif
+        </a>
+    </li>
     <li class="active">Ajout d'un code hôtesse</li>
 @endsection
 
@@ -58,7 +66,7 @@
                                 @foreach ($photos as $photo)
                                     <a class="gallery-item" href="assets/images/gallery/nature-1.jpg" title="Nature Image 1" data-gallery="">
                                         <div class="image">
-                                            <img src="xir("assets/images/users/".$photo->file.".jpg"))}}{{url(eli" alt="{{$photo->file}}">
+                                            <img src="{{url(elixir('assets/images/users/'.$photo->file.'.jpg'))}}" alt="{{$photo->file}}">
                                             <ul class="gallery-item-controls">
                                                 <li><label class="check"><div class="icheckbox_minimal-grey" style="position: relative;"> {!!Form::checkbox("photo",null,array('class' => 'icheckbox', 'placeholder' => 'pseudo','style'=>"position: absolute; opacity: 0;"))!!}<ins class="iCheck-helper" style="position: absolute; top: 0%; left: 0%; display: block; width: 100%; height: 100%; margin: 0px; padding: 0px; background: rgb(255, 255, 255); border: 0px; opacity: 0;"></ins></div></label></li>
                                                 <li><span class="gallery-item-remove"><i class="fa fa-times"></i></span></li>

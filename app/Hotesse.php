@@ -3,9 +3,8 @@
 namespace App;
 
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class Hotesse extends Authenticatable
+class Hotesse extends User
 {
     use Notifiable;
     protected $table = 'hotesse';
@@ -13,5 +12,10 @@ class Hotesse extends Authenticatable
     public function code()
     {
         return $this->hasMany('App\Code');
+    }
+
+    public function admin()
+    {
+        return $this->belongsTo('App\Admin');
     }
 }

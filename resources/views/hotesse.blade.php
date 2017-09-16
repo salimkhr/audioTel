@@ -1,8 +1,16 @@
-@extends('layouts.admin')
+@extends('layouts.base')
 @section('title')Admin @endsection
 
 @section('breadcrumb')
-    <li><a href="{{route('admin')}}">Admin</a></li>
+    <li>
+        <a href="{{route('home')}}">
+            @if(Auth::guard("web_admin")->id())
+                Admin
+            @else
+                Hotesse
+            @endif
+        </a>
+    </li>
     <li class="active">Hotesse</li>
 @endsection
 
@@ -24,7 +32,6 @@
                     <table class="table table-striped table-hover datatable">
                         <thead>
                         <tr>
-                            <th>Code</th>
                             <th>Nom</th>
                             <th>Statut</th>
                             <th>Derniére connexion</th>
@@ -34,7 +41,6 @@
                         <tbody>
                             @foreach ($hotesses as $hotesse)
                                 <tr>
-                                    <td>@foreach ($hotesse->code as $code) <a href="">{{$code->code}}</a>@endforeach</td>
                                     <td>{{$hotesse["name"]}}</td>
                                     <td>@switch($hotesse->co)
                                             @case(1)
@@ -52,7 +58,7 @@
 
                                     </td>
                                     <td></td>
-                                    <td><a href="{{route("getUpdateHotesse",["id"=>$hotesse["id"]])}}" role="button" class="btn btn-success"><i class="fa fa-pencil" aria-hidden="true"></i></a></td>
+                                    <td><a href="{{route("getUpdateHotesse",["id"=>$hotesse["id"]])}}" role="button" class="btn btn-success"><i class="fa fa-pencil" aria-hidden="true"></i> Modifier</a></td>
                                 </tr>
                             @endforeach
                         </tbody>

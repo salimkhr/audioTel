@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class HotesseRequest extends FormRequest
+class AdminRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,7 +24,7 @@ class HotesseRequest extends FormRequest
     public function rules()
     {
         if($this->segment(2)=="new")
-            return ['name' => 'required|unique:hotesse','password' => 'required','passwordConf' => 'required|same:password'];
+            return ['name' => 'required|unique:admin','password' => 'required','passwordConf' => 'required|same:password'];
         else
             return ['name' => 'required'];
     }

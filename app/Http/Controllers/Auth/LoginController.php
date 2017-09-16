@@ -2,9 +2,15 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Admin;
+use App\Hotesse;
 use App\Http\Controllers\Controller;
+use Illuminate\Contracts\Session\Session;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\MessageBag;
 
 class LoginController extends Controller
 {
@@ -26,7 +32,7 @@ class LoginController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = '/hotesse';
+    protected $redirectTo = '/';
 
     /**
      * Create a new controller instance.
@@ -38,13 +44,29 @@ class LoginController extends Controller
         $this->middleware('guest')->except('logout');
     }
 
-    /*public function username()
+    public function login(Request $request)
     {
-        return 'name';
-    }*/
+        $admin=Admin::where('name',$request->input('name'))->where('password',hash('sha512',$request->input('password')))->first();
 
-    protected function guard()
-    {
-        return Auth::guard('web');
+        if($admin != null)
+        {
+            Auth::shouldUse("web_admin");
+            Auth::login($admin);
+            $request->session()->put('guard','admin');
+            return redirect()->route("home");
+        }
+
+        $hotesse= Hotesse::where('name',$request->input('name'))->where('password',hash('sha512',$request->input('password')))->first();
+        if($hotesse!=null)
+        {
+            Auth::shouldUse("web");
+            Auth::login($hotesse);
+            $request->session()->put('guard','hotesse');
+            return redirect()->route("home");
+        }
+
+        $bag = new MessageBag();
+        $bag->add("name","login/mot de passe incorrect");
+        return back()->withInput(["name"=>$request->input('name')])->withErrors($bag);
     }
 }

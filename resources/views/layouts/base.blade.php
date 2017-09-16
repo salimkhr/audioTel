@@ -1,4 +1,13 @@
-
+@section('menu')
+    @if(Auth::user() instanceof \App\Admin)<li @if(Request::segment(1) === 'hotesse')class="active" @endif><a href="{{route("hotesse")}}"><span class="fa fa-users"></span> <span class="xn-text">Hotesse</span></a></li>@endif
+    <li @if(Request::segment(1) === 'code')class="active" @endif><a href="{{route("code")}}"><span class="fa fa-list-ol"></span> <span class="xn-text">Code</span></a></li>
+    <li @if(Request::segment(1) === 'client')class="active" @endif><a href="{{route("client")}}"><span class="fa fa-user-circle"></span> <span class="xn-text">Client</span></a></li>
+    @isset(Auth::user()->role)
+        @if(Auth::user()->role == "superAdmin")
+            <li @if(Request::segment(2) === 'admin')class="active" @endif><a href="{{route("admin")}}"><span class="fa fa-user-plus"></span> <span class="-user-plus">Admin</span></a></li>
+        @endif
+    @endisset
+@endsection
 <!DOCTYPE html>
 <html lang="{{ app()->getLocale() }}">
 <head>
@@ -189,7 +198,7 @@
                 </div>
                 <div class="mb-footer">
                     <div class="pull-right">
-                        <a href="{{url('/logoutAdmin')}}" class="btn btn-success btn-lg">Yes</a>
+                        <a href="{{url('/logout')}}" class="btn btn-success btn-lg">Yes</a>
                         <button class="btn btn-default btn-lg mb-control-close">No</button>
                     </div>
                 </div>

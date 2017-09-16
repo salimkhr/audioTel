@@ -1,9 +1,17 @@
-@extends('layouts.admin')
-@section('title')Admin @endsection
+@extends('layouts.base')
+@section('title')hotesse @endsection
 
 @section('breadcrumb')
-    <li><a href="{{route('admin')}}">Admin</a></li>
-    <li class="active">Ajout d'une hôtesse</li>
+    <li>
+        <a href="{{route('home')}}">
+            @if(Auth::guard("web_admin")->id())
+                Admin
+            @else
+                Hotesse
+            @endif
+        </a>
+    </li>
+    <li class="active">Ajout d'un admin</li>
 @endsection
 
 @section('content')
@@ -32,11 +40,24 @@
                     {!! $errors->first('name', '<small class="help-block">:message</small>') !!}
                     </div>
 
-                <!-- email -->
+                <!-- tel -->
                     <div class="form-group">
                         {!! Form::tel('tel', null, array('class' => 'form-control', 'placeholder' => 'tel')) !!}
                         {!! $errors->first('tel', '<small class="help-block">:message</small>') !!}
                     </div>
+                    @if($hotesse->id == null)
+                    <!-- password -->
+                    <div class="form-group">
+                        {{ Form::password('password', array('class' => 'form-control','placeholder'=>'Mot de passe')) }}
+                        {!! $errors->first('password', '<small class="help-block">:message</small>') !!}
+                    </div>
+
+                    <!-- name -->
+                    <div class="form-group">
+                        {{ Form::password('passwordConf', array('class' => 'form-control','placeholder'=>'Confirmation')) }}
+                        {!! $errors->first('passwordConf', '<small class="help-block">:message</small>') !!}
+                    </div>
+                    @endif
                     {!! Form::submit('Valider', ['class' => 'btn btn-primary pull-right']) !!}
 
                     {{ Form::close() }}

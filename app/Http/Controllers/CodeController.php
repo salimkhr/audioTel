@@ -14,12 +14,32 @@ use App\Code;
 use App\Hotesse;
 use App\Http\Requests\CodeRequest;
 use App\Photo;
+use Illuminate\Support\Facades\Auth;
 
-class CodeController
+class CodeController extends Controller
 {
+    public function __construct()
+    {
+        if(Auth::user() == null)
+            Auth::shouldUse("web_admin");
+
+        $this->middleware('auth');
+    }
+
     public function code()
     {
-        return view('admin.code')->with("codes",Code::all());
+        if(Auth::user() instanceof Hotesse)
+        {
+
+            $option= Hotesse::with("admin_id");
+            $codes = Code::has('hotesse_id','=')->where('admin_id','=',Auth::user()->admin_id)->get();
+        }
+        if(Auth::user() instanceof Admin)
+        {
+            $codes = Code::where("admin_id","=",Auth::id())->whereDate('debut',date("Y-m-d"))->get();
+        }
+
+        return view('code')->with("codes",$codes);
     }
 
 
@@ -52,8 +72,7 @@ class CodeController
             $photo=Photo::where('code','=',null)->get();
         }
 
-        return view('admin.newCode')->with("hotesses",$dataHotesse)->with("annonces",$dataAnnonce)->with("photos",$photo)->with("code",$code);
-
+        return view('code.new')->with("hotesses",$dataHotesse)->with("annonces",$dataAnnonce)->with("photos",$photo)->with("code",$code);
     }
 
     public function postFormCode(CodeRequest $request,$id=null)

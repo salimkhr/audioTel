@@ -1,9 +1,17 @@
-@extends('layouts.admin')
+@extends('layouts.base')
 @section('title')Admin @endsection
 
 @section('breadcrumb')
-    <li><a href="{{route('admin')}}">Admin</a></li>
-    <li class="active">Client</li>
+    <li>
+        <a href="{{route('home')}}">
+            @if(Auth::guard("web_admin")->id())
+                Admin
+            @else
+                Hotesse
+            @endif
+        </a>
+    </li>
+    <li class="active">Admin</li>
 @endsection
 
 @section('content')
@@ -24,22 +32,22 @@
                     <table class="table table-striped table-hover datatable">
                         <thead>
                         <tr>
-                            <th>Code</th>
-                            <th>Solde</th>
+                            <th>Nom</th>
+                            <th>Role</th>
                         </tr>
                         </thead>
                         <tbody>
-                        @foreach ($clients as $client)
+                        @foreach ($admins as $admin)
                             <tr>
-                                <td>{{$client->code}}</td>
-                                <td>{{$client->solde}}€</td>
+                                <td>{{$admin->name}}</td>
+                                <td>{{$admin->role}}</td>
                             </tr>
                         @endforeach
                         </tbody>
                     </table>
                 </div>
                 <div class="panel-footer">
-                    <a href="{{route('getNewCode')}}" role="button" class="btn btn-primary pull-right">Ajouter un code hôtesse</a>
+                    <a href="{{route('getNewCode')}}" role="button" class="btn btn-primary pull-right">Ajouter un Admin</a>
                 </div>
             </div>
         </div>

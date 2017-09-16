@@ -12,8 +12,16 @@ namespace App\Http\Controllers;
 use App\Client;
 use App\Credit;
 
-class ClientController
+class ClientController extends Controller
 {
+    public function __construct()
+    {
+        if(Auth::user() == null)
+            Auth::shouldUse("web_admin");
+
+        $this->middleware('auth');
+    }
+
     public function client()
     {
         $clients = Client::all();
@@ -28,6 +36,6 @@ class ClientController
             $client->solde=$montant;
         }
 
-        return view('admin.client')->with("clients",$clients);
+        return view('client')->with("clients",$clients);
     }
 }
