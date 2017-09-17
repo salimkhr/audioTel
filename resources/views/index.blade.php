@@ -104,7 +104,7 @@
                                 <td>{{date_diff(date_create($appel->debut),date_create($appel->fin))->format('%I:%S')}}</td>
                                 <td>@if(Auth::user() instanceof \App\Hotesse && $appel->appellant != "ANONYME"){{substr($appel->appellant,0,4).'******'}}@else{{$appel->appellant}}@endif </td>
                                 <td>@isset($appel->hotesse){{$appel->hotesse->tel}}@endisset</td>
-                                <td>@isset($appel->hotesse){{$appel->hotesse->name}}@endisset</td>
+                                <td>@isset($appel->hotesse)<a href="{{route("getHotesse",["id"=>$appel->hotesse->id])}}">{{$appel->hotesse->name}}</a>@endisset</td>
                                 <td><button class="btn btn-success" @if($appel->file == "NULL") disabled @else id="btn-{{$appel->file}}" @endif><i class="fa fa-play" onclick="play('{{$appel->file}}')"></i></button></td>
                                 <td>@isset($appel->tarif->prixMinute){{date_diff(date_create($appel->debut),date_create($appel->fin))->format('%i')*$appel->tarif->prixMinute}}@endisset</td>
                             </tr>

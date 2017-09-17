@@ -1,10 +1,12 @@
 @section('menu')
-    @if(Auth::user() instanceof \App\Admin)<li @if(Request::segment(1) === 'hotesse')class="active" @endif><a href="{{route("hotesse")}}"><span class="fa fa-users"></span> <span class="xn-text">Hotesse</span></a></li>@endif
+    <li @if(Request::segment(1) === 'hotesse')class="active" @endif><a href="{{route("hotesse")}}"><span class="fa fa-users"></span> <span class="xn-text">Hotesse</span></a></li>
     <li @if(Request::segment(1) === 'code')class="active" @endif><a href="{{route("code")}}"><span class="fa fa-list-ol"></span> <span class="xn-text">Code</span></a></li>
     <li @if(Request::segment(1) === 'client')class="active" @endif><a href="{{route("client")}}"><span class="fa fa-user-circle"></span> <span class="xn-text">Client</span></a></li>
+
     @isset(Auth::user()->role)
+        <li @if(Request::segment(1) === 'api')class="active" @endif><a href="{{route("admin")}}"><span class="fa fa-server"></span> <span class="xn-text">API</span></a></li>
         @if(Auth::user()->role == "superAdmin")
-            <li @if(Request::segment(2) === 'admin')class="active" @endif><a href="{{route("admin")}}"><span class="fa fa-user-plus"></span> <span class="-user-plus">Admin</span></a></li>
+            <li @if(Request::segment(1) === 'admin')class="active" @endif><a href="{{route("admin")}}"><span class="fa fa-user-plus"></span> <span class="xn-text">Admin</span></a></li>
         @endif
     @endisset
 @endsection

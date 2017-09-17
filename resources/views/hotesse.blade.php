@@ -33,6 +33,7 @@
                         <thead>
                         <tr>
                             <th>Nom</th>
+                            <th>Activer</th>
                             <th>Statut</th>
                             <th>Derniére connexion</th>
                             <th>Modifier</th>
@@ -41,7 +42,8 @@
                         <tbody>
                             @foreach ($hotesses as $hotesse)
                                 <tr>
-                                    <td>{{$hotesse["name"]}}</td>
+                                    <td><a href="{{route("getHotesse",[$hotesse->id])}}" >{{$hotesse->name}}</a></td>
+                                    <td><span class="{{($hotesse->active)?"text-success":"text-danger"}}">{{($hotesse->active)?"activer":"désactiver"}}</span></td>
                                     <td>@switch($hotesse->co)
                                             @case(1)
                                                 <span class="text-info">Connectée</span>

@@ -20,20 +20,13 @@
 
             <!-- START DEFAULT DATATABLE -->
             <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h3 class="panel-title">Default</h3>
-                    <ul class="panel-controls">
-                        <li><a href="#" class="panel-collapse"><span class="fa fa-angle-down"></span></a></li>
-                        <li><a href="#" class="panel-refresh"><span class="fa fa-refresh"></span></a></li>
-                        <li><a href="#" class="panel-remove"><span class="fa fa-times"></span></a></li>
-                    </ul>
-                </div>
                 <div class="panel-body">
                     <table class="table table-striped table-hover datatable">
                         <thead>
                         <tr>
                             <th>Code</th>
                             <th>Pseudo</th>
+                            <th>Activer</th>
                             <th>Description</th>
                             <th>Annonce</th>
                             <th>Photo</th>
@@ -44,13 +37,14 @@
                         <tbody>
                         @foreach ($codes as $code)
                             <tr>
-                                <td>{{$code->code}}</td>
+                                <td><a href="{{route("getCode",["id"=>$code->code])}}" >{{$code->code}}</a></td>
                                 <td>{{$code->pseudo}}</td>
+                                <td><span class="{{($code->active)?"text-success":"text-danger"}}">{{($code->active)?"activer":"désactiver"}}</span></td>
                                 <td>{{$code->description}}</td>
                                 <td><button class="btn btn-success" @if($code->annonce["id"]==null) disabled @else id="btn-{{$code->annonce["id"]}}" @endif><i class="fa fa-play" onclick="play({{$code->annonce["id"]}})"></i> {{$code->annonce["name"]}}</button></td>
                                 <td> @foreach ($code->photo as $photo)<img class="pull-left img-fluid" style="width:35px;"
                                                                            src="{{url(elixir("assets/images/users/".$photo->file.".jpg"))}}"/>@endforeach</td>
-                                <td><a href="#" >@isset($code->hotesse_id){{$code->hotesse->name}}@endisset</a></td>
+                                <td>@isset($code->hotesse_id)<a href="{{route("getHotesse",["id"=>$code->hotesse_id])}}">{{$code->hotesse->name}}</a>@endisset</td>
                                 <td><a href="{{route("getUpdateCode",["id"=>$code->code])}}" role="button" class="btn btn-success"><i class="fa fa-pencil" aria-hidden="true"></i></a></td>
                             </tr>
                         @endforeach

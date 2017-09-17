@@ -13,15 +13,17 @@
 
 use Illuminate\Support\Facades\Auth;
 
-Route::get('/hotesse', 'HotesseController@hotesse')->name('hotesse');
+Route::get('/hotesse/', 'HotesseController@index')->name('hotesse');
+Route::get('/hotesse/{id}', 'HotesseController@hotesse')->name('getHotesse');
 Route::get('/hotesse/update/{id}', 'HotesseController@getFormHotesse')->name('getUpdateHotesse');
 Route::post('/hotesse/update/{id}', 'HotesseController@postFormHotesse')->name('postUpdateHotesse');
 Route::get('/hotesse/new', 'HotesseController@getFormHotesse')->name('getNewHotesse');
 Route::post('/hotesse/new', 'HotesseController@postFormHotesse')->name('postNewHotesse');
-Route::post('/hotesse/active/{id}', 'HotesseController@activeHotesse')->name('activeHotesse');
+Route::get('/hotesse/active/{id}', 'HotesseController@activeHotesse')->name('activeHotesse');
 Route::get('/hotesse/delete/{id}', 'HotesseController@deleteHotesse')->name('deleteHotesse');
 
-Route::get('/code', 'CodeController@code')->name('code');
+Route::get('/code/', 'CodeController@index')->name('code');
+Route::get('/code/{id}', 'CodeController@code')->name('getCode');
 Route::get('/code/new', 'CodeController@getFormCode')->name('getNewCode');
 Route::post('/admin/code/new','CodeController@postFormCode')->name('postNewCode');
 Route::get('/code/update/{id}', 'CodeController@getFormCode')->name('getUpdateCode');

@@ -9,6 +9,7 @@
 namespace App\Http\Controllers;
 
 
+use App\Admin;
 use App\Annonce;
 use App\Code;
 use App\Hotesse;
@@ -18,30 +19,30 @@ use Illuminate\Support\Facades\Auth;
 
 class CodeController extends Controller
 {
-    public function __construct()
-    {
-        if(Auth::user() == null)
-            Auth::shouldUse("web_admin");
 
-        $this->middleware('auth');
-    }
-
-    public function code()
+    public function index()
     {
+        if(!$this->testLogin())
+            return redirect()->route("login");
+
         if(Auth::user() instanceof Hotesse)
         {
-
-            $option= Hotesse::with("admin_id");
-            $codes = Code::has('hotesse_id','=')->where('admin_id','=',Auth::user()->admin_id)->get();
+            $codes = Code::where("hotesse_id","=",Auth::id())->get();
         }
         if(Auth::user() instanceof Admin)
         {
-            $codes = Code::where("admin_id","=",Auth::id())->whereDate('debut',date("Y-m-d"))->get();
+            $codes = Code::where("admin_id","=",Auth::id())->get();
         }
 
         return view('code')->with("codes",$codes);
     }
 
+    public function code($id)
+    {
+        if(!$this->testLogin())
+            return redirect()->route("login");
+        return view("code.code")->with("code",Code::find($id));
+    }
 
     public function getFormCode($id=null)
     {
@@ -101,11 +102,11 @@ class CodeController extends Controller
         $code=Code::find($id);
         $code->active =! $code->active;
         $code->save();
-        return redirect()->route('codeAdmin');
+        return redirect()->route('code');
     }
     public function deleteCode($id)
     {
         Code::find($id)->delete();
-        return redirect()->route('codeAdmin');
+        return redirect()->route('code');
     }
 }

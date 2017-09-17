@@ -48,7 +48,7 @@ class LoginController extends Controller
     {
         $admin=Admin::where('name',$request->input('name'))->where('password',hash('sha512',$request->input('password')))->first();
 
-        if($admin != null)
+        if($admin != null && $admin->active)
         {
             Auth::shouldUse("web_admin");
             Auth::login($admin);
@@ -57,7 +57,7 @@ class LoginController extends Controller
         }
 
         $hotesse= Hotesse::where('name',$request->input('name'))->where('password',hash('sha512',$request->input('password')))->first();
-        if($hotesse!=null)
+        if($hotesse!=null && $hotesse->active)
         {
             Auth::shouldUse("web");
             Auth::login($hotesse);

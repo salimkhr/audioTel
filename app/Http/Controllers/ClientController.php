@@ -14,16 +14,11 @@ use App\Credit;
 
 class ClientController extends Controller
 {
-    public function __construct()
-    {
-        if(Auth::user() == null)
-            Auth::shouldUse("web_admin");
-
-        $this->middleware('auth');
-    }
-
     public function client()
     {
+        if(!$this->testLogin())
+            return redirect()->route("login");
+
         $clients = Client::all();
         foreach ($clients as $client)
         {

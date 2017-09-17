@@ -10,36 +10,42 @@ use Illuminate\Support\Facades\Auth;
 
 class HotesseController extends Controller
 {
-    public function __construct()
-    {
-        if(Auth::user() == null)
-            Auth::shouldUse("web_admin");
 
-        $this->middleware('auth');
-    }
-
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index()
     {
-        $this->login();
-        return view('hotesse.index')->with("hotesses",Hotesse::all())->with("appels",Appel::where("hotesse_id","=",Auth::guard('web')->id())->get());
-    }
+        if(!$this->testLogin())
+            return redirect()->route("login");
 
-    public function hotesse()
-    {
-
-        $this->login();
         $hotesses=Hotesse::all();
         return view('hotesse')->with("hotesses",$hotesses);
     }
 
+    public function hotesse($id)
+    {
+        if(!$this->testLogin())
+            return redirect()->route("login");
+
+        $appelToday = Appel::where("hotesse_id","=",$id)->whereDate('debut',date("Y-m-d"))->get();
+        $appels=Appel::where("hotesse_id","=",$id)->get();
+
+        $dureeAppel=0;
+        $nbAppel=0;
+        foreach($appelToday as $appel)
+        {
+            $dureeAppel+=date_diff(date_create($appel->debut),date_create($appel->fin))->format('%i');
+            $nbAppel++;
+        }
+
+        return view('index')->with("hotesses",Hotesse::all())
+            ->with("nbHotesseCo",Hotesse::where("co","<>","0")->count())
+            ->with("dureeAppel",$dureeAppel)
+            ->with("nbAppel",$nbAppel)
+            ->with("appels",$appels);
+    }
+
     public function getFormHotesse($id=null)
     {
-        $this->login();
+        
         if(isset($id))
             return view('hotesse.new')->with("hotesse",Hotesse::find($id));
         else
@@ -48,7 +54,7 @@ class HotesseController extends Controller
 
     public function postFormHotesse(HotesseRequest $request,$id=null)
     {
-        $this->login();
+        
         if(isset($id))
             $hotesse = Hotesse::find($id);
         else
@@ -67,7 +73,7 @@ class HotesseController extends Controller
 
     public function activeHotesse($id)
     {
-        $this->login();
+        
         $hotesse=Hotesse::find($id);
         $hotesse->active =! $hotesse->active;
         $hotesse->save();
@@ -76,7 +82,7 @@ class HotesseController extends Controller
 
     public function deleteHotesse($id)
     {
-        $this->login();
+        
         Hotesse::find($id)->delete();
         return redirect()->route('hotesse');
     }

@@ -14,24 +14,21 @@ class HomeController extends Controller
 
     /**
      * Create a new controller instance.
-     *
-     * @return void
      */
 
     public function index()
     {
-        $this->login();
+        if(!$this->testLogin())
+            return redirect()->route("login");
+
         if(Auth::user() instanceof Hotesse)
         {
-            $appelToday = Appel::where("admin_id","=",Auth::user()->admin->id)->whereDate('debut',date("Y-m-d"))->get();
-            $appels=Appel::where("hotesse_id","=",Auth::id())->get();
+            return redirect()->route("getHotesse",["id"=>Auth::id()]);
         }
 
-        if(Auth::user() instanceof Admin)
-        {
-            $appelToday = Appel::where("admin_id","=",Auth::id())->whereDate('debut',date("Y-m-d"))->get();
-            $appels=Appel::where("admin_id","=",Auth::id())->get();
-        }
+
+        $appelToday = Appel::where("admin_id","=",Auth::id())->whereDate('debut',date("Y-m-d"))->get();
+        $appels=Appel::where("admin_id","=",Auth::id())->get();
 
         $dureeAppel=0;
         $nbAppel=0;
@@ -41,8 +38,8 @@ class HomeController extends Controller
             $nbAppel++;
         }
 
-        return view('index')->with("hotesses",Hotesse::all())
-            ->with("nbHotesseCo",Hotesse::where("co",">","0")->where("admin_id","=",Auth::id())->get()->count())
+        return view('index')->with("hotesses",Hotesse::where("admin_id","=",Auth::id()))
+            ->with("nbHotesseCo",Hotesse::where("co",">","0")->where("admin_id","=",Auth::id())->count())
             ->with("dureeAppel",$dureeAppel)
             ->with("nbAppel",$nbAppel)
             ->with("appels",$appels);
