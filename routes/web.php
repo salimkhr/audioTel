@@ -31,13 +31,23 @@ Route::post('/code/update/{id}','CodeController@postFormCode')->name('postUpdate
 Route::get('/code/active/{id}','CodeController@activeCode')->name('activeCode');
 Route::get('/code/delete/{id}','CodeController@deleteCode')->name('deleteCode');
 
-Route::get('/client', 'ClientController@client')->name('client');
+Route::get('/client/', 'ClientController@client')->name('client');
 
-Route::get('/admin', 'AdminController@admin')->name('admin');
+Route::get('/admin/', 'AdminController@admin')->name('admin');
 Route::get('/admin/new', 'AdminController@getFormAdmin')->name('getNewAdmin');
 Route::post('/admin/new', 'AdminController@postFormAdmin')->name('postNewAdmin');
+Route::get('/admin/upadte/{id}', 'AdminController@getFormAdmin')->name('getUpdateAdmin');
+Route::post('/admin/upadte/{id}', 'AdminController@postFormAdmin')->name('postUpdateAdmin');
 Route::get('/admin/active/{id}','AdminController@activeAdmin')->name('activeAdmin');
 Route::get('/admin/delete/{id}','AdminController@activeAdmin')->name('deleteAdmin');
+
+Route::get('/api/', 'APIController@index')->name('api');
+Route::get('/api/new', 'APIController@getFormAPI')->name('getNewAPI');
+Route::post('/api/new', 'APIController@postFormAPI')->name('postNewAPI');
+Route::get('/api/upadte/{id}', 'APIController@getFormAPI')->name('getUpdateAPI');
+Route::post('/api/upadte/{id}', 'APIController@postFormAPI')->name('postUpdateAPI');
+Route::get('/api/active/{id}','APIController@activeAPI')->name('activeAPI');
+Route::get('/api/delete/{id}','APIController@activeAPI')->name('deleteAPI');
 
 Route::get('/logout/', 'Auth\LoginController@logout')->name('logout');
 Route::get('/logoutAdmin/', 'Auth\LoginAdminController@logout')->name('logoutAdmin');

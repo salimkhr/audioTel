@@ -44,6 +44,7 @@ class AdminController extends Controller
         }
 
         $admin->name=$request->input('name');
+        $admin->role=$request->input('role');
         $admin->save();
 
         return redirect()->route('admin');

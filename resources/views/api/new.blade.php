@@ -29,42 +29,23 @@
                     </ul>
                 </div>
                 <div class="panel-body">
-                @isset($admin->id)
-                    {{ Form::model($admin, array('route' => array('postUpdateAdmin', $admin->id)))}}
-                    @else
-                        {{ Form::open(array('route' => 'postNewAdmin')) }}
-                        @endisset
+                @isset($api->id)
+                    {{ Form::model($api, array('route' => array('postUpdateAPI', $api->id)))}}
+                @else
+                    {{ Form::open(array('route' => 'postNewAPI')) }}
+                @endisset
                         <!-- name -->
                             <div class="form-group">
-                                {{ Form::text('name',null, array('class' => 'form-control','placeholder'=>'name')) }}
-                                {!! $errors->first('name', '<small class="help-block">:message</small>') !!}
+                                {{ Form::text('cle',null, array('class' => 'form-control','placeholder'=>'cle')) }}
+                                {!! $errors->first('cle', '<small class="help-block">:message</small>') !!}
                             </div>
 
-                            <div class="form-group">
-                                {{ Form::label('role', 'role', array('class' => 'control-label')) }}
-                                {!!Form::select('role',["admin"=>"admin","superAdmin"=>"super admin"],null,array('class' => 'form-control select')) !!}
-                            </div>
-
-                        
-                        @if($admin->id == null)
-                            <!-- password -->
-                                <div class="form-group">
-                                    {{ Form::password('password', array('class' => 'form-control','placeholder'=>'Mot de passe')) }}
-                                    {!! $errors->first('password', '<small class="help-block">:message</small>') !!}
-                                </div>
-
-                                <!-- name -->
-                                <div class="form-group">
-                                    {{ Form::password('passwordConf', array('class' => 'form-control','placeholder'=>'Confirmation')) }}
-                                    {!! $errors->first('passwordConf', '<small class="help-block">:message</small>') !!}
-                                </div>
-                            @endif
                             {!! Form::submit('Valider', ['class' => 'btn btn-primary pull-right']) !!}
 
                             {{ Form::close() }}
                 </div>
                 <div class="panel-footer">
-                    <a href="{{route('activeAdmin',['id'=> $admin->id])}}" type="button" class="btn btn-warning pull-right">@if($admin->active)Desactiver @else Activer @endif</a>
+                    <a href="{{route('activeAPI',['id'=> $api->id])}}" type="button" class="btn btn-warning pull-right">@if($api->active)Desactiver @else Activer @endif</a>
                     <button type="button" class="btn btn-danger mb-control pull-right" data-box="#message-box-delete">Supprimer</button>
                 </div>
             </div>
@@ -80,7 +61,7 @@
                 </div>
                 <div class="mb-footer">
                     <div class="pull-right">
-                        <a href="{{route('deleteAdmin',['id'=> $admin->id])}}" class="btn btn-success btn-lg">Yes</a>
+                        <a href="{{route('deleteCode',['id'=> $api->id])}}" class="btn btn-success btn-lg">Yes</a>
                         <button class="btn btn-default btn-lg mb-control-close">No</button>
                     </div>
                 </div>

@@ -11,7 +11,7 @@
             @endif
         </a>
     </li>
-    <li class="active">Admin</li>
+    <li class="active">API</li>
 @endsection
 
 @section('content')
@@ -32,24 +32,24 @@
                     <table class="table table-striped table-hover datatable">
                         <thead>
                         <tr>
-                            <th>Nom</th>
-                            <th>Role</th>
-                            <td>modifier</td>
+                            <th>Cle</th>
+                            <th>active</th>
+                            <th>Modifier</th>
                         </tr>
                         </thead>
                         <tbody>
-                        @foreach ($admins as $admin)
+                        @foreach ($apis as $api)
                             <tr>
-                                <td>{{$admin->name}}</td>
-                                <td>{{$admin->role}}</td>
-                                <td><a href="{{route("getUpdateAdmin",["id"=>$admin->id])}}" role="button" class="btn btn-success"><i class="fa fa-pencil" aria-hidden="true"></i></a></td>
+                                <td>{{$api->cle}}</td>
+                                <td>{{$api->active?"activé":"désactivé"}}</td>
+                                <td><a href="{{route("getUpdateAPI",["id"=>$api->id])}}" role="button" class="btn btn-success"><i class="fa fa-pencil" aria-hidden="true"></i></a></td>
                             </tr>
                         @endforeach
                         </tbody>
                     </table>
                 </div>
                 <div class="panel-footer">
-                    <a href="{{route('getNewCode')}}" role="button" class="btn btn-primary pull-right">Ajouter un Admin</a>
+                    <a href="{{route('getNewAPI')}}" role="button" class="btn btn-primary pull-right">Ajouter une cle API</a>
                 </div>
             </div>
         </div>
