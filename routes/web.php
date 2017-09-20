@@ -54,3 +54,10 @@ Route::get('/logoutAdmin/', 'Auth\LoginAdminController@logout')->name('logoutAdm
 
 Route::get('/','HomeController@index')->name('home');
 Auth::routes();
+
+Route::get("/{cle}/api/hotesses",'HotesseController@APIindex');
+Route::get("/{cle}/api/hotesse/{id}",'HotesseController@APIget');
+Route::get("/{cle}/api/code/{id}",'CodeController@APIget');
+Route::get("/{cle}/api/clients",'ClientController@APIindex');
+Route::get("/{cle}/api/client/{id}",'ClientController@APIget');
+Route::post("/{cle}/api/client/{id}",'ClientController@APIpost');

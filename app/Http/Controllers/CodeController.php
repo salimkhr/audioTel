@@ -11,6 +11,7 @@ namespace App\Http\Controllers;
 
 use App\Admin;
 use App\Annonce;
+use App\API;
 use App\Code;
 use App\Hotesse;
 use App\Http\Requests\CodeRequest;
@@ -108,5 +109,25 @@ class CodeController extends Controller
     {
         Code::find($id)->delete();
         return redirect()->route('code');
+    }
+
+
+    public function APIget($cle,$id)
+    {
+        if(API::where('cle',"=", $cle)->count() == 0)
+            return response()->json(['error' => 'Not authorized.'],403);
+
+        $code = Code::find($id);
+        if($code==null)
+            return response()->json(null);
+
+        $listePhoto = array();
+        foreach ($code->photo as $photo)
+        {
+            $url=url(elixir("assets/images/users/".$photo->file.".jpg"));
+            array_push($listePhoto,$url);
+        }
+
+        return response()->json(["code"=>$code->code,"description"=>$code->description,"statut"=>$code->dispo,"active"=>$code->active,"photo"=>$listePhoto]);
     }
 }

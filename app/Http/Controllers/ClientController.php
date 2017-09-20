@@ -9,8 +9,11 @@
 namespace App\Http\Controllers;
 
 
+use App\API;
 use App\Client;
 use App\Credit;
+use Illuminate\Http\Request;
+use Mockery\Exception;
 
 class ClientController extends Controller
 {
@@ -32,5 +35,72 @@ class ClientController extends Controller
         }
 
         return view('client')->with("clients",$clients);
+    }
+
+    public function APIindex($cle)
+    {
+        if(API::where('cle',"=", $cle)->count() == 0)
+            return response()->json(['error' => 'Not authorized.'],403);
+
+        $clients = Client::all();
+        $jsonClient = array();
+
+        foreach ($clients as $client) {
+            $montant = 0;
+            $trans = Credit::where('client_id', '=', $client->id)->get();
+            foreach ($trans as $tran) {
+                $montant += $tran->montant;
+            }
+            $client->solde = $montant;
+            array_push($jsonClient, ["client" => ["id" => $client->id, "credit" => $client->solde]]);
+        }
+
+        return response()->json($jsonClient);
+    }
+
+    public function APIget($cle,$id)
+    {
+
+        if(API::where('cle',"=", $cle)->count() == 0)
+            return response()->json(['error' => 'Not authorized.'],403);
+
+        if(API::where('cle',"=", $cle)->count() == 0)
+            return response()->json(['error' => 'Not authorized.'],403);
+        $client = Client::find($id);
+
+        if($client == null)
+            return response()->json(null);
+
+        $montant=0;
+        $trans = Credit::where('client_id', '=', $client->id)->get();
+        foreach ($trans as $tran) {
+            $montant += $tran->montant;
+        }
+        $client->solde = $montant;
+
+        return response()->json(["id"=>$client->id, "code"=>$client->code, "solde"=>$client->solde]);
+    }
+
+    public function APIpost(Request $request,$cle,$id)
+    {
+        if(API::where('cle',"=", $cle)->count() == 0)
+            return response()->json(['error' => 'Not authorized.'],403);
+
+        $client = Client::find($id);
+
+        if($client == null)
+            return response()->json("failed");
+
+        try{
+            $credit = new Credit();
+            $credit->montant=$request->input("credit");
+            $credit->client_id=$client->id;
+            $credit->save();
+            return response()->json("success");
+        }
+        catch(Exception $e)
+        {
+            return response()->json("failed");
+        }
     }
 }

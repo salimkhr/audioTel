@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\API;
 use App\Hotesse;
 use App\Appel;
 use App\Http\Requests\HotesseRequest;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 
 class HotesseController extends Controller
@@ -85,5 +87,36 @@ class HotesseController extends Controller
         
         Hotesse::find($id)->delete();
         return redirect()->route('hotesse');
+    }
+
+
+    public function APIindex($cle)
+    {
+        if(API::where('cle',"=", $cle)->count() == 0)
+            return response()->json(['error' => 'Not authorized.'],403);
+
+        $hotesses = Hotesse::all();
+        $jsonHotesse = array();
+
+        foreach ($hotesses as $hotesse)
+            array_push($jsonHotesse,["hotesse"=>["id"=>$hotesse->id,"username"=>$hotesse->name]]);
+
+        return response()->json($jsonHotesse);
+    }
+
+    public function APIget($cle,$id)
+    {
+        if(API::where('cle',"=", $cle)->count() == 0)
+            return response()->json(['error' => 'Not authorized.'],403);
+
+        $hotesse = Hotesse::find($id);
+        if($hotesse==null)
+            return response()->json(null);
+
+        $listCode=array();
+        foreach ($hotesse->code as $code)
+            array_push($listCode,$code->code);
+
+        return response()->json(["id"=>$hotesse->id,"username"=>$hotesse->name,"code"=>$listCode]);
     }
 }
