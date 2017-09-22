@@ -12,6 +12,7 @@
 */
 
 use Illuminate\Support\Facades\Auth;
+Route::pattern('id', '[0-9]+');
 
 Route::get('/hotesse/', 'HotesseController@index')->name('hotesse');
 Route::get('/hotesse/{id}', 'HotesseController@hotesse')->name('getHotesse');
@@ -25,13 +26,15 @@ Route::get('/hotesse/delete/{id}', 'HotesseController@deleteHotesse')->name('del
 Route::get('/code/', 'CodeController@index')->name('code');
 Route::get('/code/{id}', 'CodeController@code')->name('getCode');
 Route::get('/code/new', 'CodeController@getFormCode')->name('getNewCode');
-Route::post('/admin/code/new','CodeController@postFormCode')->name('postNewCode');
+Route::post('/code/new','CodeController@postFormCode')->name('postNewCode');
 Route::get('/code/update/{id}', 'CodeController@getFormCode')->name('getUpdateCode');
 Route::post('/code/update/{id}','CodeController@postFormCode')->name('postUpdateCode');
 Route::get('/code/active/{id}','CodeController@activeCode')->name('activeCode');
 Route::get('/code/delete/{id}','CodeController@deleteCode')->name('deleteCode');
 
 Route::get('/client/', 'ClientController@client')->name('client');
+Route::get('/client/new/', 'ClientController@getFormClient')->name('getNewClient');
+Route::post('/client/new/', 'ClientController@postFormClient')->name('postNewClient');
 
 Route::get('/admin/', 'AdminController@admin')->name('admin');
 Route::get('/admin/new', 'AdminController@getFormAdmin')->name('getNewAdmin');
@@ -39,7 +42,7 @@ Route::post('/admin/new', 'AdminController@postFormAdmin')->name('postNewAdmin')
 Route::get('/admin/upadte/{id}', 'AdminController@getFormAdmin')->name('getUpdateAdmin');
 Route::post('/admin/upadte/{id}', 'AdminController@postFormAdmin')->name('postUpdateAdmin');
 Route::get('/admin/active/{id}','AdminController@activeAdmin')->name('activeAdmin');
-Route::get('/admin/delete/{id}','AdminController@activeAdmin')->name('deleteAdmin');
+Route::get('/admin/delete/{id}','AdminController@deleteAdmin')->name('deleteAdmin');
 
 Route::get('/api/', 'APIController@index')->name('api');
 Route::get('/api/new', 'APIController@getFormAPI')->name('getNewAPI');

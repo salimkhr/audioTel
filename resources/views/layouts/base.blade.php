@@ -23,7 +23,7 @@
     <!-- END META SECTION -->
 
     <!-- CSS INCLUDE -->
-    <link rel="stylesheet" type="text/css" id="theme" href="{{url(elixir('css/theme-default.css'))}}"/>
+    <link rel="stylesheet" type="text/css" id="theme" href="{{url(elixir('css/theme-blue.css'))}}"/>
     <!-- EOF CSS INCLUDE -->
 </head>
 <body>

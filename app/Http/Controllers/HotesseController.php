@@ -47,7 +47,10 @@ class HotesseController extends Controller
 
     public function getFormHotesse($id=null)
     {
-        
+
+        if(!$this->testLogin())
+            return redirect()->route("login");
+
         if(isset($id))
             return view('hotesse.new')->with("hotesse",Hotesse::find($id));
         else
@@ -56,7 +59,10 @@ class HotesseController extends Controller
 
     public function postFormHotesse(HotesseRequest $request,$id=null)
     {
-        
+
+        if(!$this->testLogin())
+            return redirect()->route("login");
+
         if(isset($id))
             $hotesse = Hotesse::find($id);
         else

@@ -12,6 +12,7 @@ namespace App\Http\Controllers;
 use App\API;
 use App\Client;
 use App\Credit;
+use App\Http\Requests\ClientRequest;
 use Illuminate\Http\Request;
 use Mockery\Exception;
 
@@ -58,8 +59,40 @@ class ClientController extends Controller
         return response()->json($jsonClient);
     }
 
+    public function getFormClient($id=null)
+    {
+
+        if(!$this->testLogin())
+            return redirect()->route("login");
+
+        if(isset($id))
+            return view('client.new')->with("client",Client::find($id));
+        else
+            return view('client.new')->with("client",new Client());
+    }
+
+    public function postFormClient(ClientRequest $request,$id=null)
+    {
+        if(!$this->testLogin())
+            return redirect()->route("login");
+
+        if(isset($id))
+            $client = Client::find($id);
+        else
+        {
+            $client = new Client;
+        }
+
+        $client->code=$request->input('code');
+        $client->save();
+
+        return redirect()->route('client');
+    }
+
     public function APIget($cle,$id)
     {
+        if(!$this->testLogin())
+            return redirect()->route("login");
 
         if(API::where('cle',"=", $cle)->count() == 0)
             return response()->json(['error' => 'Not authorized.'],403);

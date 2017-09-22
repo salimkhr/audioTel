@@ -47,7 +47,9 @@ class APIController extends Controller
 
     public function getFormAPI($id=null)
     {
-        
+        if(!$this->testLogin())
+            return redirect()->route("login");
+
         if(isset($id))
             return view('api.new')->with("api",API::find($id));
         else
@@ -56,7 +58,9 @@ class APIController extends Controller
 
     public function postFormAPI(APIRequest $request,$id=null)
     {
-        dump("azerty");
+        if(!$this->testLogin())
+            return redirect()->route("login");
+
         if(isset($id))
             $api = API::find($id);
         else
@@ -72,7 +76,9 @@ class APIController extends Controller
 
     public function activeAPI($id)
     {
-        
+        if(!$this->testLogin())
+            return redirect()->route("login");
+
         $api=API::find($id);
         dump($api);
         $api->active =! $api->active;
@@ -82,7 +88,9 @@ class APIController extends Controller
 
     public function deleteAPI($id)
     {
-        
+        if(!$this->testLogin())
+            return redirect()->route("login");
+
         API::find($id)->delete();
         return redirect()->route('api');
     }

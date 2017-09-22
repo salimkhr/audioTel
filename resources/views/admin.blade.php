@@ -34,6 +34,7 @@
                         <tr>
                             <th>Nom</th>
                             <th>Role</th>
+                            <th>Activé</th>
                             <td>modifier</td>
                         </tr>
                         </thead>
@@ -42,6 +43,7 @@
                             <tr>
                                 <td>{{$admin->name}}</td>
                                 <td>{{$admin->role}}</td>
+                                <td><span class="{{($admin->active)?"text-success":"text-danger"}}">{{($admin->active)?"activer":"désactiver"}}</span></td>
                                 <td><a href="{{route("getUpdateAdmin",["id"=>$admin->id])}}" role="button" class="btn btn-success"><i class="fa fa-pencil" aria-hidden="true"></i></a></td>
                             </tr>
                         @endforeach
@@ -49,7 +51,7 @@
                     </table>
                 </div>
                 <div class="panel-footer">
-                    <a href="{{route('getNewCode')}}" role="button" class="btn btn-primary pull-right">Ajouter un Admin</a>
+                    <a href="{{route('getNewAdmin')}}" role="button" class="btn btn-primary pull-right">Ajouter un Admin</a>
                 </div>
             </div>
         </div>

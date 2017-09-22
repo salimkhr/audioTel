@@ -16,7 +16,9 @@ use App\Code;
 use App\Hotesse;
 use App\Http\Requests\CodeRequest;
 use App\Photo;
+use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\MessageBag;
 
 class CodeController extends Controller
 {
@@ -47,6 +49,9 @@ class CodeController extends Controller
 
     public function getFormCode($id=null)
     {
+        if(!$this->testLogin())
+            return redirect()->route("login");
+
         $hotesses=Hotesse::all();
         $dataHotesse=[];
         $dataHotesse[-1]="Aucune Hotesse";
@@ -68,10 +73,9 @@ class CodeController extends Controller
             $code=Code::find($id);
             $photo=Photo::where('code','=',null)->orWhere('code','=',$code->code)->get();
         }
-        else
-        {
-            $code=new Code();
-            $photo=Photo::where('code','=',null)->get();
+        else {
+            $code = new Code();
+            $photo = Photo::where('code', '=', null)->get();
         }
 
         return view('code.new')->with("hotesses",$dataHotesse)->with("annonces",$dataAnnonce)->with("photos",$photo)->with("code",$code);
@@ -79,10 +83,16 @@ class CodeController extends Controller
 
     public function postFormCode(CodeRequest $request,$id=null)
     {
+        if(!$this->testLogin())
+            return redirect()->route("login");
+
         if(isset($id))
             $code = code::find($id);
         else
+        {
             $code = new Code();
+            $code->admin_id=Auth::id();
+        }
 
         $code->code=$request->input('code');
         $code->pseudo=$request->input('pseudo');
@@ -95,11 +105,14 @@ class CodeController extends Controller
 
         $code->save();
 
-        return redirect()->route('codeAdmin');
+        return redirect()->route('code');
     }
 
     public function activeCode($id)
     {
+        if(!$this->testLogin())
+            return redirect()->route("login");
+
         $code=Code::find($id);
         $code->active =! $code->active;
         $code->save();
@@ -107,8 +120,20 @@ class CodeController extends Controller
     }
     public function deleteCode($id)
     {
-        Code::find($id)->delete();
-        return redirect()->route('code');
+        if(!$this->testLogin())
+            return redirect()->route("login");
+
+        try {
+            Code::find($id)->delete();
+            return redirect()->route('code');
+        }
+        catch (QueryException $e)
+        {
+            $bag = new MessageBag();
+            $bag->add("err","une erreur s'est produite pendant la suppression");
+
+            return redirect()->route("getUpdateCode",["id"=>$id])->withErrors($bag);
+        }
     }
 
 

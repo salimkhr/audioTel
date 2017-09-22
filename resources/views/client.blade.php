@@ -39,7 +39,7 @@
                     </table>
                 </div>
                 <div class="panel-footer">
-                    <a href="{{route('getNewCode')}}" role="button" class="btn btn-primary pull-right">Ajouter un code hôtesse</a>
+                    <a href="{{route('getNewClient')}}" role="button" class="btn btn-primary pull-right">Ajouter un code hôtesse</a>
                 </div>
             </div>
         </div>
