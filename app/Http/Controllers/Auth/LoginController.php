@@ -52,7 +52,6 @@ class LoginController extends Controller
         {
             Auth::shouldUse("web_admin");
             Auth::login($admin);
-            $request->session()->put('guard','admin');
             return redirect()->route("home");
         }
 
@@ -61,12 +60,30 @@ class LoginController extends Controller
         {
             Auth::shouldUse("web");
             Auth::login($hotesse);
-            $request->session()->put('guard','hotesse');
+            $hotesse=Hotesse::find(Auth::id());
+            $hotesse->co=1;
+            $hotesse->derniere_connection=date_create();
+            $hotesse->save();
             return redirect()->route("home");
         }
 
         $bag = new MessageBag();
         $bag->add("name","login/mot de passe incorrect");
         return back()->withInput(["name"=>$request->input('name')])->withErrors($bag);
+    }
+
+    public function logout(Request $request)
+    {
+        if(!$this->testLogin())
+            return redirect()->route("login");
+
+        if(Auth::guard('web')->check())
+        {
+            $hotesse=Hotesse::find(Auth::id());
+            $hotesse->co=0;
+            $hotesse->save();
+        }
+        Auth::logout();
+        return redirect()->route("login");
     }
 }

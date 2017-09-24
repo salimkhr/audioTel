@@ -16,7 +16,7 @@
 @endsection
 @section('content')
     <div class="row">
-        <div class="col-md-3">
+        <div class="col-md-3 col-sm-6">
             <!-- START WIDGET MESSAGES -->
             <div class="widget widget-default widget-item-icon" onclick="location.href='#';">
                 <div class="widget-item-left">
@@ -30,7 +30,7 @@
             </div>
             <!-- END WIDGET MESSAGES -->
         </div>
-        <div class="col-md-3">
+        <div class="col-md-3 col-sm-6">
 
             <!-- START WIDGET REGISTRED -->
             <div class="widget @if($nbHotesseCo >2) widget-default  @else widget-danger @endif widget-item-icon" onclick="location.href='#';"><!---->
@@ -46,7 +46,7 @@
             <!-- END WIDGET REGISTRED -->
 
         </div>
-        <div class="col-md-3">
+        <div class="col-md-3 col-sm-6">
             <div class="widget widget-default widget-carousel">
                 <div class="owl-carousel" id="owl-example">
                     <div>
@@ -67,7 +67,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-3 col-sm-6">
 
             <!-- START WIDGET CLOCK -->
             <div class="widget widget-info">
@@ -80,7 +80,7 @@
     </div>
     <!-- END WIDGETS -->
     <div class="row">
-        <div class="col-sm-9">
+        <div class="col-md-9 col-sm-12">
             <div class="panel panel-default">
                 <div class="panel-body">
                     <table class="table datatable">
@@ -91,7 +91,8 @@
                             <th>Durée</th>
                             <th>appelant</th>
                             <th>appelé</th>
-                            <th>Hôtesse</th>
+                            {{Auth::guard('web_admin')->check()}}
+                            @if(Auth::guard('web_admin')->check())<th>Hôtesse</th>@endif
                             <th>Enregistrement</th>
                             <th>CA</th>
                         </tr>
@@ -102,9 +103,9 @@
                                 <td>{{date_format(date_create($appel->debut), 'd/m/Y H:i:s')}}</td>
                                 <td>{{date_format(date_create($appel->fin), 'd/m/Y H:i:s')}}</td>
                                 <td>{{date_diff(date_create($appel->debut),date_create($appel->fin))->format('%I:%S')}}</td>
-                                <td>@if(Auth::user() instanceof \App\Hotesse && $appel->appellant != "ANONYME"){{substr($appel->appellant,0,4).'******'}}@else{{$appel->appellant}}@endif </td>
+                                <td>@if(Auth::guard('web')->check() && $appel->appellant != "ANONYME"){{substr($appel->appellant,0,4).'******'}}@else{{$appel->appellant}}@endif </td>
                                 <td>@isset($appel->hotesse){{$appel->hotesse->tel}}@endisset</td>
-                                <td>@isset($appel->hotesse)<a href="{{route("getHotesse",["id"=>$appel->hotesse->id])}}">{{$appel->hotesse->name}}</a>@endisset</td>
+                                @if(Auth::guard('web_admin')->check())<td>@isset($appel->hotesse)<a href="{{route("getHotesse",["id"=>$appel->hotesse->id])}}">{{$appel->hotesse->name}}</a>@endisset</td>@endif
                                 <td><button class="btn btn-success" @if($appel->file == "NULL") disabled @else id="btn-{{$appel->file}}" @endif><i class="fa fa-play" onclick="play('{{$appel->file}}')"></i></button></td>
                                 <td>@isset($appel->tarif->prixMinute){{date_diff(date_create($appel->debut),date_create($appel->fin))->format('%i')*$appel->tarif->prixMinute}}@endisset</td>
                             </tr>
@@ -115,7 +116,7 @@
             </div>
             <!-- END DEFAULT DATATABLE -->
         </div>
-        <div class="col-sm-3">
+        <div class="col-md-3 col-sm-12">
             <!-- START CONTENT FRAME RIGHT -->
             <div class="list-group list-group-contacts border-bottom push-down-10">
                 @foreach ($hotesses as $hotesse)

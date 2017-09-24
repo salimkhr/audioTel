@@ -53,7 +53,6 @@ Route::get('/api/active/{id}','APIController@activeAPI')->name('activeAPI');
 Route::get('/api/delete/{id}','APIController@activeAPI')->name('deleteAPI');
 
 Route::get('/logout/', 'Auth\LoginController@logout')->name('logout');
-Route::get('/logoutAdmin/', 'Auth\LoginAdminController@logout')->name('logoutAdmin');
 
 Route::get('/','HomeController@index')->name('home');
 Auth::routes();

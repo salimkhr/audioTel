@@ -59,7 +59,7 @@
                                         @endswitch
 
                                     </td>
-                                    <td></td>
+                                    <td>@if($hotesse->derniere_connection!=null){{date_format(date_create($hotesse->derniere_connection), 'd/m/Y H:i:s')}}@endif</td>
                                     <td><a href="{{route("getUpdateHotesse",["id"=>$hotesse["id"]])}}" role="button" class="btn btn-success"><i class="fa fa-pencil" aria-hidden="true"></i> Modifier</a></td>
                                 </tr>
                             @endforeach

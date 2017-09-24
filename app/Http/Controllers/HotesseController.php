@@ -6,9 +6,11 @@ use App\API;
 use App\Hotesse;
 use App\Appel;
 use App\Http\Requests\HotesseRequest;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\MessageBag;
 
 class HotesseController extends Controller
 {
@@ -90,9 +92,21 @@ class HotesseController extends Controller
 
     public function deleteHotesse($id)
     {
-        
-        Hotesse::find($id)->delete();
-        return redirect()->route('hotesse');
+
+        if(!$this->testLogin())
+            return redirect()->route("login");
+
+        try {
+            Hotesse::find($id)->delete();
+            return redirect()->route('hotesse');
+        }
+        catch (QueryException $e)
+        {
+            $bag = new MessageBag();
+            $bag->add("err","une erreur s'est produite pendant la suppression");
+
+            return redirect()->route("getUpdateHotesse",["id"=>$id])->withErrors($bag);
+        }
     }
 
 
