@@ -15,7 +15,7 @@ use App\API;
 use App\Code;
 use App\Hotesse;
 use App\Http\Requests\CodeRequest;
-use App\Photo;
+use App\PhotoCode;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\MessageBag;
@@ -60,25 +60,17 @@ class CodeController extends Controller
             $dataHotesse[$hotesse->id]=$hotesse->name;
         }
 
-        $annonces=Annonce::all();
-        $dataAnnonce=[];
-        $dataAnnonce[-1]="Aucune annonce";
-        foreach($annonces as $annonce)
-        {
-            $dataAnnonce[$annonce->id]=$annonce->file." ".(($annonce->name!="")?"(".$annonce->name.")":"");
-        }
-
         if(isset($id))
         {
             $code=Code::find($id);
-            $photo=Photo::where('code','=',null)->orWhere('code','=',$code->code)->get();
+            $photo=PhotoCode::where('code','=',null)->orWhere('code','=',$code->code)->get();
         }
         else {
             $code = new Code();
-            $photo = Photo::where('code', '=', null)->get();
+            $photo = PhotoCode::where('code', '=', null)->get();
         }
 
-        return view('code.new')->with("hotesses",$dataHotesse)->with("annonces",$dataAnnonce)->with("photos",$photo)->with("code",$code);
+        return view('code.new')->with("hotesses",$dataHotesse)->with("photos",$photo)->with("code",$code);
     }
 
     public function postFormCode(CodeRequest $request,$id=null)
@@ -100,8 +92,8 @@ class CodeController extends Controller
 
         if($request->input('hotesse_id') != -1)
             $code->hotesse_id=$request->input('hotesse_id');
-        if($request->input('annonce_id') != -1)
-            $code->annonce_id=$request->input('annonce_id');
+
+        $code->annonce_id=$request->input('annonce_id');
 
         $code->save();
 
@@ -114,10 +106,36 @@ class CodeController extends Controller
             return redirect()->route("login");
 
         $code=Code::find($id);
-        $code->active =! $code->active;
-        $code->save();
+
+        $this->activeCodePv($code,!$code->active);
         return redirect()->route('code');
     }
+
+    public function activeAllCode($idHotesse)
+    {
+        $codes = Code::where("hotesse_id","=",$idHotesse)->get();
+        foreach ($codes as $code)
+            $this->activeCodePv($code,true);
+
+        return redirect()->route('code');
+    }
+
+    public function desactiveAllCode($idHotesse)
+    {
+        $codes = Code::where("hotesse_id","=",$idHotesse)->get();
+        foreach ($codes as $code)
+            $this->activeCodePv($code,false);
+
+        return redirect()->route('code');
+    }
+
+    private function activeCodePv(Code $code,$active)
+    {
+        $code->active =$active;
+        $code->save();
+    }
+
+
     public function deleteCode($id)
     {
         if(!$this->testLogin())

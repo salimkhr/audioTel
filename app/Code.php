@@ -16,7 +16,7 @@ class Code extends Model
 
     public function photo()
     {
-        return $this->hasMany('App\Photo','code');
+        return $this->hasMany('App\PhotoCode','code');
     }
 
     public function annonce()

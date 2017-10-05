@@ -8,7 +8,8 @@ use App\Code;
 use App\Hotesse;
 use App\Appel;
 use App\Http\Requests\HotesseRequest;
-use App\Photo;
+use App\PhotoCode;
+use App\PhotoHotesse;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -75,7 +76,7 @@ class HotesseController extends Controller
         else
             $hotesse = new Hotesse();
 
-        return view('hotesse.new')->with("hotesse",$hotesse)->with("photos",Photo::all());
+        return view('hotesse.new')->with("hotesse",$hotesse)->with("photos",PhotoHotesse::where("hotesse_id","=",$id)->get());
     }
 
     public function postFormHotesse(HotesseRequest $request,$id=null)
@@ -92,10 +93,8 @@ class HotesseController extends Controller
             $hotesse->password=hash("sha512",$request->input('password'));
         }
 
-        dump($request->input());
-
         $hotesse->name=$request->input('name');
-        $hotesse->photo_id=$request->input('photo_id');
+        $hotesse->photoHotesse_id=$request->input('photo_id');
         $hotesse->tel=$request->input('tel');
         $hotesse->admin_id=1;
         $hotesse->save();

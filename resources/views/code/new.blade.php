@@ -49,23 +49,22 @@
                                     {{ Form::label('hotesse_id', 'Hotesse', array('class' => 'control-label')) }}
                                     {!!Form::select('hotesse_id', $hotesses,null,array('class' => 'form-control select')) !!}
                                 </div>
-
-                                <div class="form-group">
-                                    {{ Form::label('annonce_id', 'Annonce', array('class' => 'control-label')) }}
-                                    {!!Form::select('annonce_id', $annonces,null,array('class' => 'form-control select')) !!}
-                                </div>
+                                <span class="control-label">Annonces</span>
+                                @foreach ($code->hotesse->annonces as $annonce)
+                                    <div>
+                                        <label> <a href="#" role="button" class="btn btn-success" id="btn-{{$code->annonce->id}}" onclick="play({{$annonce->id}})">{{$annonce->name}} <i class="fa fa-fw fa-play"></i> </a> {!!Form::radio("annonce_id",$annonce->id,$code->annonce_id == $annonce->id,array("class"=>"iradio")) !!}</label>
+                                    </div>
+                                @endforeach
+                                {!! $errors->first('annonce_id', '<small class="help-block">:message</small>') !!}
+                                <span class="control-label">Photos</span>
                                 <div class="gallery" id="links">
                                     @foreach ($photos as $photo)
                                         <a class="gallery-item" href="" title="Nature Image 1" data-gallery="">
                                             <div class="image">
-                                                <img src="{{url(elixir('images/catalog/'.$photo->file))}}" alt="{{$photo->file}}">
+                                                <img src="{{url(elixir('images/catalog/code/'.$photo->file))}}" alt="{{$photo->file}}">
                                                 <ul class="gallery-item-controls">
-                                                    <li><label class="check"><div class="icheckbox_minimal-grey" style="position: relative;"> {!!Form::checkbox("photo",null,array('class' => 'icheckbox', 'placeholder' => 'pseudo','style'=>"position: absolute; opacity: 0;"))!!}<ins class="iCheck-helper" style="position: absolute; top: 0%; left: 0%; display: block; width: 100%; height: 100%; margin: 0px; padding: 0px; background: rgb(255, 255, 255); border: 0px; opacity: 0;"></ins></div></label></li>
-                                                    <li><span class="gallery-item-remove"><i class="fa fa-times"></i></span></li>
+                                                    <li> {!!Form::checkbox("photo",null,array('class' => 'icheckbox', 'placeholder' => 'pseudo','style'=>"position: absolute; opacity: 0;"))!!}</li>
                                                 </ul>
-                                            </div>
-                                            <div class="meta">
-                                                <strong>{{$photo->file}}</strong>
                                             </div>
                                         </a>
                                     @endforeach
@@ -74,11 +73,13 @@
 
                                 {{ Form::close() }}
                     </div>
-                    <div class="row">
-                        {{Form::open(array('route' => 'postNewPhoto','files'=> true))}}
-                        {!! Form::file('image',["class"=>"file","accept"=>"image/*","id"=>'filename'])!!}
-                        {{ Form::close() }}
-                    </div>
+                    @if(Auth::user() instanceof \App\Admin)
+                        <div class="row">
+                            {{Form::open(array('route' => 'postNewPhotoCode','files'=> true))}}
+                            {!! Form::file('image',["class"=>"file","accept"=>"image/*","id"=>'filename'])!!}
+                            {{ Form::close() }}
+                        </div>
+                    @endif
                 </div>
                 <div class="panel-footer">
                     <a href="{{route('activeCode',['id'=> $code->code])}}" role="button" class="btn btn-warning pull-right">@if($code->active)Desactiver @else Activer @endif</a>
@@ -87,6 +88,9 @@
             </div>
         </div>
     </div>
+    @foreach ($code->hotesse->annonces as $annonce)
+        <audio id="audio-{{$annonce->id}}" src="{{url(elixir("audio/annonce/".$annonce->file.".mp3"))}}" onended="stop({{$annonce->id}})"></audio>
+    @endforeach
     <div class="message-box message-box-danger animated fadeIn" data-sound="alert" id="message-box-delete">
         <div class="mb-container">
             <div class="mb-middle">
@@ -117,4 +121,19 @@
            </div>
        </div>
    </div>')!!}
+@endsection
+
+@section('script')
+    <script>
+        function play(id) {
+            console.log($("#"+id));
+            $("#btn-"+id).prop('disabled', true);
+            $("#audio-"+id).get(0).play();
+        }
+
+        function stop(id) {
+            console.log($("#"+id));
+            $("#btn-"+id).prop('disabled', false);
+        }
+    </script>
 @endsection

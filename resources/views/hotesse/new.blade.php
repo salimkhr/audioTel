@@ -53,22 +53,24 @@
                     </div>
                     <div class="col-md-6">
                         <div class="gallery" id="links">
-                            @foreach($photos as $photo)
+                            @foreach($hotesse->photos as $photo)
                                 <a class="gallery-item" href="" title="Nature Image 1" data-gallery="">
                                     <div class="image">
-                                        <img src="{{url(elixir('images/catalog/'.$photo->file))}}" alt="{{$photo->file}}">
+                                        <img src="{{url(elixir('images/catalog/hotesse/'.$photo->file))}}" alt="{{$photo->file}}">
                                         <ul class="gallery-item-controls">
-                                            <li>{!!Form::radio("photo_id",$photo->id,$photo->file==$hotesse->photo->file,array('class' => 'icheckbox',"style"=>"position: absolute; opacity: 0;"))!!}</li>
+                                            <li>{!!Form::radio("photo_id",$photo->id,$photo->id==$hotesse->photo->id,array('class' => 'icheckbox',"style"=>"position: absolute; opacity: 0;"))!!}</li>
                                         </ul>
-                                    </div>
-                                    <div class="meta">
-                                        <strong>{{$photo->file}}</strong>
                                     </div>
                                 </a>
                             @endforeach
+
                         </div>
                     </div>
                         {!! Form::submit('Valider', ['class' => 'btn btn-primary pull-right']) !!}
+                        {{ Form::close() }}
+
+                        {{Form::open(array('route' => 'postNewPhotoHotesse','files'=> true))}}
+                        {!! Form::file('image',["class"=>"file","accept"=>"image/*","id"=>'filename'])!!}
                         {{ Form::close() }}
                 </div>
                 <div class="panel-footer">

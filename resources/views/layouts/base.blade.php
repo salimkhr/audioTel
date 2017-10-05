@@ -40,11 +40,11 @@
             </li>
             <li class="xn-profile">
                 <a href="#" class="profile-mini">
-                    <img src="@isset(Auth::user()->photo){{url(elixir("images/catalog/".Auth::user()->photo->file))}} @endisset" alt="@isset(Auth::user()->name){{Auth::user()->name}} @endisset"/>
+                    <img src="@isset(Auth::user()->photo->file){{url(elixir("images/catalog/hotesse/".Auth::user()->photo->file))}} @endisset" alt="@isset(Auth::user()->name){{Auth::user()->name}} @endisset"/>
                 </a>
                 <div class="profile">
                     <div class="profile-image">
-                        <img src="@isset(Auth::user()->photo){{url(elixir("images/catalog/".Auth::user()->photo->file))}} @endisset" alt="@isset(Auth::user()->name){{Auth::user()->name}} @endisset"/>
+                        <img src="@isset(Auth::user()->photo->file){{url(elixir("images/catalog/hotesse/".Auth::user()->photo->file))}} @endisset" alt="@isset(Auth::user()->name){{Auth::user()->name}} @endisset"/>
                     </div>
                     <div class="profile-data">
                         <div class="profile-data-name">@isset(Auth::user()->name){{Auth::user()->name}} @endisset</div>

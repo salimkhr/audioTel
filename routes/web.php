@@ -32,6 +32,9 @@ Route::post('/code/new','CodeController@postFormCode')->name('postNewCode');
 Route::get('/code/update/{id}', 'CodeController@getFormCode')->name('getUpdateCode');
 Route::post('/code/update/{id}','CodeController@postFormCode')->name('postUpdateCode');
 Route::get('/code/active/{id}','CodeController@activeCode')->name('activeCode');
+Route::get('/code/active/all/{idHottesse}','CodeController@activeAllCode')->name('activeAllCode');
+Route::get('/code/desactive/all/{idHottesse}','CodeController@desactiveAllCode')->name('desactiveAllCode');
+
 Route::get('/code/delete/{id}','CodeController@deleteCode')->name('deleteCode');
 
 Route::get('/client/', 'ClientController@client')->name('client');
@@ -54,7 +57,8 @@ Route::post('/api/upadte/{id}', 'APIController@postFormAPI')->name('postUpdateAP
 Route::get('/api/active/{id}','APIController@activeAPI')->name('activeAPI');
 Route::get('/api/delete/{id}','APIController@activeAPI')->name('deleteAPI');
 
-Route::post('/photo/add', 'PhotoController@postFormPhoto')->name('postNewPhoto');
+Route::post('/photo/add/code', 'PhotoController@postFormPhotoCode')->name('postNewPhotoCode');
+Route::post('/photo/add/hotesse', 'PhotoController@postFormPhotoHotesse')->name('postNewPhotoHotesse');
 
 Route::get('/logout/', 'Auth\LoginController@logout')->name('logout');
 
