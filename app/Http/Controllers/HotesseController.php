@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Admin;
 use App\API;
+use App\Code;
 use App\Hotesse;
 use App\Appel;
 use App\Http\Requests\HotesseRequest;
+use App\Photo;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -34,17 +37,31 @@ class HotesseController extends Controller
 
         $dureeAppel=0;
         $nbAppel=0;
+        $ca=0;
         foreach($appelToday as $appel)
         {
-            $dureeAppel+=date_diff(date_create($appel->debut),date_create($appel->fin))->format('%i');
+            $duree=date_diff(date_create($appel->debut),date_create($appel->fin))->format('%i');
+            $dureeAppel+=$duree;
             $nbAppel++;
+            if(isset($appel->tarif->prixMinute))
+                $ca+=$duree*$appel->tarif->prixMinute;
         }
+
+        if(Auth::user() instanceof Admin)
+            return view('hotesse.index')->with("hotesses",Hotesse::all())
+                ->with("nbHotesseCo",Hotesse::where("co","<>","0")->count())
+                ->with("dureeAppel",$dureeAppel)
+                ->with("nbAppel",$nbAppel)
+                ->with("appels",$appels)
+                ->with("hotesse",Hotesse::find($id));
 
         return view('index')->with("hotesses",Hotesse::all())
             ->with("nbHotesseCo",Hotesse::where("co","<>","0")->count())
             ->with("dureeAppel",$dureeAppel)
             ->with("nbAppel",$nbAppel)
+            ->with("ca",$ca)
             ->with("appels",$appels);
+
     }
 
     public function getFormHotesse($id=null)
@@ -54,9 +71,11 @@ class HotesseController extends Controller
             return redirect()->route("login");
 
         if(isset($id))
-            return view('hotesse.new')->with("hotesse",Hotesse::find($id));
+            $hotesse=Hotesse::find($id);
         else
-            return view('hotesse.new')->with("hotesse",new Hotesse());
+            $hotesse = new Hotesse();
+
+        return view('hotesse.new')->with("hotesse",$hotesse)->with("photos",Photo::all());
     }
 
     public function postFormHotesse(HotesseRequest $request,$id=null)
@@ -73,17 +92,22 @@ class HotesseController extends Controller
             $hotesse->password=hash("sha512",$request->input('password'));
         }
 
+        dump($request->input());
+
         $hotesse->name=$request->input('name');
+        $hotesse->photo_id=$request->input('photo_id');
         $hotesse->tel=$request->input('tel');
         $hotesse->admin_id=1;
         $hotesse->save();
 
-        return redirect()->route('hotesse');
+        return redirect()->back()->withInput();
     }
 
     public function activeHotesse($id)
     {
-        
+        if(!$this->testLogin())
+            return redirect()->route("login");
+
         $hotesse=Hotesse::find($id);
         $hotesse->active =! $hotesse->active;
         $hotesse->save();
@@ -107,6 +131,14 @@ class HotesseController extends Controller
 
             return redirect()->route("getUpdateHotesse",["id"=>$id])->withErrors($bag);
         }
+    }
+
+    public function codeHotesse($id)
+    {
+        if(!$this->testLogin())
+            return redirect()->route("login");
+
+        return view('code')->with("codes",Code::where("hotesse_id","=",$id)->get());
     }
 
 

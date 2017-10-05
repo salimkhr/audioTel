@@ -40,18 +40,18 @@
             </li>
             <li class="xn-profile">
                 <a href="#" class="profile-mini">
-                    <img src="{{url(elixir("assets/images/users/avatar.jpg"))}}" alt="John Doe"/>
+                    <img src="@isset(Auth::user()->photo){{url(elixir("images/catalog/".Auth::user()->photo->file))}} @endisset" alt="@isset(Auth::user()->name){{Auth::user()->name}} @endisset"/>
                 </a>
                 <div class="profile">
                     <div class="profile-image">
-                        <img src="{{url(elixir("assets/images/users/avatar.jpg"))}}" alt="John Doe"/>
+                        <img src="@isset(Auth::user()->photo){{url(elixir("images/catalog/".Auth::user()->photo->file))}} @endisset" alt="@isset(Auth::user()->name){{Auth::user()->name}} @endisset"/>
                     </div>
                     <div class="profile-data">
                         <div class="profile-data-name">@isset(Auth::user()->name){{Auth::user()->name}} @endisset</div>
                         <div class="profile-data-title"></div>
                     </div>
                     <div class="profile-controls">
-                        <a href="pages-profile.html" class="profile-control-left"><span class="fa fa-info"></span></a>
+                        <a href="{{route("getUpdateHotesse",["id"=>Auth::id()])}}" class="profile-control-left"><span class="fa fa-info"></span></a>
                         <a href="pages-messages.html" class="profile-control-right"><span class="fa fa-envelope"></span></a>
                     </div>
                 </div>
@@ -235,13 +235,15 @@
 <script type="text/javascript" src="{{url(elixir('js/plugins/rickshaw/rickshaw.min.js'))}}"></script>
 <script type='text/javascript' src="{{url(elixir('js/plugins/jvectormap/jquery-jvectormap-1.2.2.min.js'))}}"></script>
 <script type='text/javascript' src="{{url(elixir('js/plugins/jvectormap/jquery-jvectormap-world-mill-en.js'))}}"></script>
-<script type='text/javascript' src="{{url(elixir('js/plugins/bootstrap/bootstrap-datepicker.js'))}}"></script>-->
+<script type='text/javascript' src="{{url(elixir('js/plugins/bootstrap/bootstrap-datepicker.js'))}}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js"></script>-->
 
 
 <script type="text/javascript" src="{{url(elixir('js/plugins/moment.min.js'))}}"></script>
 <script type="text/javascript" src="{{url(elixir('js/plugins/daterangepicker/daterangepicker.js'))}}"></script>
 
 <script type="text/javascript" src="{{url(elixir('js/plugins/bootstrap/bootstrap-select.js'))}}"></script>
+<script type="text/javascript" src="{{url(elixir('js/plugins/fileinput/fileinput.min.js'))}}"></script>
 <!-- END THIS PAGE js/plugins-->
 
 <!-- START TEMPLATE -->
@@ -252,6 +254,9 @@
 <!-- END TEMPLATE -->
 <!-- END SCRIPTS -->
 
+<!--<script>
+    var socket = io();
+</script>-->
 @yield('script')
 
 </body>

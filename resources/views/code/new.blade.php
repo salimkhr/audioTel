@@ -20,59 +20,65 @@
             <!-- START DEFAULT DATATABLE -->
             <div class="panel panel-default">
                 <div class="panel-body">
-                @isset($code->code)
-                    {{ Form::model($code, array('route' => array('postUpdateCode', $code->code)))}}
-                    @else
-                        {{ Form::open(array('route' => 'postNewCode')) }}
-                        @endisset
+                    <div class="row">
+                    @isset($code->code)
+                        {{ Form::model($code, array('route' => array('postUpdateCode', $code->code)))}}
+                        @else
+                            {{ Form::open(array('route' => 'postNewCode')) }}
+                            @endisset
 
 
-                        <!-- name -->
-                            <div class="form-group">
-                                {{ Form::label('code', 'Code', array('class' => 'control-label')) }}
-                                {{ Form::number('code',null, array('class' => 'form-control','placeholder'=>'code')) }}
-                                {!! $errors->first('code', '<small class="help-block">:message</small>') !!}
-                            </div>
-                            <div class="form-group">
-                                <!-- email -->
-                                {{ Form::label('pseudo', 'Pseudo', array('class' => 'control-label')) }}
-                                {!! Form::text('pseudo', null, array('class' => 'form-control', 'placeholder' => 'pseudo')) !!}
-                                {!! $errors->first('pseudo', '<small class="help-block">:message</small>') !!}
-                            </div>
-                            <div class="form-group">
-                                {{ Form::label('description', 'Description', array('class' => 'control-label')) }}
-                                {!! Form::textArea('description', null, array('class' => 'form-control', 'placeholder' => 'description')) !!}
-                            </div>
+                            <!-- name -->
+                                <div class="form-group">
+                                    {{ Form::label('code', 'Code', array('class' => 'control-label')) }}
+                                    {{ Form::number('code',null, array('class' => 'form-control','placeholder'=>'code')) }}
+                                    {!! $errors->first('code', '<small class="help-block">:message</small>') !!}
+                                </div>
+                                <div class="form-group">
+                                    <!-- email -->
+                                    {{ Form::label('pseudo', 'Pseudo', array('class' => 'control-label')) }}
+                                    {!! Form::text('pseudo', null, array('class' => 'form-control', 'placeholder' => 'pseudo')) !!}
+                                    {!! $errors->first('pseudo', '<small class="help-block">:message</small>') !!}
+                                </div>
+                                <div class="form-group">
+                                    {{ Form::label('description', 'Description', array('class' => 'control-label')) }}
+                                    {!! Form::textArea('description', null, array('class' => 'form-control', 'placeholder' => 'description')) !!}
+                                </div>
 
-                            <div class="form-group">
-                                {{ Form::label('hotesse_id', 'Hotesse', array('class' => 'control-label')) }}
-                                {!!Form::select('hotesse_id', $hotesses,null,array('class' => 'form-control select')) !!}
-                            </div>
+                                <div class="form-group">
+                                    {{ Form::label('hotesse_id', 'Hotesse', array('class' => 'control-label')) }}
+                                    {!!Form::select('hotesse_id', $hotesses,null,array('class' => 'form-control select')) !!}
+                                </div>
 
-                            <div class="form-group">
-                                {{ Form::label('annonce_id', 'Annonce', array('class' => 'control-label')) }}
-                                {!!Form::select('annonce_id', $annonces,null,array('class' => 'form-control select')) !!}
-                            </div>
-                            <div class="gallery" id="links">
-                                @foreach ($photos as $photo)
-                                    <a class="gallery-item" href="assets/images/gallery/nature-1.jpg" title="Nature Image 1" data-gallery="">
-                                        <div class="image">
-                                            <img src="{{url(elixir('assets/images/users/'.$photo->file.'.jpg'))}}" alt="{{$photo->file}}">
-                                            <ul class="gallery-item-controls">
-                                                <li><label class="check"><div class="icheckbox_minimal-grey" style="position: relative;"> {!!Form::checkbox("photo",null,array('class' => 'icheckbox', 'placeholder' => 'pseudo','style'=>"position: absolute; opacity: 0;"))!!}<ins class="iCheck-helper" style="position: absolute; top: 0%; left: 0%; display: block; width: 100%; height: 100%; margin: 0px; padding: 0px; background: rgb(255, 255, 255); border: 0px; opacity: 0;"></ins></div></label></li>
-                                                <li><span class="gallery-item-remove"><i class="fa fa-times"></i></span></li>
-                                            </ul>
-                                        </div>
-                                        <div class="meta">
-                                            <strong>{{$photo->file}}</strong>
-                                        </div>
-                                    </a>
-                                @endforeach
-                            </div>
+                                <div class="form-group">
+                                    {{ Form::label('annonce_id', 'Annonce', array('class' => 'control-label')) }}
+                                    {!!Form::select('annonce_id', $annonces,null,array('class' => 'form-control select')) !!}
+                                </div>
+                                <div class="gallery" id="links">
+                                    @foreach ($photos as $photo)
+                                        <a class="gallery-item" href="" title="Nature Image 1" data-gallery="">
+                                            <div class="image">
+                                                <img src="{{url(elixir('images/catalog/'.$photo->file))}}" alt="{{$photo->file}}">
+                                                <ul class="gallery-item-controls">
+                                                    <li><label class="check"><div class="icheckbox_minimal-grey" style="position: relative;"> {!!Form::checkbox("photo",null,array('class' => 'icheckbox', 'placeholder' => 'pseudo','style'=>"position: absolute; opacity: 0;"))!!}<ins class="iCheck-helper" style="position: absolute; top: 0%; left: 0%; display: block; width: 100%; height: 100%; margin: 0px; padding: 0px; background: rgb(255, 255, 255); border: 0px; opacity: 0;"></ins></div></label></li>
+                                                    <li><span class="gallery-item-remove"><i class="fa fa-times"></i></span></li>
+                                                </ul>
+                                            </div>
+                                            <div class="meta">
+                                                <strong>{{$photo->file}}</strong>
+                                            </div>
+                                        </a>
+                                    @endforeach
+                                </div>
+                                {!! Form::submit('Valider', ['class' => 'btn btn-primary pull-right']) !!}
 
-                            {!! Form::submit('Valider', ['class' => 'btn btn-primary pull-right']) !!}
-
-                            {{ Form::close() }}
+                                {{ Form::close() }}
+                    </div>
+                    <div class="row">
+                        {{Form::open(array('route' => 'postNewPhoto','files'=> true))}}
+                        {!! Form::file('image',["class"=>"file","accept"=>"image/*","id"=>'filename'])!!}
+                        {{ Form::close() }}
+                    </div>
                 </div>
                 <div class="panel-footer">
                     <a href="{{route('activeCode',['id'=> $code->code])}}" role="button" class="btn btn-warning pull-right">@if($code->active)Desactiver @else Activer @endif</a>

@@ -22,6 +22,8 @@ Route::get('/hotesse/new', 'HotesseController@getFormHotesse')->name('getNewHote
 Route::post('/hotesse/new', 'HotesseController@postFormHotesse')->name('postNewHotesse');
 Route::get('/hotesse/active/{id}', 'HotesseController@activeHotesse')->name('activeHotesse');
 Route::get('/hotesse/delete/{id}', 'HotesseController@deleteHotesse')->name('deleteHotesse');
+Route::get('/hotesse/{id}/code', 'HotesseController@codeHotesse')->name('codeHotesse');
+
 
 Route::get('/code/', 'CodeController@index')->name('code');
 Route::get('/code/{id}', 'CodeController@code')->name('getCode');
@@ -51,6 +53,8 @@ Route::get('/api/upadte/{id}', 'APIController@getFormAPI')->name('getUpdateAPI')
 Route::post('/api/upadte/{id}', 'APIController@postFormAPI')->name('postUpdateAPI');
 Route::get('/api/active/{id}','APIController@activeAPI')->name('activeAPI');
 Route::get('/api/delete/{id}','APIController@activeAPI')->name('deleteAPI');
+
+Route::post('/photo/add', 'PhotoController@postFormPhoto')->name('postNewPhoto');
 
 Route::get('/logout/', 'Auth\LoginController@logout')->name('logout');
 

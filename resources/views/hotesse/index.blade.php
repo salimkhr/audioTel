@@ -51,7 +51,7 @@
                     <span class="fa fa-hourglass-half"></span>
                 </div>
                 <div class="widget-data">
-                    <div class="widget-int num-count">@if($nbAppel!=0){{$dureeAppel/$nbAppel}} @else 0 @endif min</div>
+                    <div class="widget-int num-count">@if($nbAppel!=0){{$dureeAppel/$nbAppel}} @else 0 @endif</div>
                     <div class="widget-title">durée moyenne d'un appel</div>
                     <div class="widget-subtitle">Aujourd'hui</div>
                 </div>
@@ -59,23 +59,19 @@
             <!-- END WIDGET MESSAGES -->
         </div>
         <div class="col-md-3 col-sm-6">
-            <!-- START WIDGET MESSAGES -->
-            <div class="widget widget-default widget-item-icon" onclick="location.href='#';">
-                <div class="widget-item-left">
-                    <span class="fa fa-money"></span>
-                </div>
-                <div class="widget-data">
-                    <div class="widget-int num-count">{{$ca}} €</div>
-                    <div class="widget-title">Chiffre d'affaire</div>
-                    <div class="widget-subtitle">Aujourd'hui</div>
-                </div>
+
+            <!-- START WIDGET CLOCK -->
+            <div class="widget widget-info">
+                <div class="widget-big-int plugin-clock">00:00</div>
+                <div class="widget-subtitle plugin-date">Loading...</div>
             </div>
-            <!-- END WIDGET MESSAGES -->
+            <!-- END WIDGET CLOCK -->
+
         </div>
     </div>
     <!-- END WIDGETS -->
     <div class="row">
-        <div class="col-sm-9">
+        <div class="col-md-9 col-sm-12">
             <div class="panel panel-default">
                 <div class="panel-body">
                     <table class="table datatable">
@@ -102,7 +98,7 @@
                                 <td>@isset($appel->hotesse){{$appel->hotesse->tel}}@endisset</td>
                                 @if(Auth::guard('web_admin')->check())<td>@isset($appel->hotesse)<a href="{{route("getHotesse",["id"=>$appel->hotesse->id])}}">{{$appel->hotesse->name}}</a>@endisset</td>@endif
                                 <td><button class="btn btn-success" @if($appel->file == "NULL") disabled @else id="btn-{{$appel->file}}" @endif><i class="fa fa-play" onclick="play('{{$appel->file}}')"></i></button></td>
-                                <td>@isset($appel->tarif->prixMinute){{(date_diff(date_create($appel->debut),date_create($appel->fin))->format('%i')*$appel->tarif->prixMinute)." €"}}@endisset</td>
+                                <td>@isset($appel->tarif->prixMinute){{date_diff(date_create($appel->debut),date_create($appel->fin))->format('%i')*$appel->tarif->prixMinute}}@endisset</td>
                             </tr>
                         @endforeach
                         </tbody>
@@ -114,42 +110,28 @@
             </div>
             <!-- END DEFAULT DATATABLE -->
         </div>
-        <div class="col-sm-3">
-            <!-- START CONTENT FRAME RIGHT -->
-            <div class="list-group list-group-contacts border-bottom push-down-10">
-                @foreach ($hotesses as $hotesse)
-                    <a href="#" class="list-group-item">
-                        <div class="list-group-status
-                        @switch($hotesse->co)
-                        @case(1)
-                                status-away
-@break
-                        @case(2)
-                                status-online
-@break
-                        @case(3)
-                                status-away
-@break
-                        @default
-                                status-offline
-@endswitch">
-                        </div>
-                        <img src="assets/images/users/user.jpg" class="pull-left" alt="{{$hotesse["name"]}}" title="{{$hotesse["name"]}}">
-                        <span class="contacts-title">{{$hotesse["name"]}}</span>
-                        <p> @foreach ($hotesse->code as $code){{$code->code}} @endforeach</p>
-                    </a>
-                @endforeach
-            </div>
-
-            <div class="block">
-                <h4>Status</h4>
-                <div class="list-group list-group-simple">
-                    <a href="#" class="list-group-item"><span class="fa fa-circle text-success"></span> Online</a>
-                    <a href="#" class="list-group-item"><span class="fa fa-circle text-warning"></span> Away</a>
-                    <a href="#" class="list-group-item"><span class="fa fa-circle text-muted"></span> Offline</a>
+        <div class="col-md-3 col-sm-12">
+            <!-- CONTACT ITEM -->
+            <div class="panel panel-default">
+                <div class="panel-body profile">
+                    <div class="profile-image">
+                        <img src="{{url(elixir("images/catalog/".$hotesse->photo->file))}}" alt="{{$hotesse->name}}" title="{{$hotesse->name}}">
+                    </div>
+                    <div class="profile-data">
+                        <div class="profile-data-name">{{$hotesse->name}}</div>
+                        <div class="profile-data-title">{{($hotesse->co)?"Connecté":"Déconnecté"}}</div>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <div class="contact-info">
+                        <p><small>Mobile</small><br>{{$hotesse->tel}}</p>
+                        <p><small>Dérniere connection</small><br>{{date_format(date_create($hotesse->derniere_connection), 'd/m/Y H:i:s')}}</p>
+                        <p><small>Code</small><br><a href="{{route("codeHotesse",["id"=>$hotesse->id])}}">Liste des codes hôtesse</a></p>
+                    </div>
                 </div>
             </div>
-            <!-- END CONTENT FRAME RIGHT -->
+
+            <!-- END CONTACT ITEM -->
         </div>
     </div>
     @foreach ($appels as $appel)

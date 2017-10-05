@@ -16,42 +16,44 @@
 
 @section('content')
     <div class="row">
-        <div class="col-md-12">
 
-            <!-- START DEFAULT DATATABLE -->
-            <div class="panel panel-default">
-                <div class="panel-body">
-                    <table class="table table-striped table-hover datatable">
-                        <thead>
-                        <tr>
-                            <th>Code</th>
-                            <th>Pseudo</th>
-                            <th>Activer</th>
-                            <th>Description</th>
-                            <th>Annonce</th>
-                            <th>Photo</th>
-                            <th>Hôtesse</th>
-                            <th>Modifier</th>
-                        </tr>
-                        </thead>
-                        <tbody>
                         @foreach ($codes as $code)
-                            <tr>
-                                <td><a href="{{route("getCode",["id"=>$code->code])}}" >{{$code->code}}</a></td>
-                                <td>{{$code->pseudo}}</td>
-                                <td><span class="{{($code->active)?"text-success":"text-danger"}}">{{($code->active)?"activer":"désactiver"}}</span></td>
-                                <td>{{$code->description}}</td>
-                                <td><button class="btn btn-success" @if($code->annonce["id"]==null) disabled @else id="btn-{{$code->annonce["id"]}}" @endif><i class="fa fa-play" onclick="play({{$code->annonce["id"]}})"></i> {{$code->annonce["name"]}}</button></td>
-                                <td> @foreach ($code->photo as $photo)<img class="pull-left img-fluid" style="width:35px;"
-                                                                           src="{{url(elixir("assets/images/users/".$photo->file.".jpg"))}}"/>@endforeach</td>
-                                <td>@isset($code->hotesse_id)<a href="{{route("getHotesse",["id"=>$code->hotesse_id])}}">{{$code->hotesse->name}}</a>@endisset</td>
-                                <td><a href="{{route("getUpdateCode",["id"=>$code->code])}}" role="button" class="btn btn-success"><i class="fa fa-pencil" aria-hidden="true"></i></a></td>
-                            </tr>
-                        @endforeach
-                        </tbody>
-                    </table>
+            <div class="col-md-3">
+                <!-- CONTACT ITEM -->
+                <div class="panel panel-default">
+                    <div class="panel-body profile">
+                        <div class="profile-image">
+                            <img src="@isset($code->photo[0]) {{url(elixir("images/catalog/".$code->photo[0]->file))}} @endisset" alt="{{$code->pseudo}}">
+                        </div>
+                        <div class="profile-data">
+                            <div class="profile-data-name">{{$code->pseudo}}</div>
+                            <div class="profile-data-title">{{$code->code}}</div>
+                        </div>
+                        <div class="profile-controls">
+                            <a href="{{route("getCode",["id"=>$code->code])}}" class="profile-control-left"><span class="fa fa-info"></span></a>
+                            <a href="#" class="profile-control-right @if($code->annonce["id"]==null) disabled @endif" @if($code->annonce["id"]!=null)id="btn-{{$code->annonce["id"]}}" onclick="play({{$code->annonce["id"]}})"@endif ><span class="fa fa-play"></span></a>
+                        </div>
+                    </div>
+                    <div class="panel-body">
+                        <div class="contact-info">
+                            <p><small>Hotesse</small><br>{{$code->hotesse->name}}</p>
+                            <p><small>Statut</small><br><span class="{{($code->active)?"text-success":"text-danger"}}">{{($code->active)?"activer":"désactiver"}}</span></p>
+                            <p><small>Active</small><br>{{($code->active)?"activer":"désactiver"}}</p>
+                        </div>
+                    </div>
                 </div>
-                <div class="panel-footer">
+                <!-- END CONTACT ITEM -->
+            </div>
+
+            <!--<tr>
+                <td><span class="{{($code->active)?"text-success":"text-danger"}}">{{($code->active)?"activer":"désactiver"}}</span></td>
+                <td>{{$code->description}}</td>
+                <td><button class="btn btn-success" @if($code->annonce["id"]==null) disabled @else id="btn-{{$code->annonce["id"]}}" @endif><i class="fa fa-play" onclick="play({{$code->annonce["id"]}})"></i> {{$code->annonce["name"]}}</button></td>
+                <td> @foreach ($code->photo as $photo)<img class="pull-left img-fluid" style="width:35px;" src="{{url(elixir("images/catalog/".$photo->file))}}"/>@endforeach</td>
+                <td>@isset($code->hotesse_id)<a href="{{route("getHotesse",["id"=>$code->hotesse_id])}}">{{$code->hotesse->name}}</a>@endisset</td>
+                <td><a href="{{route("getUpdateCode",["id"=>$code->code])}}" role="button" class="btn btn-success"><i class="fa fa-pencil" aria-hidden="true"></i></a></td>
+            </tr>-->
+                        @endforeach
                     <a href="{{route('getNewCode')}}" role="button" class="btn btn-primary pull-right">Ajouter un code hôtesse</a>
                 </div>
             </div>

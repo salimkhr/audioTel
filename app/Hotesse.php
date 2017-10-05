@@ -14,6 +14,11 @@ class Hotesse extends User
         return $this->hasMany('App\Code');
     }
 
+    public function photo()
+    {
+        return $this->belongsTo('App\Photo');
+    }
+
     public function admin()
     {
         return $this->belongsTo('App\Admin');

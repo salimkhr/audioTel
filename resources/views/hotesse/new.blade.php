@@ -17,50 +17,59 @@
 @section('content')
     <div class="row">
         <div class="col-md-12">
-
             <!-- START DEFAULT DATATABLE -->
             <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h3 class="panel-title">Ajout d'une hôtesse</h3>
-                    <ul class="panel-controls">
-                        <li><a href="#" class="panel-collapse"><span class="fa fa-angle-down"></span></a></li>
-                        <li><a href="#" class="panel-refresh"><span class="fa fa-refresh"></span></a></li>
-                        <li><a href="#" class="panel-remove"><span class="fa fa-times"></span></a></li>
-                    </ul>
-                </div>
                 <div class="panel-body">
-                    @isset($hotesse->id)
+                    @if(isset($hotesse->id))
                         {{ Form::model($hotesse, array('route' => array('postUpdateHotesse', $hotesse->id)))}}
                     @else
                         {{ Form::open(array('route' => 'postNewHotesse')) }}
-                    @endisset
-                <!-- name -->
-                    <div class="form-group">
-                    {{ Form::text('name',null, array('class' => 'form-control','placeholder'=>'name')) }}
-                    {!! $errors->first('name', '<small class="help-block">:message</small>') !!}
-                    </div>
-
-                <!-- tel -->
-                    <div class="form-group">
-                        {!! Form::tel('tel', null, array('class' => 'form-control', 'placeholder' => 'tel')) !!}
-                        {!! $errors->first('tel', '<small class="help-block">:message</small>') !!}
-                    </div>
-                    @if($hotesse->id == null)
-                    <!-- password -->
-                    <div class="form-group">
-                        {{ Form::password('password', array('class' => 'form-control','placeholder'=>'Mot de passe')) }}
-                        {!! $errors->first('password', '<small class="help-block">:message</small>') !!}
-                    </div>
-
-                    <!-- name -->
-                    <div class="form-group">
-                        {{ Form::password('passwordConf', array('class' => 'form-control','placeholder'=>'Confirmation')) }}
-                        {!! $errors->first('passwordConf', '<small class="help-block">:message</small>') !!}
-                    </div>
                     @endif
-                    {!! Form::submit('Valider', ['class' => 'btn btn-primary pull-right']) !!}
+                    <div class="col-md-6">
+                        <!-- name -->
+                        <div class="form-group">
+                            {{ Form::text('name',null, array('class' => 'form-control','placeholder'=>'name','readonly'=>!isset(Auth::user()->role))) }}
+                            {!! $errors->first('name', '<small class="help-block">:message</small>') !!}
+                        </div>
 
-                    {{ Form::close() }}
+                        <!-- tel -->
+                        <div class="form-group">
+                            {!! Form::tel('tel', null, array('class' => 'form-control', 'placeholder' => 'tel')) !!}
+                            {!! $errors->first('tel', '<small class="help-block">:message</small>') !!}
+                        </div>
+                    @if($hotesse->id == null)
+                        <!-- password -->
+                            <div class="form-group">
+                                {{ Form::password('password', array('class' => 'form-control','placeholder'=>'Mot de passe')) }}
+                                {!! $errors->first('password', '<small class="help-block">:message</small>') !!}
+                            </div>
+
+                            <!-- name -->
+                            <div class="form-group">
+                                {{ Form::password('passwordConf', array('class' => 'form-control','placeholder'=>'Confirmation')) }}
+                                {!! $errors->first('passwordConf', '<small class="help-block">:message</small>') !!}
+                            </div>
+                        @endif
+                    </div>
+                    <div class="col-md-6">
+                        <div class="gallery" id="links">
+                            @foreach($photos as $photo)
+                                <a class="gallery-item" href="" title="Nature Image 1" data-gallery="">
+                                    <div class="image">
+                                        <img src="{{url(elixir('images/catalog/'.$photo->file))}}" alt="{{$photo->file}}">
+                                        <ul class="gallery-item-controls">
+                                            <li>{!!Form::radio("photo_id",$photo->id,$photo->file==$hotesse->photo->file,array('class' => 'icheckbox',"style"=>"position: absolute; opacity: 0;"))!!}</li>
+                                        </ul>
+                                    </div>
+                                    <div class="meta">
+                                        <strong>{{$photo->file}}</strong>
+                                    </div>
+                                </a>
+                            @endforeach
+                        </div>
+                    </div>
+                        {!! Form::submit('Valider', ['class' => 'btn btn-primary pull-right']) !!}
+                        {{ Form::close() }}
                 </div>
                 <div class="panel-footer">
                     <a href="{{route('activeHotesse',['id'=> $hotesse->id])}}" type="button" class="btn btn-warning pull-right">@if($hotesse->active)Desactiver @else Activer @endif</a>
