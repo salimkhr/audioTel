@@ -13,6 +13,8 @@ return [
     |
     */
 
+    'cache' => false,
+
     'paths' => [
         resource_path('views'),
     ],

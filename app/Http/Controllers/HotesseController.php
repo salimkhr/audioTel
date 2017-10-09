@@ -10,6 +10,7 @@ use App\Appel;
 use App\Http\Requests\HotesseRequest;
 use App\PhotoCode;
 use App\PhotoHotesse;
+use Illuminate\Contracts\Session\Session;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -33,7 +34,10 @@ class HotesseController extends Controller
         if(!$this->testLogin())
             return redirect()->route("login");
 
-        $appelToday = Appel::where("hotesse_id","=",$id)->whereDate('debut',date("Y-m-d"))->get();
+        if(Auth::user() instanceof Hotesse && Auth::id() != $id)
+            abort(403, 'Unauthorized action.');
+
+        $appelToday = Appel::where("hotesse_id","=",$id)->where('debut',"=" ,"CURDATE()")->get();
         $appels=Appel::where("hotesse_id","=",$id)->get();
 
         $dureeAppel=0;
@@ -48,20 +52,45 @@ class HotesseController extends Controller
                 $ca+=$duree*$appel->tarif->prixMinute;
         }
 
-        if(Auth::user() instanceof Admin)
-            return view('hotesse.index')->with("hotesses",Hotesse::all())
-                ->with("nbHotesseCo",Hotesse::where("co","<>","0")->count())
-                ->with("dureeAppel",$dureeAppel)
-                ->with("nbAppel",$nbAppel)
-                ->with("appels",$appels)
-                ->with("hotesse",Hotesse::find($id));
-
         return view('index')->with("hotesses",Hotesse::all())
             ->with("nbHotesseCo",Hotesse::where("co","<>","0")->count())
             ->with("dureeAppel",$dureeAppel)
             ->with("nbAppel",$nbAppel)
             ->with("ca",$ca)
             ->with("appels",$appels);
+
+    }
+
+    public function hotesseAdmin($id)
+    {
+        if(!$this->testLogin())
+            return redirect()->route("login");
+
+        if(Auth::user() instanceof Hotesse && Auth::id() != $id)
+            abort(403, 'Unauthorized action.');
+
+        $appelToday = Appel::where("hotesse_id","=",$id)->where('debut',"=" ,"CURDATE()")->get();
+        $appels=Appel::where("hotesse_id","=",$id)->get();
+
+        $dureeAppel=0;
+        $nbAppel=0;
+        $ca=0;
+        foreach($appelToday as $appel)
+        {
+            $duree=date_diff(date_create($appel->debut),date_create($appel->fin))->format('%i');
+            $dureeAppel+=$duree;
+            $nbAppel++;
+            if(isset($appel->tarif->prixMinute))
+                $ca+=$duree*$appel->tarif->prixMinute;
+        }
+
+        return view('hotesse.admin')->with("hotesses",Hotesse::all())
+            ->with("nbHotesseCo",Hotesse::where("co","<>","0")->count())
+            ->with("dureeAppel",$dureeAppel)
+            ->with("nbAppel",$nbAppel)
+            ->with("ca",$ca)
+            ->with("appels",$appels)
+            ->with("hotesse",Hotesse::find($id));
 
     }
 
@@ -76,21 +105,35 @@ class HotesseController extends Controller
         else
             $hotesse = new Hotesse();
 
-        return view('hotesse.new')->with("hotesse",$hotesse)->with("photos",PhotoHotesse::where("hotesse_id","=",$id)->get());
+        if(Auth::user() instanceof Hotesse)
+            $photos = PhotoHotesse::where("hotesse_id","=",$id)->get();
+        else
+            $photos = PhotoHotesse::where("admin_id","=",Auth::id())->get();
+
+        return view('hotesse.new')->with("hotesse",$hotesse)->with("photos",$photos)->with("password",$this->RandomString());
     }
 
-    public function postFormHotesse(HotesseRequest $request,$id=null)
+    /**
+     * @param HotesseRequest $request
+     * @param null $id
+     * @return $this|\Illuminate\Http\RedirectResponse
+     */
+    public function postFormHotesse(HotesseRequest $request, $id=null)
     {
 
         if(!$this->testLogin())
             return redirect()->route("login");
 
         if(isset($id))
+        {
             $hotesse = Hotesse::find($id);
+            $message="modification effectué avec succès";
+        }
         else
         {
             $hotesse = new Hotesse;
             $hotesse->password=hash("sha512",$request->input('password'));
+            $message="ajout effectué avec succès";
         }
 
         $hotesse->name=$request->input('name');
@@ -99,7 +142,7 @@ class HotesseController extends Controller
         $hotesse->admin_id=1;
         $hotesse->save();
 
-        return redirect()->back()->withInput();
+        return redirect()->back()->withInput()->with('message', $message);
     }
 
     public function activeHotesse($id)
@@ -110,7 +153,7 @@ class HotesseController extends Controller
         $hotesse=Hotesse::find($id);
         $hotesse->active =! $hotesse->active;
         $hotesse->save();
-        return redirect()->route('hotesse');
+        return redirect()->back()->withInput()->with('message', $hotesse->name." à été ".($hotesse->active?"activé":"désactivé"));
     }
 
     public function deleteHotesse($id)
@@ -128,16 +171,20 @@ class HotesseController extends Controller
             $bag = new MessageBag();
             $bag->add("err","une erreur s'est produite pendant la suppression");
 
-            return redirect()->route("getUpdateHotesse",["id"=>$id])->withErrors($bag);
+            return redirect()->back()->withErrors($bag);
         }
+        return redirect()->back()->with('message', "l'hotesse a bien été suprimer ");
     }
 
-    public function codeHotesse($id)
+    public function codeHotesse($id,$page=0)
     {
         if(!$this->testLogin())
             return redirect()->route("login");
 
-        return view('code')->with("codes",Code::where("hotesse_id","=",$id)->get());
+        $codes = Code::where("hotesse_id","=",$id)->limit(8)->offset(8*($page-1))->get();
+        $nbCode = Code::where("hotesse_id","=",$id)->count();
+
+        return view('code')->with("codes",$codes)->with("nbCode",$nbCode)->with("page",$page);
     }
 
 

@@ -26,6 +26,9 @@
                         <tr>
                             <th>Code</th>
                             <th>Solde</th>
+                            <th>Téléphone</th>
+                            <th>date de création</th>
+                            <th>date de dérniére modification</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -33,6 +36,9 @@
                             <tr>
                                 <td>{{$client->code}}</td>
                                 <td>{{$client->solde}}€</td>
+                                <td>{{$client->tel}}</td>
+                                <td>{{date_format(date_create($client->created_at), 'd/m/Y H:i:s')}}</td>
+                                <td>{{date_format(date_create($client->updated_at), 'd/m/Y H:i:s')}}</td>
                             </tr>
                         @endforeach
                         </tbody>

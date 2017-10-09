@@ -20,6 +20,12 @@ class Controller extends BaseController
         return(Auth::check());
     }
 
+    public function testLoginAdmin()
+    {
+        Auth::shouldUse("web_admin");
+        return(Auth::check());
+    }
+
     public function RandomString()
     {
         $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';

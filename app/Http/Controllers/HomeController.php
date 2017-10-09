@@ -27,21 +27,26 @@ class HomeController extends Controller
         }
 
 
-        $appelToday = Appel::where("admin_id","=",Auth::id())->whereDate('debut',date("Y-m-d"))->get();
+        $appelToday = Appel::where("admin_id","=",Auth::id())->where('debut',"=" ,"CURDATE()")->get();
         $appels=Appel::where("admin_id","=",Auth::id())->get();
 
         $dureeAppel=0;
         $nbAppel=0;
+        $ca=0;
         foreach($appelToday as $appel)
         {
-            $dureeAppel+=date_diff(date_create($appel->debut),date_create($appel->fin))->format('%i');
+            $duree=date_diff(date_create($appel->debut),date_create($appel->fin))->format('%i');
+            $dureeAppel+=$duree;
             $nbAppel++;
+            if(isset($appel->tarif->prixMinute))
+                $ca+=$duree*$appel->tarif->prixMinute;
         }
 
         return view('index')->with("hotesses",Hotesse::where("admin_id","=",Auth::id()))
             ->with("nbHotesseCo",Hotesse::where("co",">","0")->where("admin_id","=",Auth::id())->count())
             ->with("dureeAppel",$dureeAppel)
             ->with("nbAppel",$nbAppel)
+            ->with("ca",$ca)
             ->with("appels",$appels);
     }
 }

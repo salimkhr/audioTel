@@ -22,10 +22,11 @@ Route::get('/hotesse/new', 'HotesseController@getFormHotesse')->name('getNewHote
 Route::post('/hotesse/new', 'HotesseController@postFormHotesse')->name('postNewHotesse');
 Route::get('/hotesse/active/{id}', 'HotesseController@activeHotesse')->name('activeHotesse');
 Route::get('/hotesse/delete/{id}', 'HotesseController@deleteHotesse')->name('deleteHotesse');
-Route::get('/hotesse/{id}/code', 'HotesseController@codeHotesse')->name('codeHotesse');
+Route::get('/hotesse/admin/{id}', 'HotesseController@hotesseAdmin')->name('deleteHotesse');
+Route::get('/hotesse/{id}/code/page/{page?}', 'HotesseController@codeHotesse')->name('codeHotesse');
 
 
-Route::get('/code/', 'CodeController@index')->name('code');
+Route::get('/code/page/{page?}', 'CodeController@index')->name('code');
 Route::get('/code/{id}', 'CodeController@code')->name('getCode');
 Route::get('/code/new', 'CodeController@getFormCode')->name('getNewCode');
 Route::post('/code/new','CodeController@postFormCode')->name('postNewCode');
@@ -34,8 +35,13 @@ Route::post('/code/update/{id}','CodeController@postFormCode')->name('postUpdate
 Route::get('/code/active/{id}','CodeController@activeCode')->name('activeCode');
 Route::get('/code/active/all/{idHottesse}','CodeController@activeAllCode')->name('activeAllCode');
 Route::get('/code/desactive/all/{idHottesse}','CodeController@desactiveAllCode')->name('desactiveAllCode');
-
 Route::get('/code/delete/{id}','CodeController@deleteCode')->name('deleteCode');
+
+Route::get('/annonce/','AnnonceController@index')->name('annonce');
+Route::post('/annonce/update/{id}','AnnonceController@update')->name('postUpdateAnnonce');
+Route::get('/annonce/delete/{id}','AnnonceController@delete')->name('deleteAnnonce');
+
+
 
 Route::get('/client/', 'ClientController@client')->name('client');
 Route::get('/client/new/', 'ClientController@getFormClient')->name('getNewClient');
@@ -59,6 +65,10 @@ Route::get('/api/delete/{id}','APIController@activeAPI')->name('deleteAPI');
 
 Route::post('/photo/add/code', 'PhotoController@postFormPhotoCode')->name('postNewPhotoCode');
 Route::post('/photo/add/hotesse', 'PhotoController@postFormPhotoHotesse')->name('postNewPhotoHotesse');
+Route::post('/photo/add/admin', 'PhotoController@postFormPhotoAdmin')->name('postNewPhotoAdmin');
+Route::get('/photo/delete/admin/{id}', 'PhotoController@deleteFormPhotoAdmin')->name('deletePhotoAdmin');
+Route::get('/photo/delete/code/{id}', 'PhotoController@deleteFormPhotoCode')->name('deletePhotoCode');
+Route::get('/photo/delete/hotesse/{id}', 'PhotoController@deleteFormPhotoHotesse')->name('deletePhotoHotesse');
 
 Route::get('/logout/', 'Auth\LoginController@logout')->name('logout');
 

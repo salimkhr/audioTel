@@ -33,6 +33,8 @@
                         <thead>
                         <tr>
                             <th>Cle</th>
+                            <th>date de création</th>
+                            <th>date de dérniére modification</th>
                             <th>active</th>
                             <th>Modifier</th>
                         </tr>
@@ -41,6 +43,8 @@
                         @foreach ($apis as $api)
                             <tr>
                                 <td>{{$api->cle}}</td>
+                                <td>{{date_format(date_create($api->created_at), 'd/m/Y H:i:s')}}</td>
+                                <td>{{date_format(date_create($api->updated_at), 'd/m/Y H:i:s')}}</td>
                                 <td>{{$api->active?"activé":"désactivé"}}</td>
                                 <td><a href="{{route("getUpdateAPI",["id"=>$api->id])}}" role="button" class="btn btn-success"><i class="fa fa-pencil" aria-hidden="true"></i></a></td>
                             </tr>

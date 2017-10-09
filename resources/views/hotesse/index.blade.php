@@ -12,7 +12,16 @@
 @endsection
 
 @section('breadcrumb')
-    <li><a href="{{route('home')}}">Admin</a></li>
+    <li>
+        <a href="{{route('home')}}">
+            @if(Auth::user() instanceof \App\Admin)
+                Admin
+            @else
+                Hotesse
+            @endif
+            {{dump(Auth::user())}}
+        </a>
+    </li>
 @endsection
 @section('content')
     <div class="row">
@@ -66,7 +75,6 @@
                 <div class="widget-subtitle plugin-date">Loading...</div>
             </div>
             <!-- END WIDGET CLOCK -->
-
         </div>
     </div>
     <!-- END WIDGETS -->
@@ -105,7 +113,7 @@
                     </table>
                 </div>
                 <div class="panel-footer">
-                    <a href="{{route('getUpdateHotesse',["id"=>Auth::id()])}}" role="button" class="btn btn-primary pull-right">Modifier</a>
+                    <a href="{{route('getUpdateHotesse',["id"=>$hotesse->id])}}" role="button" class="btn btn-primary pull-right">Modifier</a>
                 </div>
             </div>
             <!-- END DEFAULT DATATABLE -->

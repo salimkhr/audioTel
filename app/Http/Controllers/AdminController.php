@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Admin;
+use App\Hotesse;
 use App\Http\Requests\AdminRequest;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Auth;
@@ -20,6 +21,8 @@ class AdminController extends Controller
 
     public function admin()
     {
+        if(Auth::user() instanceof Hotesse)
+            abort(403,"acces admin");
         if(!$this->testLogin())
             return redirect()->route("login");
 
@@ -48,10 +51,15 @@ class AdminController extends Controller
         }
 
         $admin->name=$request->input('name');
-        $admin->role=$request->input('role');
+        if($request->input('role')!=null)
+            $admin->role=$request->input('role');
+
+        $admin->photoAdmin_id=$request->input('photo_id');
+        $admin->email=$request->input('email');
+
         $admin->save();
 
-        return redirect()->route('admin');
+        return redirect()->back();
     }
 
     public function activeAdmin($id)

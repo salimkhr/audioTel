@@ -1,104 +1,111 @@
 @extends('layouts.base')
-@section('title')Admin @endsection
+@section('title')hotesse @endsection
 
 @section('breadcrumb')
     <li>
         <a href="{{route('home')}}">
-            @if(Auth::guard("web_admin")->id())
+            @if(Auth::user() instanceof \App\Admin)
                 Admin
             @else
                 Hotesse
             @endif
         </a>
     </li>
-    <li class="active">Ajout d'une hôtesse</li>
+    <li class="active">{{$admin->name}}</li>
 @endsection
 
 @section('content')
     <div class="row">
         <div class="col-md-12">
-
             <!-- START DEFAULT DATATABLE -->
             <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h3 class="panel-title">Ajout d'un admin</h3>
-                    <ul class="panel-controls">
-                        <li><a href="#" class="panel-collapse"><span class="fa fa-angle-down"></span></a></li>
-                        <li><a href="#" class="panel-refresh"><span class="fa fa-refresh"></span></a></li>
-                        <li><a href="#" class="panel-remove"><span class="fa fa-times"></span></a></li>
-                    </ul>
-                </div>
                 <div class="panel-body">
-                @isset($admin->id)
-                    {{ Form::model($admin, array('route' => array('postUpdateAdmin', $admin->id)))}}
-                    @else
-                        {{ Form::open(array('route' => 'postNewAdmin')) }}
-                        @endisset
-                        <!-- name -->
-                            <div class="form-group">
-                                {{ Form::text('name',null, array('class' => 'form-control','placeholder'=>'name')) }}
-                                {!! $errors->first('name', '<small class="help-block">:message</small>') !!}
-                            </div>
-
-                            <div class="form-group">
-                                {{ Form::label('role', 'role', array('class' => 'control-label')) }}
-                                {!!Form::select('role',["admin"=>"admin","superAdmin"=>"super admin"],null,array('class' => 'form-control select')) !!}
-                            </div>
-
-                        
-                        @if($admin->id == null)
-                            <!-- password -->
-                                <div class="form-group">
-                                    {{ Form::password('password', array('class' => 'form-control','placeholder'=>'Mot de passe')) }}
-                                    {!! $errors->first('password', '<small class="help-block">:message</small>') !!}
-                                </div>
-
+                    <div class="row">
+                        @if(isset($admin->id))
+                            {{ Form::model($admin, array('route' => array('postUpdateAdmin', $admin->id)))}}
+                        @else
+                            {{ Form::open(array('route' => 'postNewAdmin')) }}
+                        @endif
+                        <div class="row">
+                            <div class="col-md-6">
                                 <!-- name -->
                                 <div class="form-group">
-                                    {{ Form::password('passwordConf', array('class' => 'form-control','placeholder'=>'Confirmation')) }}
-                                    {!! $errors->first('passwordConf', '<small class="help-block">:message</small>') !!}
+                                    <label class="control-label">Pseudo</label>
+                                    <div class="input-group">
+                                        <span class="input-group-addon"><i class="fa fa-user"></i></span>
+                                        {{ Form::text('name',null, array('class' => 'form-control','placeholder'=>'name','readonly'=>!isset(Auth::user()->role))) }}
+                                        {!! $errors->first('name', '<small class="help-block">:message</small>') !!}
+                                    </div>
                                 </div>
-                            @endif
-                            {!! Form::submit('Valider', ['class' => 'btn btn-primary pull-right']) !!}
-
-                            {{ Form::close() }}
-                </div>
-                <div class="panel-footer">
-                    <a href="{{route('activeAdmin',['id'=> $admin->id])}}" type="button" class="btn btn-warning pull-right">@if($admin->active)Desactiver @else Activer @endif</a>
-                    <button type="button" class="btn btn-danger mb-control pull-right" data-box="#message-box-delete">Supprimer</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="message-box message-box-danger animated fadeIn" data-sound="alert" id="message-box-delete">
-        <div class="mb-container">
-            <div class="mb-middle">
-                <div class="mb-title"><span class="fa fa-trash-o"></span> <strong>Supprimer</strong> ?</div>
-                <div class="mb-content">
-                    <p>êtes-vous sûr de vouloir supprimer l'hôtesse</p>
-                    <p>Appuyez sur Non si vous souhaitez continuer votre travail. Appuyez sur Oui pour supprimer l'hôtesse.</p>
-                </div>
-                <div class="mb-footer">
-                    <div class="pull-right">
-                        <a href="{{route('deleteAdmin',['id'=> $admin->id])}}" class="btn btn-success btn-lg">Yes</a>
-                        <button class="btn btn-default btn-lg mb-control-close">No</button>
+                            </div>
+                            <div class="col-md-6">
+                                <!-- name -->
+                                <div class="form-group">
+                                    <label class="control-label">Email</label>
+                                    <div class="input-group">
+                                        <span class="input-group-addon"><i class="fa fa-at"></i></span>
+                                        {{ Form::email('email',null, array('class' => 'form-control','placeholder'=>'name','readonly'=>!isset(Auth::user()->role))) }}
+                                        {!! $errors->first('name', '<small class="help-block">:message</small>') !!}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        @if($admin->id == null)
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="control-label">Password</label>
+                                    <div class="input-group">
+                                        <span class="input-group-addon"><i class="fa fa-lock"></i></span>
+                                        {{ Form::password('password', array('class' => 'form-control','placeholder'=>'Mot de passe')) }}
+                                        {!! $errors->first('password', '<small class="help-block">:message</small>') !!}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <!-- name -->
+                                <div class="form-group">
+                                    <label class="control-label">Password</label>
+                                    <div class="input-group">
+                                        <span class="input-group-addon"><i class="fa fa-lock"></i></span>
+                                        {{ Form::password('passwordConf', array('class' => 'form-control','placeholder'=>'Confirmation')) }}
+                                        {!! $errors->first('passwordConf', '<small class="help-block">:message</small>') !!}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        @endif
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="gallery" id="links">
+                                    @foreach($admin->photos as $photo)
+                                        <div class="gallery-item" data-gallery="" style="width:auto;">
+                                            <div class="image" style="max-height:150px; max-width: 150px">
+                                                <img src="{{url(elixir('images/catalog/hotesse/'.$photo->file))}}" alt="{{$photo->file}}" class="img-responsive">
+                                                <ul class="gallery-item-controls">
+                                                    <li>{!!Form::radio("photo_id",$photo->id,$photo->id==$admin->photo->id,array('class' => 'icheckbox',"style"=>"position: absolute; opacity: 0;"))!!}</li>
+                                                    @if($photo->id!=$admin->photo->id)<li><a href="{{route("deletePhotoAdmin",["id"=>$photo->id])}}"><i class="fa fa-times"></i></a></li>@endif
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            {!! Form::submit('Valider', ['class' => 'btn btn-primary btn btn-primary pull-right']) !!}
+                        </div>
+                        {{ Form::close() }}
+                    </div>
+                    <hr/>
+                    <div class="row">
+                        {{Form::open(array('route' => 'postNewPhotoAdmin','files'=> true))}}
+                        {!! Form::file('image',["class"=>"","accept"=>"image/*","id"=>'image'])!!}
+                        {!! Form::submit('Envoyer', ['class' => 'btn btn-primary pull-right']) !!}
+                        {{ Form::close() }}
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
-    {!! $errors->first('err','<div class="message-box message-box-danger animated fadeIn open" data-sound="fail" id="message-box-delete-err">
-        <div class="mb-container">
-            <div class="mb-middle">
-                <div class="mb-title"><span class="fa fa-times"></span> DANGER!</div>
-                <div class="mb-content">
-                    <p>:message</p>
-                </div>
-                <div class="mb-footer">
-                    <button class="btn btn-default btn-lg pull-right mb-control-close">Close</button>
-                </div>
-            </div>
-        </div>
-    </div>')!!}
 @endsection
