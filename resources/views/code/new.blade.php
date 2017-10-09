@@ -101,11 +101,14 @@
                         </div>
                     @endif
                 </div>
-                @if(Auth::user() instanceof \App\Admin)<div class="panel-footer">
-                    <a href="{{route('activeCode',['id'=> $code->code])}}" role="button" class="btn btn-warning pull-right">@if($code->active)Desactiver @else Activer @endif</a>
-                    <button type="button" class="btn btn-danger mb-control pull-right" data-box="#message-box-delete">Supprimer</button>
+                <div class="panel-footer">
+                    <div class="pull-right">
+                    <a href="{{route('activeCode',['id'=> $code->code])}}" role="button" class="btn btn-warning">@if($code->active)Déconnecter @else Connecter @endif</a>
+                    @if(Auth::user() instanceof \App\Admin)
+                        <button type="button" class="btn btn-danger mb-control" data-box="#message-box-delete">Supprimer</button>
+                    @endif
+                    </div>
                 </div>
-                @endif
             </div>
         </div>
     </div>

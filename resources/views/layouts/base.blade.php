@@ -3,6 +3,7 @@
     @if(Auth::user() instanceof \App\Hotesse)<li @if(Request::segment(1) === 'annonce')class="active" @endif><a href="{{route("annonce")}}"><span class="fa fa-volume-up"></span> <span class="xn-text">Annonce</span></a></li>@endif
     <li @if(Request::segment(1) === 'code')class="active" @endif><a href="{{route("code")}}"><span class="fa fa-list-ol"></span> <span class="xn-text">Code</span></a></li>
     <li @if(Request::segment(1) === 'hotesse')class="active" @endif><a href="{{route("home")}}"><span class="fa fa-table"></span> <span class="xn-text">Reporting géneral</span></a></li>
+    <li @if(Request::segment(1) === 'message')class="active" @endif><a href="{{route("message")}}"><span class="fa fa-comments"></span> <span class="xn-text">Message</span></a></li>
     @if(Auth::user() instanceof \App\Admin)<li @if(Request::segment(1) === 'client')class="active" @endif><a href="{{route("client")}}"><span class="fa fa-user-circle"></span> <span class="xn-text">Client</span></a></li>@endif
 
     @isset(Auth::user()->role)
@@ -26,6 +27,7 @@
 
     <!-- CSS INCLUDE -->
     <link rel="stylesheet" type="text/css" id="theme" href="{{url(elixir('css/theme-blue.css'))}}"/>
+    <link rel="stylesheet" type="text/css" id="theme" href="{{url(elixir('css/style.css'))}}"/>
     <!-- EOF CSS INCLUDE -->
 </head>
 <body>
@@ -41,15 +43,18 @@
                 <a href="#" class="x-navigation-control"></a>
             </li>
             <li class="xn-profile">
-                <a href="#" class="profile-mini">
+                <a href="@if(Auth::user() instanceof \App\Admin){{route("getUpdateAdmin",["id"=>Auth::id()])}} @else{{route("getUpdateHotesse",["id"=>Auth::id()])}}@endif" class="profile-mini">
                     <img src="{{url(elixir("images/catalog/hotesse/".Auth::user()->photo->file))}}" alt="{{Auth::user()->name}}">
                 </a>
                 <div class="profile">
                     <div class="profile-image">
-                        <img src="{{url(elixir("images/catalog/hotesse/".Auth::user()->photo->file))}}" alt="{{Auth::user()->name}}">
+                        <a href="@if(Auth::user() instanceof \App\Admin){{route("getUpdateAdmin",["id"=>Auth::id()])}} @else{{route("getUpdateHotesse",["id"=>Auth::id()])}}@endif">
+                            <img src="{{url(elixir("images/catalog/hotesse/".Auth::user()->photo->file))}}" alt="{{Auth::user()->name}}">
+                        </a>
                     </div>
                     <div class="profile-data">
-                        <div class="profile-data-name">@isset(Auth::user()->name){{Auth::user()->name}} @endisset</div>
+                        <div class="profile-data-name">@isset(Auth::user()->name)<a href="@if(Auth::user() instanceof \App\Admin){{route("getUpdateAdmin",["id"=>Auth::id()])}} @else{{route("getUpdateHotesse",["id"=>Auth::id()])}}@endif">
+                                <span style="color:white">{{Auth::user()->name}}</span> </a>@endisset</div>
                         <div class="profile-data-title"></div>
                     </div>
                     <div class="profile-controls">

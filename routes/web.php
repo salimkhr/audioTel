@@ -41,8 +41,6 @@ Route::get('/annonce/','AnnonceController@index')->name('annonce');
 Route::post('/annonce/update/{id}','AnnonceController@update')->name('postUpdateAnnonce');
 Route::get('/annonce/delete/{id}','AnnonceController@delete')->name('deleteAnnonce');
 
-
-
 Route::get('/client/', 'ClientController@client')->name('client');
 Route::get('/client/new/', 'ClientController@getFormClient')->name('getNewClient');
 Route::post('/client/new/', 'ClientController@postFormClient')->name('postNewClient');
@@ -70,6 +68,9 @@ Route::get('/photo/delete/admin/{id}', 'PhotoController@deleteFormPhotoAdmin')->
 Route::get('/photo/delete/code/{id}', 'PhotoController@deleteFormPhotoCode')->name('deletePhotoCode');
 Route::get('/photo/delete/hotesse/{id}', 'PhotoController@deleteFormPhotoHotesse')->name('deletePhotoHotesse');
 
+Route::get('/message', 'MessageController@index')->name('message');
+Route::get('/message/{id}', 'MessageController@get')->name('getMessage');
+Route::get('/message/new', 'MessageController@new')->name('newMessage');
 Route::get('/logout/', 'Auth\LoginController@logout')->name('logout');
 
 Route::get('/','HomeController@index')->name('home');

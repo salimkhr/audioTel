@@ -18,8 +18,10 @@
     <div class="panel panel-default">
         <div class="panel-heading">
             <div class="col-md-12">
-                <a href="{{route("activeAllCode",["idHotesse"=>Auth::id()])}}"  role="button" class="btn btn-primary pull-right">Activer tout les codes</a>
-                <a href="{{route("desactiveAllCode",["idHotesse"=>Auth::id()])}}"  role="button" class="btn btn-primary pull-right">Désactiver tout les codes</a>
+                <div class="pull-right">
+                    <a href="{{route("activeAllCode",["idHotesse"=>Auth::id()])}}"  role="button" class="btn btn-primary">Connecter tout les codes</a>
+                    <a href="{{route("desactiveAllCode",["idHotesse"=>Auth::id()])}}"  role="button" class="btn btn-primary">Déconnecter tout les codes</a>
+                </div>
             </div>
         </div>
         <div class="panel-body">
@@ -30,11 +32,13 @@
                         <div class="panel panel-default">
                             <div class="panel-body profile">
                                 <div class="profile-image">
-                                    <img src="@isset($code->photo[0]) {{url(elixir("images/catalog/code/".$code->photo[0]->file))}} @endisset" alt="{{$code->pseudo}}" style="max-width: 100px; height: 100px;">
+                                    <a href="{{route("getUpdateCode",["id"=>$code->code])}}">
+                                        <img src="@isset($code->photo[0]) {{url(elixir("images/catalog/code/".$code->photo[0]->file))}} @endisset" alt="{{$code->pseudo}}" style="max-width: 100px; height: 100px;">
+                                    </a>
                                 </div>
                                 <div class="profile-data">
-                                    <div class="profile-data-name">{{$code->pseudo}}</div>
-                                    <div class="profile-data-title">{{$code->code}}</div>
+                                    <div class="profile-data-name"> <a href="{{route("getUpdateCode",["id"=>$code->code])}}"> <span style="color: white">{{$code->pseudo}}</span></a></div>
+                                    <div class="profile-data-title"> <a href="{{route("getUpdateCode",["id"=>$code->code])}}"> <span style="color: white">{{$code->code}}</span></a></div>
                                 </div>
                                 <div class="profile-controls">
                                     <a href="{{route("getUpdateCode",["id"=>$code->code])}}" class="profile-control-left"><span class="fa fa-info"></span></a>

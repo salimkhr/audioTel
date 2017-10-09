@@ -100,7 +100,6 @@ class CodeController extends Controller
         if(!$this->testLogin())
             return redirect()->route("login");
         $code = code::find($id);
-        dump($id);
         if($code != null)
         {
             $message="modification effectué avec succès";
@@ -132,7 +131,7 @@ class CodeController extends Controller
                 $photo->code=($request->input("photo".$photo->id)!=null)?$id:null;
                 $photo->save();
         }
-        return redirect()->route('code')->with("message",$message);
+        return redirect()->back()->with("message",$message);
     }
 
     public function activeCode($id)
@@ -143,7 +142,7 @@ class CodeController extends Controller
         $code=Code::find($id);
 
         $this->activeCodePv($code,!$code->active);
-        return redirect()->route('code');
+        return redirect()->back()->with("message","le code a été ".($code->active?"connecté":"déconnecté"));
     }
 
     public function activeAllCode($idHotesse)
@@ -152,7 +151,7 @@ class CodeController extends Controller
         foreach ($codes as $code)
             $this->activeCodePv($code,true);
 
-        return back();
+        return redirect()->back()->with("message","tous les codes ont été connectés");
     }
 
     public function desactiveAllCode($idHotesse)
@@ -161,7 +160,7 @@ class CodeController extends Controller
         foreach ($codes as $code)
             $this->activeCodePv($code,false);
 
-        return back();
+        return redirect()->back()->with("message","tous les codes ont été déconnectés");
     }
 
     private function activeCodePv(Code $code,$active)

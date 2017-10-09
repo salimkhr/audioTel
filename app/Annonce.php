@@ -10,6 +10,6 @@ class Annonce extends Model
 
     public function code()
     {
-        return $this->hasOne('App\Code');
+        return $this->hasMany('App\Code');
     }
 }

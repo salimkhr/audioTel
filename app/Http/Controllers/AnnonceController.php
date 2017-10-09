@@ -41,7 +41,6 @@ class AnnonceController extends Controller
         }
 
         $codes=[];
-        $codes[0]="non séléctioné";
 
         foreach ($codesTmp as $code)
         {
@@ -55,23 +54,15 @@ class AnnonceController extends Controller
     {
         $annonce = Annonce::find($id);
         $annonce->name=$request->input("name")!=null?$request->input("name"):"";
+        $annonce->save();
 
-
-        $code=$annonce->code;
-        if($code != null)
+        $codes=$request->input("code");
+        foreach($codes as $idCode)
         {
-            $code->annonce_id=null;
-            $code->save();
-        }
-
-        if($request->input("code")!= 0 )
-        {
-            $code = Code::find($request->input("code"));
+            $code = Code::find($idCode);
             $code->annonce_id=$id;
             $code->save();
         }
-
-        $annonce->save();
         return redirect()->route("annonce")->with("message","modification effectué avec succès");
     }
 
