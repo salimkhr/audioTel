@@ -2,12 +2,16 @@
 
 namespace App;
 
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
 
 class Hotesse extends User
 {
     use Notifiable;
+    use SoftDeletes;
+
     protected $table = 'hotesse';
+    protected $dates = ['deleted_at'];
 
     public function code()
     {
@@ -19,11 +23,6 @@ class Hotesse extends User
         return $this->hasMany('App\PhotoHotesse');
     }
 
-    public function annonces()
-    {
-        return $this->hasMany('App\Annonce');
-    }
-
     public function photo()
     {
         return $this->belongsTo('App\PhotoHotesse','photoHotesse_id');
@@ -32,5 +31,10 @@ class Hotesse extends User
     public function admin()
     {
         return $this->belongsTo('App\Admin');
+    }
+
+    public function annonces()
+    {
+        return $this->hasMany('App\Annonce');
     }
 }

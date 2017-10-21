@@ -7,7 +7,7 @@
             @if(Auth::user() instanceof \App\Admin)
                 Admin
             @else
-                Hotesse
+                Hôtesse
             @endif
         </a>
     </li>
@@ -76,14 +76,22 @@
                                 @foreach($photos as $photo)
                                     <div class="gallery-item" data-gallery="" style="width:auto;">
                                         <div class="image" style="max-height:150px; max-width: 150px">
-                                            <img src="{{url(elixir('images/catalog/hotesse/'.$photo->file))}}" alt="{{$photo->file}}" class="img-responsive">
+                                            <img src="{{url(elixir('images/catalog/'.$photo->file))}}" alt="{{$photo->file}}" class="img-responsive">
                                             <ul class="gallery-item-controls">
                                                 <li>{!!Form::radio("photo_id",$photo->id,$hotesse->photo != null && $photo->id==$hotesse->photo->id,array('class' => 'icheckbox',"style"=>"position: absolute; opacity: 0;"))!!}</li>
-                                                @if(isset($hotesse->photo->id) && $photo->id!=$hotesse->photo->id)<li><a href="{{route("deletePhotoHotesse",["id"=>$photo->id])}}"><i class="fa fa-times"></i></a></li>@endif
+                                                <li><a href="{{route("deletePhotoHotesse",["id"=>$photo->id])}}"><i class="fa fa-times"></i></a></li>
                                             </ul>
                                         </div>
                                     </div>
                                 @endforeach
+                                    <div class="gallery-item" data-gallery="" style="width:auto;">
+                                        <div class="image" style="max-height:150px; max-width: 150px">
+                                            <img src="{{url(elixir('images/catalog/noImage.jpg'))}}" alt="no image" class="img-responsive">
+                                            <ul class="gallery-item-controls">
+                                                <li>{!!Form::radio("photo_id",1,$hotesse->photo == null ||$hotesse->photo->id == 1,array('class' => 'icheckbox',"style"=>"position: absolute; opacity: 0;"))!!}</li>
+                                            </ul>
+                                        </div>
+                                    </div>
                             </div>
                         </div>
                         {!! Form::submit('Valider', ['class' => 'btn btn-primary btn btn-primary pull-right']) !!}
@@ -91,10 +99,35 @@
                     </div>
                     <hr/>
                     <div class="row">
-                        {{Form::open(array('route' => 'postNewPhotoHotesse','files'=> true))}}
+                        {{Form::open(array('route' => array('postNewPhotoHotesse',$hotesse->id),'files'=> true))}}
                         {!! Form::file('image',["class"=>"","accept"=>"image/*","id"=>'image'])!!}
                         {!! Form::submit('Envoyer', ['class' => 'btn btn-primary pull-right']) !!}
                         {{ Form::close() }}
+                    </div>
+                </div>
+                @if(Auth::user() instanceof \App\Admin && isset($hotesse->id))
+                    <div class="panel-footer">
+                        <div class="pull-right">
+                            <button type="button" class="btn btn-danger mb-control" data-box="#message-box-delete">Supprimer</button>
+                            <a href="{{route("activeHotesse",["id"=>$hotesse->id])}}" role="button" class="btn btn-warning">{{$hotesse->active?"Désactiver":"Activer"}}</a>
+                        </div>
+                    </div>
+                @endif
+            </div>
+        </div>
+    </div>
+    <div class="message-box message-box-danger animated fadeIn" data-sound="alert" id="message-box-delete">
+        <div class="mb-container">
+            <div class="mb-middle">
+                <div class="mb-title"><span class="fa fa-trash-o"></span> <strong>Supprimer</strong> ?</div>
+                <div class="mb-content">
+                    <p>êtes-vous sûr de vouloir supprimer le code hôtesse</p>
+                    <p>Appuyez sur Non si vous souhaitez continuer votre travail. Appuyez sur Oui pour supprimer le code hôtesse.</p>
+                </div>
+                <div class="mb-footer">
+                    <div class="pull-right">
+                        <a href="{{route('deleteHotesse',['id'=> $hotesse->id])}}" class="btn btn-success btn-lg">Yes</a>
+                        <button class="btn btn-default btn-lg mb-control-close">No</button>
                     </div>
                 </div>
             </div>

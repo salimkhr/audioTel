@@ -33,9 +33,9 @@
                         <thead>
                         <tr>
                             <th>Cle</th>
-                            <th>date de création</th>
-                            <th>date de dérniére modification</th>
-                            <th>active</th>
+                            <th>Date de création</th>
+                            <th>Date de dernière modification</th>
+                            <th>Active</th>
                             <th>Modifier</th>
                         </tr>
                         </thead>

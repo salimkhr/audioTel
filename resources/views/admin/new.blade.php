@@ -78,13 +78,13 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="gallery" id="links">
-                                    @foreach($admin->photos as $photo)
+                                    @foreach($photos as $photo)
                                         <div class="gallery-item" data-gallery="" style="width:auto;">
                                             <div class="image" style="max-height:150px; max-width: 150px">
-                                                <img src="{{url(elixir('images/catalog/hotesse/'.$photo->file))}}" alt="{{$photo->file}}" class="img-responsive">
+                                                <img src="{{url(elixir('images/catalog/'.$photo->file))}}" alt="{{$photo->file}}" class="img-responsive">
                                                 <ul class="gallery-item-controls">
-                                                    <li>{!!Form::radio("photo_id",$photo->id,$photo->id==$admin->photo->id,array('class' => 'icheckbox',"style"=>"position: absolute; opacity: 0;"))!!}</li>
-                                                    @if($photo->id!=$admin->photo->id)<li><a href="{{route("deletePhotoAdmin",["id"=>$photo->id])}}"><i class="fa fa-times"></i></a></li>@endif
+                                                    <li>{!!Form::radio("photo_id",$photo->id,isset($admin->photo->id) && $photo->id==$admin->photo->id,array('class' => 'icheckbox',"style"=>"position: absolute; opacity: 0;"))!!}</li>
+                                                    @if(isset($admin->photo->id) && $photo->id!=$admin->photo->id)<li><a href="{{route("deletePhotoAdmin",["id"=>$photo->id])}}"><i class="fa fa-times"></i></a></li>@endif
                                                 </ul>
                                             </div>
                                         </div>

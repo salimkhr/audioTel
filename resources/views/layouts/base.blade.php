@@ -1,9 +1,10 @@
 @section('menu')
-    @if(Auth::user() instanceof \App\Admin)<li @if(Request::segment(1) === 'hotesse')class="active" @endif><a href="{{route("hotesse")}}"><span class="fa fa-users"></span> <span class="xn-text">Hotesse</span></a></li>@endif
-    @if(Auth::user() instanceof \App\Hotesse)<li @if(Request::segment(1) === 'annonce')class="active" @endif><a href="{{route("annonce")}}"><span class="fa fa-volume-up"></span> <span class="xn-text">Annonce</span></a></li>@endif
+    @if(Auth::user() instanceof \App\Admin)<li @if(Request::segment(1) === 'hotesse')class="active" @endif><a href="{{route("hotesse")}}"><span class="fa fa-users"></span> <span class="xn-text">Hôtesse</span></a></li>@endif
     <li @if(Request::segment(1) === 'code')class="active" @endif><a href="{{route("code")}}"><span class="fa fa-list-ol"></span> <span class="xn-text">Code</span></a></li>
-    <li @if(Request::segment(1) === 'hotesse')class="active" @endif><a href="{{route("home")}}"><span class="fa fa-table"></span> <span class="xn-text">Reporting géneral</span></a></li>
-    <li @if(Request::segment(1) === 'message')class="active" @endif><a href="{{route("message")}}"><span class="fa fa-comments"></span> <span class="xn-text">Message</span></a></li>
+    <li @if(Request::segment(1) === 'reporting')class="active" @endif><a href="{{route("home")}}"><span class="fa fa-table"></span> <span class="xn-text">Reporting Général</span></a></li>
+    @if(Auth::user() instanceof \App\Admin)<li @if(Request::segment(1) === 'activite')class="active" @endif><a href="{{route("activite")}}"><span class="fa fa-table"></span> <span class="xn-text">Activité</span></a></li>@endif
+    <li @if(Request::segment(1) === 'message')class="active" @endif><a href="{{route("message")}}"><span class="fa fa-commenting"></span> <span class="xn-text">Message</span></a></li>
+    <li @if(Request::segment(1) === 'tchat')class="active" @endif><a href="{{route("message")}}"><span class="fa fa-comments"></span> <span class="xn-text">Tchat room</span></a></li>
     @if(Auth::user() instanceof \App\Admin)<li @if(Request::segment(1) === 'client')class="active" @endif><a href="{{route("client")}}"><span class="fa fa-user-circle"></span> <span class="xn-text">Client</span></a></li>@endif
 
     @isset(Auth::user()->role)
@@ -17,7 +18,7 @@
 <html lang="{{ app()->getLocale() }}">
 <head>
     <!-- META SECTION -->
-    <title>Joli Admin - Responsive Bootstrap Admin Template</title>
+    <title>Opiumlove - Interface de gestion audiotel</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -44,12 +45,12 @@
             </li>
             <li class="xn-profile">
                 <a href="@if(Auth::user() instanceof \App\Admin){{route("getUpdateAdmin",["id"=>Auth::id()])}} @else{{route("getUpdateHotesse",["id"=>Auth::id()])}}@endif" class="profile-mini">
-                    <img src="{{url(elixir("images/catalog/hotesse/".Auth::user()->photo->file))}}" alt="{{Auth::user()->name}}">
+                    <img src="{{url(elixir("images/catalog/".Auth::user()->photo->file))}}" alt="{{Auth::user()->name}}">
                 </a>
                 <div class="profile">
                     <div class="profile-image">
                         <a href="@if(Auth::user() instanceof \App\Admin){{route("getUpdateAdmin",["id"=>Auth::id()])}} @else{{route("getUpdateHotesse",["id"=>Auth::id()])}}@endif">
-                            <img src="{{url(elixir("images/catalog/hotesse/".Auth::user()->photo->file))}}" alt="{{Auth::user()->name}}">
+                            <img src="{{url(elixir("images/catalog/".Auth::user()->photo->file))}}" alt="{{Auth::user()->name}}">
                         </a>
                     </div>
                     <div class="profile-data">
@@ -78,69 +79,12 @@
                 <a href="#" class="x-navigation-minimize"><span class="fa fa-dedent"></span></a>
             </li>
             <!-- END TOGGLE NAVIGATION -->
-            <!-- SEARCH -->
-            <li class="xn-search">
-                <form role="form">
-                    <input type="text" name="search" placeholder="Search...">
-                </form>
-            </li>
-            <!-- END SEARCH -->
+
             <!-- SIGN OUT -->
             <li class="xn-icon-button pull-right">
                 <a href="#" class="mb-control" data-box="#mb-signout"><span class="fa fa-sign-out"></span></a>
             </li>
             <!-- END SIGN OUT -->
-            <!-- MESSAGES -->
-            <li class="xn-icon-button pull-right">
-                <a href="#"><span class="fa fa-comments"></span></a>
-                <div class="informer informer-danger">1</div>
-                <div class="panel panel-primary animated zoomIn xn-drop-left xn-panel-dragging ui-draggable">
-                    <div class="panel-heading ui-draggable-handle">
-                        <h3 class="panel-title"><span class="fa fa-comments"></span> Messages</h3>
-                        <div class="pull-right">
-                            <span class="label label-danger">1 new</span>
-                        </div>
-                    </div>
-                    <div class="panel-body list-group list-group-contacts scroll mCustomScrollbar _mCS_2 mCS-autoHide mCS_no_scrollbar" style="height: 200px;"><div id="mCSB_2" class="mCustomScrollBox mCS-light mCSB_vertical mCSB_inside" tabindex="0"><div id="mCSB_2_container" class="mCSB_container mCS_y_hidden mCS_no_scrollbar_y" style="position:relative; top:0; left:0;" dir="ltr">
-                                <a href="#" class="list-group-item">
-                                    <div class="list-group-status status-online"></div>
-                                    <img src="assets/images/users/user2.jpg" class="pull-left" alt="John Doe">
-                                    <span class="contacts-title">John Doe</span>
-                                    <p>Praesent placerat tellus id augue condimentum</p>
-                                </a>
-                            </div><div id="mCSB_2_scrollbar_vertical" class="mCSB_scrollTools mCSB_2_scrollbar mCS-light mCSB_scrollTools_vertical" style="display: none;"><div class="mCSB_draggerContainer"><div id="mCSB_2_dragger_vertical" class="mCSB_dragger" style="position: absolute; min-height: 30px; top: 0px;" oncontextmenu="return false;"><div class="mCSB_dragger_bar" style="line-height: 30px;"></div></div><div class="mCSB_draggerRail"></div></div></div></div></div>
-                    <div class="panel-footer text-center">
-                        <a href="pages-messages.html">Show all messages</a>
-                    </div>
-                </div>
-            </li>
-            <!-- END MESSAGES -->
-            <!-- TASKS -->
-            <li class="xn-icon-button pull-right">
-                <a href="#"><span class="fa fa-tasks"></span></a>
-                <div class="informer informer-warning">1</div>
-                <div class="panel panel-primary animated zoomIn xn-drop-left xn-panel-dragging ui-draggable">
-                    <div class="panel-heading ui-draggable-handle">
-                        <h3 class="panel-title"><span class="fa fa-tasks"></span> Tasks</h3>
-                        <div class="pull-right">
-                            <span class="label label-warning">1 active</span>
-                        </div>
-                    </div>
-                    <div class="panel-body list-group scroll mCustomScrollbar _mCS_3 mCS-autoHide mCS_no_scrollbar" style="height: 200px;"><div id="mCSB_3" class="mCustomScrollBox mCS-light mCSB_vertical mCSB_inside" tabindex="0"><div id="mCSB_3_container" class="mCSB_container mCS_y_hidden mCS_no_scrollbar_y" style="position:relative; top:0; left:0;" dir="ltr">
-                                <a class="list-group-item" href="#">
-                                    <strong>Phasellus augue arcu, elementum</strong>
-                                    <div class="progress progress-small progress-striped active">
-                                        <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" style="width: 50%;">50%</div>
-                                    </div>
-                                    <small class="text-muted">John Doe, 25 Sep 2014 / 50%</small>
-                                </a>
-                            </div><div id="mCSB_3_scrollbar_vertical" class="mCSB_scrollTools mCSB_3_scrollbar mCS-light mCSB_scrollTools_vertical" style="display: none;"><div class="mCSB_draggerContainer"><div id="mCSB_3_dragger_vertical" class="mCSB_dragger" style="position: absolute; min-height: 30px; top: 0px;" oncontextmenu="return false;"><div class="mCSB_dragger_bar" style="line-height: 30px;"></div></div><div class="mCSB_draggerRail"></div></div></div></div></div>
-                    <div class="panel-footer text-center">
-                        <a href="pages-tasks.html">Show all tasks</a>
-                    </div>
-                </div>
-            </li>
-            <!-- END TASKS -->
         </ul>
         <!-- START BREADCRUMB -->
         <ul class="breadcrumb">
@@ -160,15 +104,15 @@
     <div class="message-box animated fadeIn" data-sound="alert" id="mb-signout">
         <div class="mb-container">
             <div class="mb-middle">
-                <div class="mb-title"><span class="fa fa-sign-out"></span> Log <strong>Out</strong> ?</div>
+                <div class="mb-title"><span class="fa fa-sign-out"></span><strong>Déconnexion</strong> ?</div>
                 <div class="mb-content">
-                    <p>Are you sure you want to log out?</p>
-                    <p>Press No if youwant to continue work. Press Yes to logout current user.</p>
+                    <p>Êtes-vous sûr de vouloir vous déconnecter ?</p>
+                    <p>Appuyez sur Non si vous souhaitez continuer à travailler. Appuyez sur Oui pour vous déconnecter.</p>
                 </div>
                 <div class="mb-footer">
                     <div class="pull-right">
-                        <a href="{{url('/logout')}}" class="btn btn-success btn-lg">Yes</a>
-                        <button class="btn btn-default btn-lg mb-control-close">No</button>
+                        <a href="{{url('/logout')}}" class="btn btn-success btn-lg">Oui</a>
+                        <button class="btn btn-default btn-lg mb-control-close">Non</button>
                     </div>
                 </div>
             </div>
@@ -207,7 +151,8 @@
 
 
 <script type="text/javascript" src="{{url(elixir('js/plugins/moment.min.js'))}}"></script>
-<script type="text/javascript" src="{{url(elixir('js/plugins/daterangepicker/daterangepicker.js'))}}"></script>
+<script type="text/javascript" src="{{url(elixir('js/plugins/bootstrap/bootstrap-datepicker.js'))}}"></script>
+<script type="text/javascript" src="{{url(elixir('js/plugins/rangeslider/jQAllRangeSliders-min.js'))}}"></script>
 
 <script type="text/javascript" src="{{url(elixir('js/plugins/bootstrap/bootstrap-select.js'))}}"></script>
 <script type="text/javascript" src="{{url(elixir('js/plugins/fileinput/fileinput.min.js'))}}"></script>
@@ -226,10 +171,33 @@
 <!-- END TEMPLATE -->
 <!-- END SCRIPTS -->
 
-@if (Session::has('message')) {<script>
+@if (Session::has('message')) {
+<script>
     noty({text: '{{Session::get('message')}}', layout: 'topRight', type: 'success'});
 </script>
 @endif
+<script>
+    function play(file) {
+        console.log($("#btn-"+file+" i"));
+        console.log($("#audio-"+file).get(0));
+
+        if($("#btn-"+file+" i").hasClass("fa-pause"))
+        {
+            $("#btn-"+file+" i").addClass("fa-play").removeClass("fa-pause");
+            $("#audio-"+file).get(0).pause();
+        }
+        else{
+            $("#btn-"+file+" i").removeClass("fa-play").addClass("fa-pause");
+            $("#audio-"+file).get(0).play();
+        }
+
+    }
+
+    function stop(file) {
+        $("#btn-"+file+" i").addClass("fa-play").removeClass("fa-pause");
+    }
+
+</script>
 @yield('script')
 
 </body>

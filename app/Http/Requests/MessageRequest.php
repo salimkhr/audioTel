@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class ClientRequest extends FormRequest
+class MessageRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,9 +23,6 @@ class ClientRequest extends FormRequest
      */
     public function rules()
     {
-        if($this->segment(2)=="new")
-            return ['code' => 'required|unique:client'];
-        else
-            return ['code' => 'required','remarque'=>'required'];
+            return ['client_id' => 'required'];
     }
 }

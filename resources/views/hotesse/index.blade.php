@@ -5,7 +5,7 @@
             @if(Auth::user() instanceof \App\Admin)
                 Admin
             @else
-                Hotesse
+                Hôtesse
             @endif
         </a>
     </li>
@@ -17,7 +17,7 @@
             @if(Auth::user() instanceof \App\Admin)
                 Admin
             @else
-                Hotesse
+                Hôtesse
             @endif
             {{dump(Auth::user())}}
         </a>
@@ -147,18 +147,4 @@
             <audio id="audio-{{$appel->file}}" src="{{url(elixir("audio/log_appel/".$appel->file.".mp3"))}}" onended="stop('{{$appel->file}}')"></audio>
         @endif
     @endforeach
-@endsection
-@section('script')
-    <script>
-        function play(file) {
-            console.log($("#"+file));
-            $("#btn-"+file).prop('disabled', true);
-            $("#audio-"+file).get(0).play();
-        }
-
-        function stop(file) {
-            console.log($("#"+file));
-            $("#btn-"+file).prop('disabled', false);
-        }
-    </script>
 @endsection

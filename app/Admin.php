@@ -1,12 +1,16 @@
 <?php
 
 namespace App;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
 
 class Admin extends User
 {
     use Notifiable;
+    use SoftDeletes;
+
     protected $table = 'admin';
+    protected $dates = ['deleted_at'];
 
     public function photos()
     {

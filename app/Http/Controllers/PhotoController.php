@@ -24,38 +24,26 @@ class PhotoController extends Controller
      */
 
 
-    public function postFormPhotoCode(PhotoRequest $request)
+    public function postFormPhotoHotesse(PhotoRequest $request,$id=null)
     {
         if(!$this->testLogin())
             return redirect()->route("login");
 
         $imageName = $this->RandomString().'.' .$request->file('image')->getClientOriginalExtension();
-        $request->file('image')->move(base_path() . '/public/images/catalog/code', $imageName);
-
-        $photo = new PhotoCode();
-        $photo->file=$imageName;
-        $photo->save();
-
-        return back()->withInput()->with("message","photo ajouté");
-    }
-
-    public function postFormPhotoHotesse(PhotoRequest $request)
-    {
-        if(!$this->testLogin())
-            return redirect()->route("login");
-
-        $imageName = $this->RandomString().'.' .$request->file('image')->getClientOriginalExtension();
-        $request->file('image')->move(base_path() . '/public/images/catalog/hotesse', $imageName);
+        $request->file('image')->move(base_path() . '/public/images/catalog/', $imageName);
 
         $photo = new PhotoHotesse();
         $photo->file=$imageName;
         if(Auth::user() instanceof Hotesse)
             $photo->hotesse_id=Auth::id();
         else
-            $photo->admin_id=Auth::id();
+            if($id!=null)
+                $photo->hotesse_id=$id;
+            else
+                $photo->admin_id=Auth::id();
         $photo->save();
 
-        return back()->withInput()->with("message","photo ajouté");
+        return back()->withInput()->with("message","photo ajoutée");
     }
 
     public function postFormPhotoAdmin(PhotoRequest $request)
@@ -64,25 +52,18 @@ class PhotoController extends Controller
             return redirect()->route("login");
 
         $imageName = $this->RandomString().'.' .$request->file('image')->getClientOriginalExtension();
-        $request->file('image')->move(base_path() . '/public/images/catalog/hotesse', $imageName);
+        $request->file('image')->move(base_path() . '/public/images/catalog/', $imageName);
 
         $photo = new PhotoAdmin();
         $photo->file=$imageName;
         $photo->admin_id=Auth::id();
         $photo->save();
 
-        return back()->withInput()->with("message","photo ajouté");
+        return back()->withInput()->with("message","photo ajoutée");
     }
     public function deleteFormPhotoHotesse($id)
     {
         PhotoHotesse::find($id)->delete();
         return back()->withInput();
     }
-
-    public function deleteFormPhotoCode($id)
-    {
-        PhotoCode::find($id)->delete();
-        return back()->withInput();
-    }
-
 }

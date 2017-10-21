@@ -15,10 +15,10 @@ class APIController extends Controller
 
     public function index()
     {
-        if(!$this->testLogin())
+        if(!$this->testLoginAdmin())
             return redirect()->route("login");
 
-        $api=API::all();
+        $api=API::where("admin_id","=",Auth::id())->get();
         return view('api')->with("apis",$api);
     }
 

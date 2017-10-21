@@ -30,10 +30,11 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            {{ Form::label('code', 'Code', array('class' => 'control-label')) }}
+                            {{dump($codes)}}
+                            {{ Form::label('code', $annonce->code, array('class' => 'control-label')) }}
                             <div class="input-group">
                                 <span class="input-group-addon"><i class="fa fa-user"></i></span>
-                                {!!Form::select('code[]',$codes,$annonce->code,array('class' => 'form-control select',"multiple"=>"true")) !!}
+                                {!!Form::select('code',$codes,$annonce->code,array('class' => 'form-control select')) !!}
                             </div>
                         </div>
                         {!! Form::submit('Valider', ['class' => 'btn btn-primary pull-right']) !!}
@@ -65,18 +66,4 @@
             </div>
         @endforeach
     </div>
-@endsection
-@section('script')
-    <script>
-        function play(file) {
-            console.log($("#"+file));
-            $("#btn-"+file).prop('disabled', true);
-            $("#audio-"+file).get(0).play();
-        }
-
-        function stop(file) {
-            console.log($("#"+file));
-            $("#btn-"+file).prop('disabled', false);
-        }
-    </script>
 @endsection

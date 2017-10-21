@@ -18,17 +18,29 @@
 @section('content')
     <div class="row">
         <div class="col-md-12">
-            <!-- START DEFAULT DATATABLE -->
-            <div class="panel panel-default">
-                <div class="panel-body">
-                    <div class="row">
-                        @isset($code->code)
+            <div class="pull-right">
+                <a href="{{route('activeCode',['id'=> $code->code])}}" role="button" class="btn btn-warning">@if($code->active)Déconnecter @else Connecter @endif ce code</a>
+                @if(Auth::user() instanceof \App\Admin) <button type="button" class="btn btn-danger mb-control" data-box="#message-box-delete">Supprimer</button> @endif
+            </div>
+        </div>
+        <div class="row" style="margin-top: 50px">
+            @if(isset($code->code))
 
-                            {{ Form::model($code, array('route' => array('postUpdateCode', $code->code)))}}
-                            @else
-                                {{ Form::open(array('route' => 'postNewCode')) }}
-                                @endisset
-                                <div class="col-md-8">
+                {{ Form::model($code, array('route' => array('postUpdateCode', $code->code)))}}
+            @else
+                {{ Form::open(array('route' => 'postNewCode')) }}
+            @endif
+
+            <div class="row">
+                <div class="col-md-8">
+                    <!-- START DEFAULT DATATABLE -->
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Informations</h3>
+                        </div>
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-md-12">
 
                                     <!-- name -->
                                     <div class="form-group">
@@ -63,72 +75,93 @@
                                         </div>
                                     @endif
                                 </div>
-                                <div class="col-md-4">
-                                    <span class="control-label">Annonces</span>
-                                    <ul class="list-group border-bottom">
-                                        @foreach ($annonces as $annonce)
-                                            <li class="list-group-item"><label>{{$annonce->name}} {!!Form::radio("annonce_id",$annonce->id,$code->annonce_id == $annonce->id,array("class"=>"iradio")) !!}</label>
-                                                <button class="btn btn-primary btn-rounded pull-right" id="btn-{{$annonce->id}}" onclick="play({{$annonce->id}})"><i class="fa fa-fw fa-play"></i></button>
-                                            </li>
-                                        @endforeach
-                                    </ul>
-                                </div>
-                                {!! $errors->first('annonce_id', '<small class="help-block">:message</small>') !!}
-                                <span class="control-label">Photos</span>
-                                <div class="gallery" id="links">
-                                    @foreach ($photos as $photo)
-                                        <div class="gallery-item" data-gallery="" style="width:auto;">
-                                            <div class="image" style="max-height:150px; max-width: 150px">
-                                                <img src="{{url(elixir('images/catalog/code/'.$photo->file))}}" alt="{{$photo->file}}">
-                                                <ul class="gallery-item-controls">
-                                                    <li> {!!Form::checkbox("photo".$photo->id,null,$photo->code!=null,array('class' => 'icheckbox', 'placeholder' => 'pseudo','style'=>"position: absolute; opacity: 0;"))!!}</li>
-                                                    @if(Auth::user() instanceof \App\Admin)<li><a href="{{route("deletePhotoCode",["id"=>$photo->id])}}"><i class="fa fa-times"></i></a></li>@endif
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    @endforeach
-                                </div>
-                                {!! Form::submit('Valider', ['class' => 'btn btn-primary pull-right']) !!}
-
-                                {{ Form::close() }}
-                    </div>
-                    @if(Auth::user() instanceof \App\Admin)
-                        <div class="row">
-                            {{Form::open(array('route' => 'postNewPhotoCode','files'=> true))}}
-                            {!! Form::file('image',["class"=>"","accept"=>"image/*","id"=>'image'])!!}
-                            {!! Form::submit('Envoyer', ['class' => 'btn btn-primary pull-right']) !!}
-                            {{ Form::close() }}
+                            </div>
                         </div>
-                    @endif
+                    </div>
                 </div>
-                <div class="panel-footer">
-                    <div class="pull-right">
-                    <a href="{{route('activeCode',['id'=> $code->code])}}" role="button" class="btn btn-warning">@if($code->active)Déconnecter @else Connecter @endif</a>
-                    @if(Auth::user() instanceof \App\Admin)
-                        <button type="button" class="btn btn-danger mb-control" data-box="#message-box-delete">Supprimer</button>
-                    @endif
+                <div class="col-md-4">
+                    <div class="panel panel-default"  style="max-height: 448px; overflow: auto;">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Annonces</h3>
+                        </div>
+                        <div class="panel-body list-group list-group-contacts">
+                            @foreach ($code->annonces as $annonce)
+                                <span class="list-group-item"><label>{!!Form::radio("annonce_id",$annonce->id,$code->annonce_id == $annonce->id,array("class"=>"iradio")) !!} {{$annonce->name}}</label>
+                                <a href="#" class="btn btn-primary btn-rounded mb-control pull-right" id="btn-{{$annonce->id}}" onclick="play({{$annonce->id}})"><i class="fa fa-fw fa-play"></i></a>
+                            </span>
+                            @endforeach
+                            {!! $errors->first('annonce_id', '<small class="help-block">:message</small>') !!}
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
-    @isset($code->hotesse->annonces)
-        @foreach ($code->hotesse->annonces as $annonce)
-            <audio id="audio-{{$annonce->id}}" src="{{url(elixir("audio/annonce/".$annonce->file.".mp3"))}}" onended="stop({{$annonce->id}})"></audio>
-        @endforeach
-    @endisset
-    <div class="message-box message-box-danger animated fadeIn" data-sound="alert" id="message-box-delete">
-        <div class="mb-container">
-            <div class="mb-middle">
-                <div class="mb-title"><span class="fa fa-trash-o"></span> <strong>Supprimer</strong> ?</div>
-                <div class="mb-content">
-                    <p>êtes-vous sûr de vouloir supprimer le code hôtesse</p>
-                    <p>Appuyez sur Non si vous souhaitez continuer votre travail. Appuyez sur Oui pour supprimer le code hôtesse.</p>
+
+            <div class="row">
+                <div class="col-md-12">
+                    {!! Form::submit('Enregistrer les modifications', ['class' => 'btn btn-primary pull-right']) !!}
                 </div>
-                <div class="mb-footer">
-                    <div class="pull-right">
-                        <a href="{{route('deleteCode',['id'=> $code->code])}}" class="btn btn-success btn-lg">Yes</a>
-                        <button class="btn btn-default btn-lg mb-control-close">No</button>
+            </div>
+
+            <div class="row" style="margin-top: 20px">
+                <div class="col-md-12">
+                    <div class="panel panel-default"  style="max-height: 485px; overflow: auto;">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Photo</h3>
+                        </div>
+                        <div class="panel-body">
+                            <div class="gallery" id="links2">
+                                @foreach($photos as $photo)
+                                    <div class="gallery-item" data-gallery="" style="width:auto;">
+                                        <div class="image" style="max-height:150px; max-width: 150px">
+                                            <img src="{{url(elixir('images/catalog/'.$photo->file))}}" alt="{{$photo->file}}" class="img-responsive">
+                                            <ul class="gallery-item-controls">
+                                                <li>{!!Form::radio("photo_id",$photo->id,$code->photoHotesse_id != null && $photo->id==$code->photoHotesse_id,array('class' => 'icheckbox',"style"=>"position: absolute; opacity: 0;"))!!}</li>
+                                                <li><a href="{{route("deletePhotoHotesse",["id"=>$photo->id])}}"><i class="fa fa-times"></i></a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                @endforeach
+                                <div class="gallery-item" data-gallery="" style="width:auto;">
+                                    <div class="image" style="max-height:150px; max-width: 150px">
+                                        <img src="{{url(elixir('images/catalog/noImage.jpg'))}}" alt="" class="img-responsive">
+                                        <ul class="gallery-item-controls">
+                                            <li>{!!Form::radio("photo_id",1,$code->photoHotesse_id == 1,array('class' => 'icheckbox',"style"=>"position: absolute; opacity: 0;"))!!}</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            {{ Form::close() }}
+                            <div class="row">
+
+                                {{Form::open(array('route' => 'postNewPhotoHotesse','files'=> true))}}
+                                {!! Form::file('image',["class"=>"","accept"=>"image/*","id"=>'image'])!!}
+                                {!! Form::submit('Ajouter la photo', ['class' => 'btn btn-primary pull-right']) !!}
+                                {{ Form::close() }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+            @foreach ($code->annonces as $annonce)
+                <audio id="audio-{{$annonce->id}}" src="{{url(elixir("audio/annonce/".$annonce->file.".mp3"))}}" onended="stop({{$annonce->id}})"></audio>
+            @endforeach
+            <div class="message-box message-box-danger animated fadeIn" data-sound="alert" id="message-box-delete">
+                <div class="mb-container">
+                    <div class="mb-middle">
+                        <div class="mb-title"><span class="fa fa-trash-o"></span> <strong>Supprimer</strong> ?</div>
+                        <div class="mb-content">
+                            <p>êtes-vous sûr de vouloir supprimer le code hôtesse</p>
+                            <p>Appuyez sur Non si vous souhaitez continuer votre travail. Appuyez sur Oui pour supprimer le code hôtesse.</p>
+                        </div>
+                        <div class="mb-footer">
+                            <div class="pull-right">
+                                <a href="{{route('deleteCode',['id'=> $code->code])}}" class="btn btn-success btn-lg">Yes</a>
+                                <button class="btn btn-default btn-lg mb-control-close">No</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -147,19 +180,4 @@
            </div>
        </div>
    </div>')!!}
-@endsection
-
-@section('script')
-    <script>
-        function play(id) {
-            console.log($("#"+id));
-            $("#btn-"+id).prop('disabled', true);
-            $("#audio-"+id).get(0).play();
-        }
-
-        function stop(id) {
-            console.log($("#"+id));
-            $("#btn-"+id).prop('disabled', false);
-        }
-    </script>
 @endsection

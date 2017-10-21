@@ -35,9 +35,22 @@
                         {{ Form::open(array('route' => 'postNewClient')) }}
                     @endisset
                 <!-- name -->
+                            <div class="form-group">
+                                {{ Form::label('code', 'Code', array('class' => 'control-label')) }}
+                                <div class="input-group">
+                                    <span class="input-group-addon"><i class="fa fa-sort-numeric-desc"></i></span>
+                                    {!! Form::number('code', $client->code, array('class' => 'form-control',"readonly"=>"readonly")) !!}
+                                </div>
+                                {!! $errors->first('code', '<small class="help-block">:message</small>') !!}
+                            </div>
+
                     <div class="form-group">
-                    {{ Form::text('code',null, array('class' => 'form-control','placeholder'=>'name')) }}
-                    {!! $errors->first('code', '<small class="help-block">:message</small>') !!}
+                        {{ Form::label('remarque', 'Remarque', array('class' => 'control-label')) }}
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="fa fa-align-justify"></i></span>
+                            {!! Form::textArea('remarque', $client->remarque, array('class' => 'form-control',"rows"=>"8","style"=>"resize: none;")) !!}
+                        </div>
+                        {!! $errors->first('remarque', '<small class="help-block">:message</small>') !!}
                     </div>
 
                     {!! Form::submit('Valider', ['class' => 'btn btn-primary pull-right']) !!}

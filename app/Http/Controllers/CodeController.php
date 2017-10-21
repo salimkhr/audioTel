@@ -12,31 +12,57 @@ namespace App\Http\Controllers;
 use App\Admin;
 use App\Annonce;
 use App\API;
+use App\Appel;
 use App\Code;
 use App\Hotesse;
 use App\Http\Requests\CodeRequest;
-use App\PhotoCode;
+use App\PhotoHotesse;
+use DateTime;
 use Illuminate\Database\QueryException;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\MessageBag;
 
 class CodeController extends Controller
 {
 
-    public function index($page=1)
+    public function index($page=1,$idAdmin =null,$search=null)
     {
         if(!$this->testLogin())
             return redirect()->route("login");
 
-        if(Auth::user() instanceof Hotesse)
-        {
-            $codes = Code::where("hotesse_id","=",Auth::id())->limit(8)->offset(8*($page-1))->get();
-            $nbCodes = Code::where("hotesse_id","=",Auth::id())->count();
-        }
         if(Auth::user() instanceof Admin)
         {
-            $codes = Code::where("admin_id","=",Auth::id())->limit(8)->offset(8*($page-1))->get();
-            $nbCodes = Code::where("admin_id","=",Auth::id())->count();
+            if($idAdmin==null)
+                $idAdmin = Auth::id();
+
+            if(Auth::user()->role == "superAdmin")
+            {
+                $listAdmin=Admin::where("admin_id","=",Auth::id())->get(['id']);
+                $listId=[Auth::id()];
+
+                foreach ($listAdmin as $admin)
+                {
+                    array_push($listId,$admin->id);
+                }
+
+                $codes = Code::wherein("admin_id",$listId)->where("pseudo","like","%".$search."%")->orWhere("code","like","%".$search."%")->limit(8)->offset(8*($page-1))->orderByDesc("created_at")->get();
+                $nbCodes = Code::wherein("admin_id",$listId)->where("pseudo","like","%".$search."%")->orWhere("code","like","%".$search."%")->count();
+
+            }
+            else
+            {
+                $codes= Code::where("admin_id","=",$idAdmin)->where("pseudo","like","%".$search."%")->orWhere("code","like","%".$search."%")->limit(8)->offset(8*($page-1))->orderByDesc("created_at")->get();
+                $nbCodes= Code::where("admin_id","=",$idAdmin)->where("pseudo","like","%".$search."%")->orWhere("code","like","%".$search."%")->count();
+            }
+        }
+        else
+        {
+            $search = $idAdmin;
+            $idAdmin=null;
+
+            $codes = Code::where("hotesse_id","=",Auth::id())->where("pseudo","like","%".$search."%")->orWhere("code","like","%".$search."%")->limit(8)->offset(8*($page-1))->orderByDesc("created_at")->get();
+            $nbCodes = Code::where("hotesse_id","=",Auth::id())->where("pseudo","like","%".$search."%")->orWhere("code","like","%".$search."%")->count();
         }
 
         if($nbCodes %8 !=0)
@@ -48,14 +74,14 @@ class CodeController extends Controller
             $nbCodes=($nbCodes/8);
         }
 
-        return view('code')->with("codes",$codes)->with("nbCode",$nbCodes)->with("page",$page);
+        return view('code')->with("codes",$codes)->with("nbCode",$nbCodes)->with("page",$page)->with("idAdmin",$idAdmin)->with("search",$search);
     }
 
-    public function code($id)
+    public function reportingCode($id)
     {
         if(!$this->testLogin())
             return redirect()->route("login");
-        return view("code.code")->with("code",Code::find($id));
+        return view("code.report")->with("code",Code::find($id));
     }
 
     public function getFormCode($id=null)
@@ -74,26 +100,63 @@ class CodeController extends Controller
         if(isset($id))
         {
             $code=Code::find($id);
-            $photo=PhotoCode::where('code','=',null)->orWhere('code','=',$code->code)->get();
-            $annonces=$code->hotesse->annonces;
+            if(Auth::user() instanceof Hotesse)
+                $photo=PhotoHotesse::where("hotesse_id","=",Auth::id())->get();
+            else
+                $photo=PhotoHotesse::where("admin_id","=",Auth::id())->get();
         }
         else {
             $code = new Code();
             do
                 $code->code=rand(0,10000);
             while($code::find($code->code)!=null);
-            $photo = PhotoCode::where('code', '=', null)->get();
-
-            $annonces=[];
-            foreach($hotesses as $hotesse)
-            {
-                foreach ($hotesse->annonces as $annonce)
-                    array_push($annonces,$annonce);
-            }
+            $photo = PhotoHotesse::where('admin_id','=',Auth::id())->get();
         }
 
-        return view('code.new')->with("hotesses",$dataHotesse)->with("photos",$photo)->with("code",$code)->with("annonces",$annonces);
+        return view('code.new')->with("hotesses",$dataHotesse)->with("photos",$photo)->with("code",$code);
     }
+
+    public function reporting($id,$debut=null,$fin=null)
+    {
+        if(!$this->testLogin())
+            return redirect()->route("login");
+
+        if($debut == null)
+        {
+            $dateDebut= new DateTime();
+            $dateFin= new DateTime();
+        }
+        else{
+            $dateDebut=new DateTime($debut);
+            $dateFin=new DateTime($fin);
+
+        }
+        $dateFin->modify('+1 day');
+        $appels=Appel::where("code","=",$id)->where('debut',">=",$dateDebut->format('Y-m-d'))->where("debut","<=",$dateFin->format('Y-m-d'))->get();
+
+
+        $dureeAppel=0;
+        $nbAppel=0;
+        $ca=0;
+        foreach($appels as $appel)
+        {
+            $duree=date_diff(date_create($appel->debut),date_create($appel->fin))->format('%i');
+            $dureeAppel+=$duree;
+            $nbAppel++;
+            if(isset($appel->tarif->prixMinute))
+                $ca+=$duree*$appel->tarif->prixMinute;
+        }
+
+        return view('code.report')->with("hotesses",Hotesse::all())
+            ->with("dureeAppel",$dureeAppel)
+            ->with("nbAppel",$nbAppel)
+            ->with("ca",$ca)
+            ->with("appels",$appels)
+            ->with("code",Code::find($id))
+            ->with("debut",$debut)
+            ->with("fin",$fin);
+    }
+
 
     public function postFormCode(CodeRequest $request,$id=null)
     {
@@ -102,7 +165,7 @@ class CodeController extends Controller
         $code = code::find($id);
         if($code != null)
         {
-            $message="modification effectué avec succès";
+            $message="modification effectuée avec succès";
         }
         else
         {
@@ -111,6 +174,7 @@ class CodeController extends Controller
             $message="ajout effectué avec succès";
         }
 
+        $code->photoHotesse_id=$request->input('photo_id')!=null?$request->input('photo_id'):1;
         $code->code=$request->input('code');
         $code->pseudo=$request->input('pseudo');
         $code->description=$request->input('description');
@@ -124,14 +188,14 @@ class CodeController extends Controller
 
         $code->save();
 
-        $photos=PhotoCode::where('code','=',null)->orWhere('code','=',$code->code)->get();
+        /*$photos=PhotoCode::where('code','=',null)->orWhere('code','=',$code->code)->get();
 
         foreach ($photos as $photo)
         {
                 $photo->code=($request->input("photo".$photo->id)!=null)?$id:null;
                 $photo->save();
-        }
-        return redirect()->back()->with("message",$message);
+        }*/
+        return redirect()->route("code")->with("message",$message);
     }
 
     public function activeCode($id)
@@ -141,22 +205,39 @@ class CodeController extends Controller
 
         $code=Code::find($id);
 
-        $this->activeCodePv($code,!$code->active);
-        return redirect()->back()->with("message","le code a été ".($code->active?"connecté":"déconnecté"));
+        $this->activeCodePv($code,!$code->dispo);
+        return redirect()->back()->with("message","le code a été ".($code->dispo?"connecté":"déconnecté"));
     }
 
-    public function activeAllCode($idHotesse)
+    public function bockCode($id)
     {
-        $codes = Code::where("hotesse_id","=",$idHotesse)->get();
+        if(!$this->testLogin())
+            return redirect()->route("login");
+
+        $code=Code::find($id);
+
+        $code->active=!$code->active;
+        $code->dispo=$code->active;
+
+        if($code->hotesse==null)
+            $code->dispo=false;
+
+        $code->save();
+        return redirect()->back()->with("message","le code a été ".($code->dispo?"activé":"désactivé"));
+    }
+
+    public function activeAllCode($idAdmin)
+    {
+        $codes = Code::where("Admin_id","=",$idAdmin)->get();
         foreach ($codes as $code)
             $this->activeCodePv($code,true);
 
         return redirect()->back()->with("message","tous les codes ont été connectés");
     }
 
-    public function desactiveAllCode($idHotesse)
+    public function desactiveAllCode($idAdmin)
     {
-        $codes = Code::where("hotesse_id","=",$idHotesse)->get();
+        $codes = Code::where("Admin_id","=",$idAdmin)->get();
         foreach ($codes as $code)
             $this->activeCodePv($code,false);
 
@@ -165,8 +246,11 @@ class CodeController extends Controller
 
     private function activeCodePv(Code $code,$active)
     {
-        $code->active =$active;
-        $code->save();
+        if($code->hotesse != null && $code->active) {
+            $code->dispo = $active;
+            $code->derniere_connection = date_create();
+            $code->save();
+        }
     }
 
 
@@ -182,29 +266,26 @@ class CodeController extends Controller
         catch (QueryException $e)
         {
             $bag = new MessageBag();
-            $bag->add("err","une erreur s'est produite pendant la suppression");
+            ///$bag->add("err","une erreur s'est produite pendant la suppression");
+            $bag->add("err",$e->getMessage());
 
             return redirect()->route("getUpdateCode",["id"=>$id])->withErrors($bag);
         }
     }
 
 
-    public function APIget($cle,$id)
+    public function APIget(Request $request,$code)
     {
-        if(API::where('cle',"=", $cle)->count() == 0)
-            return response()->json(['error' => 'Not authorized.'],403);
+        $api = $this->loginApi($request);
 
-        $code = Code::find($id);
+        if (!$api instanceof API)
+            return $api;
+
+        $code = Code::where("code","=",$code)->where("admin_id","=",$api->admin_id)->first();
         if($code==null)
             return response()->json(null);
 
-        $listePhoto = array();
-        foreach ($code->photo as $photo)
-        {
-            $url=url(elixir("assets/images/users/".$photo->file.".jpg"));
-            array_push($listePhoto,$url);
-        }
 
-        return response()->json(["code"=>$code->code,"description"=>$code->description,"statut"=>$code->dispo,"active"=>$code->active,"photo"=>$listePhoto]);
+        return response()->json(["code"=>$code->code,"pseudo"=>$code->pseudo,"description"=>$code->description,"photo"=>$code->getPhoto!=null?url(elixir("images/catalog/".$code->getPhoto->file)):null,"statut"=>$code->dispo?"Connecter":"Déconnecter","annonce"=>$code->annonce!=null ? url(elixir("audio/annonce/".$code->annonce->file)) : null]);
     }
 }

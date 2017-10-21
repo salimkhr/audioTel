@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Admin;
+use App\API;
 use App\Hotesse;
 use App\Http\Controllers\Controller;
 use Illuminate\Contracts\Session\Session;
@@ -52,7 +53,11 @@ class LoginController extends Controller
         {
             Auth::shouldUse("web_admin");
             Auth::login($admin);
-            return redirect()->route("home");
+            $admin=Admin::find(Auth::id());
+            $admin->co=1;
+            $admin->derniere_connection=date_create();
+            $admin->save();
+            return redirect()->route("activite");
         }
 
         $hotesse= Hotesse::where('name',$request->input('name'))->where('password',hash('sha512',$request->input('password')))->first();
@@ -86,4 +91,11 @@ class LoginController extends Controller
         Auth::logout();
         return redirect()->route("login");
     }
+
+    public function resetPassword(Request $request)
+    {
+        if(!$this->testLogin())
+            return redirect()->route("login");
+    }
+
 }

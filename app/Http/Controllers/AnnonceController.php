@@ -27,12 +27,20 @@ class AnnonceController extends Controller
 
     public function index(){
 
-        $annonces=$codes=null;
+        $annonces=[];
+        $codes=null;
 
         if(Auth::user() instanceof Hotesse)
         {
             $codesTmp = Code::where("hotesse_id","=",Auth::id())->get();
-            $annonces = Annonce::where("hotesse_id","=",Auth::id())->get();
+            $codes = Code::where("hotesse_id","=",Auth::id())->get();
+            foreach($codes as $code){
+                $annoncesTmp=Annonce::where("code","=",$code->code)->get();
+                foreach ($annoncesTmp as $annonce)
+                {
+                    array_push($annonces,$annonce);
+                }
+            }
         }
         if(Auth::user() instanceof Admin)
         {
@@ -56,14 +64,17 @@ class AnnonceController extends Controller
         $annonce->name=$request->input("name")!=null?$request->input("name"):"";
         $annonce->save();
 
-        $codes=$request->input("code");
-        foreach($codes as $idCode)
-        {
-            $code = Code::find($idCode);
-            $code->annonce_id=$id;
-            $code->save();
-        }
-        return redirect()->route("annonce")->with("message","modification effectué avec succès");
+        $code = Code::find($annonce->code);
+        $code->annonce_id=null;
+        $code->save();
+        dump($code);
+
+        $code2 = Code::find($request->input("code"));
+        $code2->annonce_id=$id;
+        $code2->save();
+        dump($code2);
+
+        //return redirect()->route("annonce")->with("message","modification effectué avec succès");
     }
 
     public function delete($id)

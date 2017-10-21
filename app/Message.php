@@ -22,4 +22,19 @@ class Message extends Model
     {
         return $this->belongsTo("App\Client");
     }
+
+    public function getCode()
+    {
+        return $this->belongsTo("App\Code","code");
+    }
+
+    public function photo()
+    {
+        return $this->belongsTo('App\PhotoHotesse','photoHotesse_id');
+    }
+
+    public function annonce()
+    {
+        return $this->belongsTo('App\Annonce');
+    }
 }

@@ -9,7 +9,7 @@
             @if(Auth::user() instanceof \App\Admin)
                 Admin
             @else
-                Hôtesse
+                Hotesse
             @endif
         </a>
     </li>
@@ -25,73 +25,73 @@
             </div>
         </div>
     @endif
+
     <div class="row">
         <div class="col-md-3 col-sm-6">
             <!-- START WIDGET MESSAGES -->
             <div class="widget widget-default widget-item-icon" onclick="location.href='#';">
                 <div class="widget-item-left">
-                    <span class="fa fa-hourglass-end"></span>
+                    <span class="fa fa-envelope"></span>
                 </div>
                 <div class="widget-data">
-                    <div class="widget-int num-count">{{$dureeAppel}} min</div>
-                    <div class="widget-title">durée d'appel</div>
+                    <div class="widget-int num-count">48</div>
+                    <div class="widget-title">New messages</div>
+                    <div class="widget-subtitle">In your mailbox</div>
                 </div>
             </div>
             <!-- END WIDGET MESSAGES -->
         </div>
         <div class="col-md-3 col-sm-6">
-            <!-- START WIDGET MESSAGES -->
-            <div class="widget widget-default widget-item-icon" onclick="location.href='#';">
+
+            <!-- START WIDGET REGISTRED -->
+            <div class="widget @if($nbHotesseCo >2) widget-default  @else widget-danger @endif widget-item-icon" onclick="location.href='#';"><!---->
                 <div class="widget-item-left">
-                    <span class="fa fa-phone"></span>
+                    <span class="fa fa-user"></span>
                 </div>
                 <div class="widget-data">
-                    <div class="widget-int num-count">{{$nbAppel}}</div>
-                    <div class="widget-title">Nombre d'appels</div>
+                    <div class="widget-int num-count">{{$nbHotesseCo}}</div>
+                    <div class="widget-title">Hôtesse</div>
+                    <div class="widget-subtitle">connectées en ce moment</div>
                 </div>
             </div>
-            <!-- END WIDGET MESSAGES -->
+            <!-- END WIDGET REGISTRED -->
+
         </div>
         <div class="col-md-3 col-sm-6">
-            <!-- START WIDGET MESSAGES -->
-            <div class="widget widget-default widget-item-icon" onclick="location.href='#';">
-                <div class="widget-item-left">
-                    <span class="fa fa-hourglass-half"></span>
-                </div>
-                <div class="widget-data">
-                    <div class="widget-int num-count">@if($nbAppel!=0){{number_format($dureeAppel/$nbAppel,2)}} @else 0 @endif min</div>
-                    <div class="widget-title">Durée moyenne d'un appel</div>
+            <div class="widget widget-default widget-carousel">
+                <div class="owl-carousel" id="owl-example">
+                    <div>
+                        <div class="widget-title">Nombre de minutes</div>
+                        <div class="widget-subtitle">Aujourd'hui</div>
+                        <div class="widget-int">{{$dureeAppel}}</div>
+                    </div>
+                    <div>
+                        <div class="widget-title">Nombre d'appels</div>
+                        <div class="widget-subtitle">Aujourd'hui</div>
+                        <div class="widget-int">{{$nbAppel}}</div>
+                    </div>
+                    <div>
+                        <div class="widget-title">Moyenne minutes</div>
+                        <div class="widget-subtitle"> </div>
+                        <div class="widget-int">@if($nbAppel != 0) {{$nbAppel/$dureeAppel}} @else 0 @endif</div>
+                    </div>
                 </div>
             </div>
-            <!-- END WIDGET MESSAGES -->
         </div>
         <div class="col-md-3 col-sm-6">
-            <!-- START WIDGET MESSAGES -->
-            <div class="widget widget-default widget-item-icon" onclick="location.href='#';">
-                <div class="widget-item-left">
-                    <span class="fa fa-money"></span>
-                </div>
-                <div class="widget-data">
-                    <div class="widget-int num-count">{{$ca}} €</div>
-                    <div class="widget-title">Chiffre d'affaire</div>
-                </div>
+
+            <!-- START WIDGET CLOCK -->
+            <div class="widget widget-info">
+                <div class="widget-big-int plugin-clock">00:00</div>
+                <div class="widget-subtitle plugin-date">Loading...</div>
             </div>
-            <!-- END WIDGET MESSAGES -->
+            <!-- END WIDGET CLOCK -->
+
         </div>
     </div>
-    <!-- END WIDGETS -->
     <div class="row">
         <div class="col-md-{{$hotesses != null ? "9":"12"}}">
             <div class="panel panel-default">
-                <div class="panel-heading">
-
-                    <div class="col-md-5"><input type="date" id="debut" class="form-control datepicker" value="{{date_format(date_create($debut), 'Y-m-d')}}"></div>
-                    <div class="col-md-5"><input type="date" id="fin" class="form-control datepicker" value="{{date_format(date_create($fin), 'Y-m-d')}}"></div>
-
-                    <div class="col-md-2">
-                        <button class="btn btn-primary" id="periode">valider</button>
-                    </div>
-                </div>
                 <div class="panel-body">
                     <table class="table datatable" data-page-length="25" data-order="[[2, 'asc' ]]">
                         <thead>
@@ -104,7 +104,6 @@
                             @if(Auth::guard('web_admin')->check())<th>Client</th>@endif
                             @if(Auth::guard('web_admin')->check())<th>Hôtesse</th>@endif
                             <th>Enregistrement</th>
-                            @if(Auth::user() instanceof \App\Hotesse)<th>Envoyer un message</th>@endif
                             <th>CA</th>
                         </tr>
                         </thead>
@@ -115,11 +114,10 @@
                                 <td>{{date_format(date_create($appel->fin), 'd/m/Y H:i:s')}}</td>
                                 <td>{{date_diff(date_create($appel->debut),date_create($appel->fin))->format('%I:%S')}}</td>
                                 <td>@if(Auth::guard('web')->check() && $appel->appellant != "ANONYME"){{substr($appel->appellant,0,5).'*****'}}@else{{$appel->appellant}}@endif </td>
-                                <td>@isset($appel->getcode)<a href="{{route("getUpdateCode",["id"=>$appel->getcode])}}">{{$appel->getcode->pseudo}} ({{$appel->code}})</a>@endisset</td>
+                                <td>@isset($appel->code)<a href="{{route("getUpdateCode",["id"=>$appel->getcode])}}">{{$appel->getcode->pseudo}} ({{$appel->code}})</a>@endisset</td>
                                 @if(Auth::user() instanceof \App\Admin)<td>@isset($appel->getClient)<a href="{{route("getClient",["id"=>$appel->getClient->id])}}">{{$appel->getClient->code}}</a>@endisset</td>@endif
                                 @if(Auth::guard('web_admin')->check())<td>@isset($appel->hotesse)<a href="{{route("hotesseAdmin",["id"=>$appel->hotesse->id])}}">{{$appel->hotesse->name}}</a>@endisset</td>@endif
                                 <td><button class="btn btn-primary btn-rounded" @if($appel->file == "NULL") disabled @else id="btn-{{$appel->file}}" @endif><i class="fa fa-play" onclick="play('{{$appel->file}}')"></i></button></td>
-                                @if(Auth::user() instanceof \App\Hotesse)<td><a href="{{route("newMessage",["appel"=>$appel->id])}}" role="button" class="btn btn-primary btn-rounded @if($appel->appellant == "ANONYME") disabled @endif" ><i class="fa fa-comment"></i></a></td>@endif
                                 <td>@isset($appel->tarif->prixMinute){{(date_diff(date_create($appel->debut),date_create($appel->fin))->format('%i')*$appel->tarif->prixMinute)." €"}}@else NC @endisset</td>
                             </tr>
                         @endforeach
@@ -133,7 +131,7 @@
             <div class="col-md-3">
                 <div class="panel panel-default"  style="max-height: 46vh; overflow: auto;">
                     <div class="panel-heading ui-draggable-handle">
-                        <h3 class="panel-title">Codes connectés</h3>
+                        <h3 class="panel-title">Hôtesses connectées</h3>
                     </div>
                     <div class="panel-body list-group list-group-contacts">
                         @foreach ($hotesses as $hotesse)
@@ -158,7 +156,7 @@
                 @endif
 
                 @foreach ($appels as $appel)
-                    @if($appel->file != "NULL" && $appel->file != null)
+                    @if($appel->file != "NULL" && $appel->file != null )
                         <audio id="audio-{{$appel->file}}" src="{{url(elixir("audio/log_appel/".$appel->file.".mp3"))}}" onended="stop('{{$appel->file}}')"></audio>
                     @endif
                 @endforeach
@@ -167,25 +165,6 @@
 @endsection
 @section("script")
     <script>
-        $("#periode").click(function () {
-            d =new Date($("#debut").val());
-            f =new Date($("#fin").val());
-            @if($debut == null)
-                window.location.href+="/"+formatDate(d)+"/"+formatDate(f)
-                    @else
-            var href = window.location.href.split("/");
-            newHref="";
-            for(i=0;i<href.length-2;i++)
-                newHref+=href[i]+"/"
-            window.location.href=newHref+formatDate(d)+"/"+formatDate(f)
-            @endif
-        })
-
-        function formatDate(d) {
-            return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate();
-        }
-
-
         $('.datatable').DataTable({
             "order": [[ 0, 'desc' ]]
         });

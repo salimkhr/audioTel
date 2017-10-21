@@ -1,15 +1,4 @@
 @extends('layouts.base')
-@section('title')
-    <li>
-        <a href="{{route('home')}}">
-            @if(Auth::user() instanceof \App\Admin)
-                Admin
-            @else
-                Hotesse
-            @endif
-        </a>
-    </li>
-@endsection
 
 @section('breadcrumb')
     <li>
@@ -17,7 +6,7 @@
             @if(Auth::user() instanceof \App\Admin)
                 Admin
             @else
-                Hotesse
+                Hôtesse
             @endif
         </a>
     </li>
@@ -86,19 +75,65 @@
     </div>
     <!-- END WIDGETS -->
     <div class="row">
+        <div class="col-md-3">
+
+            <div class="panel panel-default">
+                <div class="panel-body profile">
+                    <div class="profile-image">
+                        <img src="{{url(elixir("images/catalog/".$hotesse->photo->file))}}" alt="{{$hotesse->name}}">
+                    </div>
+                    <div class="profile-data">
+                        <div class="profile-data-name">{{$hotesse->name}}</div>
+                        <div class="profile-data-title">{{($hotesse->co)?"Connecté":"Déconnecté"}}</div>
+                    </div>
+                </div>
+                <div class="panel-body list-group border-bottom">
+                    <a href="{{route('getUpdateHotesse',["id"=>$hotesse->id])}}" class="list-group-item"><span class="fa fa-pencil"></span> Modifier</a>
+                    <a href="{{route('activeHotesse',["id"=>$hotesse->id])}}" class="list-group-item"><span class="fa fa-ban"></span> {{$hotesse->active?"Désaciver":"Activer"}}</a>
+                    <a href="#" class="list-group-item mb-control" data-box="#message-box-delete"><span class="fa fa-trash-o"></span> Supprimer</a>
+                </div>
+                <div class="panel-body">
+                    <h4 class="text-title">Code</h4>
+                    <div class="row">
+                        @foreach($hotesse->code as $code)
+                        @if($loop->iteration %3==1)
+                        <div class="row">
+
+                        </div>
+                            @endif
+                        <div class="col-md-4 col-xs-4">
+                            <a href="{{route("reportingCode",["id"=>$code->code])}}" class="friend">
+                                <img src="{{url(elixir("images/catalog/".$code->getPhoto->file))}}">
+                                <span>{{$code->pseudo." (".$code->code.")"}}</span>
+                            </a>
+                        </div>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+
+        </div>
         <div class="col-md-9 col-sm-12">
             <div class="panel panel-default">
+                <div class="panel-heading">
+
+                    <div class="col-md-5"><input type="date" id="debut" class="form-control datepicker" value="{{date_format(date_create($debut), 'Y-m-d')}}"></div>
+                    <div class="col-md-5"><input type="date" id="fin" class="form-control datepicker" value="{{date_format(date_create($fin), 'Y-m-d')}}"></div>
+
+                    <div class="col-md-2">
+                        <button class="btn btn-primary" id="periode">valider</button>
+                    </div>
+                </div>
                 <div class="panel-body">
                     <table class="table datatable">
                         <thead>
                         <tr>
-                            <th>début</th>
-                            <th>fin</th>
+                            <th>Début</th>
+                            <th>Fin</th>
                             <th>Durée</th>
-                            <th>appelant</th>
-                            <th>appelé</th>
-                            {{Auth::guard('web_admin')->check()}}
-                            @if(Auth::guard('web_admin')->check())<th>Hôtesse</th>@endif
+                            <th>Appelant</th>
+                            <th>Code</th>
+                            @if(Auth::guard('web_admin')->check())<th>Client</th>@endif
                             <th>Enregistrement</th>
                             <th>CA</th>
                         </tr>
@@ -109,46 +144,18 @@
                                 <td>{{date_format(date_create($appel->debut), 'd/m/Y H:i:s')}}</td>
                                 <td>{{date_format(date_create($appel->fin), 'd/m/Y H:i:s')}}</td>
                                 <td>{{date_diff(date_create($appel->debut),date_create($appel->fin))->format('%I:%S')}}</td>
-                                <td>@if(Auth::guard('web')->check() && $appel->appellant != "ANONYME"){{substr($appel->appellant,0,4).'******'}}@else{{$appel->appellant}}@endif </td>
-                                <td>@isset($appel->hotesse){{$appel->hotesse->tel}}@endisset</td>
-                                @if(Auth::guard('web_admin')->check())<td>@isset($appel->hotesse)<a href="{{route("getHotesse",["id"=>$appel->hotesse->id])}}">{{$appel->hotesse->name}}</a>@endisset</td>@endif
-                                <td><button class="btn btn-success" @if($appel->file == "NULL") disabled @else id="btn-{{$appel->file}}" @endif><i class="fa fa-play" onclick="play('{{$appel->file}}')"></i></button></td>
-                                <td>@isset($appel->tarif->prixMinute){{date_diff(date_create($appel->debut),date_create($appel->fin))->format('%i')*$appel->tarif->prixMinute}}@endisset</td>
+                                <td>@if(Auth::guard('web')->check() && $appel->appellant != "ANONYME"){{substr($appel->appellant,0,5).'*****'}}@else{{$appel->appellant}}@endif </td>
+                                <td>@isset($appel->code)<a href="{{route("reportingCode",["id"=>$appel->getcode])}}">{{$appel->getcode->pseudo}} ({{$appel->code}})</a>@endisset</td>
+                                @if(Auth::user() instanceof \App\Admin)<td>@isset($appel->client)<a href="{{route("getClient",["id"=>$appel->client->id])}}">{{$appel->client->code}}</a>@endisset</td>@endif
+                                <td><button class="btn btn-primary btn-rounded" @if($appel->file == "NULL") disabled @else id="btn-{{$appel->file}}" @endif><i class="fa fa-play" onclick="play('{{$appel->file}}')"></i></button></td>
+                                <td>@isset($appel->tarif->prixMinute){{(date_diff(date_create($appel->debut),date_create($appel->fin))->format('%i')*$appel->tarif->prixMinute)." €"}}@else NC @endisset</td>
                             </tr>
                         @endforeach
                         </tbody>
                     </table>
                 </div>
-                <div class="panel-footer">
-                    <button type="button" class="btn btn-danger mb-control pull-right" data-box="#message-box-delete">Supprimer</button>
-                    <a href="{{route('activeHotesse',["id"=>$hotesse->id])}}" role="button" class="btn btn-warning pull-right">{{$hotesse->active?"Désaciver":"Activer"}}</a>
-                    <a href="{{route('getUpdateHotesse',["id"=>$hotesse->id])}}" role="button" class="btn btn-primary pull-right">Modifier</a>
-                </div>
             </div>
             <!-- END DEFAULT DATATABLE -->
-        </div>
-        <div class="col-md-3 col-sm-12">
-            <!-- CONTACT ITEM -->
-            <div class="panel panel-default">
-                <div class="panel-body profile">
-                    <div class="profile-image">
-                        <img src="{{url(elixir("images/catalog/hotesse/".$hotesse->photo->file))}}" alt="{{$hotesse->name}}" title="{{$hotesse->name}}">
-                    </div>
-                    <div class="profile-data">
-                        <div class="profile-data-name">{{$hotesse->name}}</div>
-                        <div class="profile-data-title">{{($hotesse->co)?"Connecté":"Déconnecté"}}</div>
-                    </div>
-                </div>
-                <div class="panel-body">
-                    <div class="contact-info">
-                        <p><small>Tel</small><br>{{$hotesse->tel}}</p>
-                        <p><small>Dérniere connection</small><br>{{date_format(date_create($hotesse->derniere_connection), 'd/m/Y H:i:s')}}</p>
-                        <p><small>Code</small><br><a href="{{route("codeHotesse",["id"=>$hotesse->id])}}">Liste des codes hôtesse</a></p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- END CONTACT ITEM -->
         </div>
     </div>
     @foreach ($appels as $appel)
@@ -189,15 +196,26 @@
 @endsection
 @section('script')
     <script>
-        function play(file) {
-            console.log($("#"+file));
-            $("#btn-"+file).prop('disabled', true);
-            $("#audio-"+file).get(0).play();
+        $("#periode").click(function () {
+            d =new Date($("#debut").val());
+            f =new Date($("#fin").val());
+            @if($debut == null)
+                window.location.href+="/"+formatDate(d)+"/"+formatDate(f)
+                    @else
+            var href = window.location.href.split("/");
+            newHref="";
+            for(i=0;i<href.length-2;i++)
+                newHref+=href[i]+"/"
+            window.location.href=newHref+formatDate(d)+"/"+formatDate(f)
+            @endif
+        })
+
+        function formatDate(d) {
+            return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate();
         }
 
-        function stop(file) {
-            console.log($("#"+file));
-            $("#btn-"+file).prop('disabled', false);
-        }
+        $('.datatable').DataTable({
+            "order": [[ 0, 'desc' ]]
+        });
     </script>
 @endsection

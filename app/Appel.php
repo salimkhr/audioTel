@@ -27,4 +27,9 @@ class Appel extends Model
     {
         return $this->belongsTo('App\Tarif',"pays");
     }
+
+    public function getClient()
+    {
+        return $this->belongsTo('App\Client',"client_id");
+    }
 }

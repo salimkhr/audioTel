@@ -7,69 +7,92 @@
             @if(Auth::guard("web_admin")->id())
                 Admin
             @else
-                Hotesse
+                Hôtesse
             @endif
         </a>
     </li>
-    <li class="active">Hotesse</li>
+    <li class="active">Hôtesse</li>
 @endsection
 
 @section('content')
-    <div class="row">
-        <div class="col-md-12">
-
-            <!-- START DEFAULT DATATABLE -->
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h3 class="panel-title">Default</h3>
-                    <ul class="panel-controls">
-                        <li><a href="#" class="panel-collapse"><span class="fa fa-angle-down"></span></a></li>
-                        <li><a href="#" class="panel-refresh"><span class="fa fa-refresh"></span></a></li>
-                        <li><a href="#" class="panel-remove"><span class="fa fa-times"></span></a></li>
-                    </ul>
-                </div>
-                <div class="panel-body">
-                    <table class="table table-striped table-hover datatable">
-                        <thead>
-                        <tr>
-                            <th>Nom</th>
-                            <th>Activer</th>
-                            <th>Statut</th>
-                            <th>Derniére connexion</th>
-                            <th>Modifier</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($hotesses as $hotesse)
-                                <tr>
-                                    <td><a href="{{route("getHotesse",[$hotesse->id])}}" >{{$hotesse->name}}</a></td>
-                                    <td><span class="{{($hotesse->active)?"text-success":"text-danger"}}">{{($hotesse->active)?"activer":"désactiver"}}</span></td>
-                                    <td>@switch($hotesse->co)
-                                            @case(1)
-                                                <span class="text-info">Connectée</span>
-                                            @break
-                                            @case(2)
-                                                <span class="text-success">En ligne</span>
-                                            @break
-                                            @case(3)
-                                                <span class="text-warning">En attente</span>
-                                            @break
-                                            @default
-                                                <span class="text-danger">Déconnecter</span>
-                                        @endswitch
-
-                                    </td>
-                                    <td>@if($hotesse->derniere_connection!=null){{date_format(date_create($hotesse->derniere_connection), 'd/m/Y H:i:s')}}@endif</td>
-                                    <td><a href="{{route("getUpdateHotesse",["id"=>$hotesse["id"]])}}" role="button" class="btn btn-success"><i class="fa fa-pencil" aria-hidden="true"></i> Modifier</a></td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-                <div class="panel-footer">
-                    <a href="{{route('getNewHotesse')}}" role="button" class="btn btn-primary pull-right">Ajouter un hôtesse</a>
-                </div>
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <div class="input-group">
+                <input type="search" class="form-control"  placeholder="rechercher" id="search" value="{{$search}}">
+                <div class="input-group-addon"><i class="fa fa-search"></i> </div>
             </div>
         </div>
+        <div class="panel-body">
+            <div class="row">
+                @foreach ($hotesses as $hotesse)
+                    <div class="col-md-3">
+                        <!-- CONTACT ITEM -->
+                        <div class="panel panel-default">
+                            <div class="panel-body profile">
+                                <div class="profile-image">
+                                    <a href="{{route("hotesseAdmin",["id"=>$hotesse->id])}}">
+                                        <img src="{{url(elixir("images/catalog/".$hotesse->photo->file))}}" alt="{{$hotesse->name}}" style="max-width: 100px; height: 100px;">
+                                    </a>
+                                </div>
+                                <div class="profile-data">
+                                    <div class="profile-data-name"> <a href="{{route("hotesseAdmin",["id"=>$hotesse->id])}}"> <span style="color: white">{{$hotesse->name}}</span></a></div>
+                                </div>
+                                <div class="profile-controls">
+                                    <a href="{{route("hotesseAdmin",["id"=>$hotesse->id])}}" class="profile-control-left"><span class="fa fa-info"></span></a>
+                                    <a href="#" class="profile-control-right"><span class="fa fa-comment"></span></a>
+                                </div>
+                            </div>
+                            <div class="panel-body">
+                                <div class="contact-info">
+                                    <p><small>Disponible</small><br><span class="{{($hotesse->dispo)?"text-success":"text-danger"}}">{{($hotesse->dispo)?"Disponible":"Indisponible"}}</span></p>
+                                    <p><small>Dernière connexion</small><br><span>@if($hotesse->derniere_connection){{date_format(date_create($hotesse->derniere_connection), 'd/m/Y H:i:s')}}@else code jamais connecté@endif</span></p>
+                                    <p><small>Statut</small><br><span class="{{($hotesse->active)?"text-success":"text-danger"}}">{{($hotesse->active)?"activé":"désactivé"}}</span></p>
+                                </div>
+                            </div>
+                            <div class="panel-footer">
+                                <a href="{{route("activeHotesse",["id"=>$hotesse->id])}}" role="button" class="btn btn-block {{($hotesse->active)?"btn-warning":"btn-success" }}">{{($hotesse->active)?"désactiver":"activer" }}</a>
+                            </div>
+                        </div>
+                        <!-- END CONTACT ITEM -->
+                    </div>
+
+                @endforeach
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="pull-right">
+                        <ul class="pagination pagination-sm">
+                                <li @if($page == 1)  class="disabled" @endif><a href="{{route(Route::currentRouteName(),["page"=>$page-1,"idAdmin"=>$idAdmin,"search"=>$search])}}">«</a></li>
+                                @for ($i = 1; $i <=$nbCode; $i++)
+                                    <li @if($i == $page)class="active"@endif><a href="{{route(Route::currentRouteName(),["page"=>$i,"idAdmin"=>$idAdmin,"search"=>$search])}}">{{$i}}</a></li>
+                                @endfor
+                                <li @if($page == $nbCode)  class="disabled" @endif><a href="{{route(Route::currentRouteName(),["page"=>$page+1,"idAdmin"=>$idAdmin,"search"=>$search])}}">»</a></li>
+                        </ul>
+                        @if(Auth::user() instanceof \App\Admin)<a href="{{route('getNewHotesse')}}" role="button" class="btn btn-primary" style="margin-top: -22px;">Ajouter une hôtesse</a>@endif
+                    </div>
+                </div>
+            </div>
+
+        </div>
     </div>
+@endsection
+@section("script")
+    <script>
+        $(".fa-search").click(function(){
+            redirect();
+        });
+        $("#search").keyup(function(e){
+            if(e.keyCode == 13)
+            {
+                redirect();
+            }
+        }).onblur(function(){
+            redirect();
+        });
+
+        function redirect() {
+            window.location.href="{{route("hotesse",["page"=>1,"idAdmin"=>$idAdmin])}}/"+$("#search").val();
+        }
+    </script>
+
 @endsection

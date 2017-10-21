@@ -24,8 +24,8 @@ class CodeRequest extends FormRequest
     public function rules()
     {
         if($this->segment(3)=="new")
-            return ['code' => 'required|integer|unique:code','pseudo'=> 'required',"annonce_id"=>"required"];
+            return ['code' => 'required|integer|unique:code','pseudo'=> 'required'];
         else
-            return ['code' => 'required|integer','pseudo'=> 'required',"annonce_id"=>"required"];
+            return ['code' => 'required|integer','pseudo'=> 'required'];
     }
 }
