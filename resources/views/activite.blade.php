@@ -25,7 +25,6 @@
             </div>
         </div>
     @endif
-
     <div class="row">
         <div class="col-md-3 col-sm-6">
             <!-- START WIDGET MESSAGES -->
@@ -73,7 +72,7 @@
                     <div>
                         <div class="widget-title">Moyenne minutes</div>
                         <div class="widget-subtitle"> </div>
-                        <div class="widget-int">@if($nbAppel != 0) {{$nbAppel/$dureeAppel}} @else 0 @endif</div>
+                        <div class="widget-int">@if($dureeAppel != 0) {{number_format($nbAppel/$dureeAppel,2)}} @else 0 @endif</div>
                     </div>
                 </div>
             </div>

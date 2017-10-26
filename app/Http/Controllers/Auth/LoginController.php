@@ -6,6 +6,7 @@ use App\Admin;
 use App\API;
 use App\Hotesse;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\PasswordRequest;
 use Illuminate\Contracts\Session\Session;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
@@ -40,10 +41,10 @@ class LoginController extends Controller
      *
      * @return void
      */
-    public function __construct()
+    /*public function __construct()
     {
         $this->middleware('guest')->except('logout');
-    }
+    }*/
 
     public function login(Request $request)
     {
@@ -96,6 +97,30 @@ class LoginController extends Controller
     {
         if(!$this->testLogin())
             return redirect()->route("login");
+    }
+
+    public function updatePassword(PasswordRequest $request)
+    {
+        if(!$this->testLogin())
+            return redirect()->route("login");
+
+        if($request->has("idHotesse"))
+            $auth = Hotesse::find($request->input("idHotesse"));
+        else
+            $auth = Auth::user();
+
+        if($auth->password != hash('sha512',$request->input("oldPassword")))
+        {
+            $bag = new MessageBag();
+            $bag->add("oldPassword","login/mot de passe incorrect");
+            return redirect()->back()->withInput(["name"=>$request->input('name')])->withErrors($bag);
+        }
+        else
+        {
+            $auth->password = hash('sha512',$request->input("newPassword"));
+            $auth->save();
+            return  redirect()->back()->with("message","mot de passe modifié");
+        }
     }
 
 }

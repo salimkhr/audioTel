@@ -50,6 +50,7 @@ Route::post('/client/new/', 'ClientController@postFormClient')->name('postNewCli
 Route::post('/client/update/{id}', 'ClientController@postFormClient')->name('postUpdateClient');
 Route::get('/client/active/{id}','ClientController@activeClient')->name('activeClient');
 Route::get('/client/{id}/', 'ClientController@getClient')->name('getClient');
+Route::get('/client/delete/{id}','ClientController@delete')->name('deleteClient');
 
 Route::get('/admin/', 'AdminController@admin')->name('admin');
 Route::get('/admin/new', 'AdminController@getFormAdmin')->name('getNewAdmin');
@@ -63,11 +64,12 @@ Route::get('/activite/', 'AdminController@activite')->name('activite');
 
 Route::get('/api/', 'APIController@index')->name('api');
 Route::get('/api/new', 'APIController@getFormAPI')->name('getNewAPI');
+Route::get('/api/regenere/{id}', 'APIController@regenereAPI')->name('regenereAPI');
 Route::post('/api/new', 'APIController@postFormAPI')->name('postNewAPI');
-Route::get('/api/upadte/{id}', 'APIController@getFormAPI')->name('getUpdateAPI');
-Route::post('/api/upadte/{id}', 'APIController@postFormAPI')->name('postUpdateAPI');
-Route::get('/api/active/{id}','APIController@activeAPI')->name('activeAPI');
-Route::get('/api/delete/{id}','APIController@activeAPI')->name('deleteAPI');
+Route::get('/api/upadte/{ida}', 'APIController@getFormAPI')->name('getUpdateAPI');
+Route::post('/api/upadte/{ida}', 'APIController@postFormAPI')->name('postUpdateAPI');
+Route::get('/api/active/{ida}','APIController@activeAPI')->name('activeAPI');
+Route::get('/api/delete/{ida}','APIController@deleteAPI')->name('deleteAPI');
 
 Route::post('/photo/add/code', 'PhotoController@postFormPhotoCode')->name('postNewPhotoCode');
 Route::post('/photo/add/hotesse/{id?}', 'PhotoController@postFormPhotoHotesse')->name('postNewPhotoHotesse');
@@ -84,6 +86,8 @@ Route::get('/logout/', 'Auth\LoginController@logout')->name('logout');
 Route::post('/resetPassword/', 'Auth\LoginController@resetPassword')->name('logout');
 
 Route::get('reporting/admin/{debut?}/{fin?}','HomeController@index')->name('home');
+Route::post('updatePassword/','Auth\LoginController@updatePassword')->name('UpdatePassword');
+
 Auth::routes();
 
 Route::get('/', function() {

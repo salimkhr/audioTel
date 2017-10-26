@@ -17,9 +17,11 @@
 @section('content')
     <div class="panel panel-default">
         <div class="panel-heading">
-            <div class="input-group">
-                <input type="search" class="form-control"  placeholder="rechercher" id="search" value="{{$search}}">
-                <div class="input-group-addon"><i class="fa fa-search"></i> </div>
+            <div class="col-md-6">
+                <div class="input-group">
+                    <input type="search" class="form-control"  placeholder="rechercher" id="search" value="{{$search}}">
+                    <div class="input-group-addon"><i class="fa fa-search"></i> </div>
+                </div>
             </div>
         </div>
         <div class="panel-body">
@@ -62,11 +64,11 @@
                 <div class="col-md-12">
                     <div class="pull-right">
                         <ul class="pagination pagination-sm">
-                                <li @if($page == 1)  class="disabled" @endif><a href="{{route(Route::currentRouteName(),["page"=>$page-1,"idAdmin"=>$idAdmin,"search"=>$search])}}">«</a></li>
-                                @for ($i = 1; $i <=$nbCode; $i++)
-                                    <li @if($i == $page)class="active"@endif><a href="{{route(Route::currentRouteName(),["page"=>$i,"idAdmin"=>$idAdmin,"search"=>$search])}}">{{$i}}</a></li>
-                                @endfor
-                                <li @if($page == $nbCode)  class="disabled" @endif><a href="{{route(Route::currentRouteName(),["page"=>$page+1,"idAdmin"=>$idAdmin,"search"=>$search])}}">»</a></li>
+                            <li @if($page == 1)  class="disabled" @endif><a href="{{route(Route::currentRouteName(),["page"=>$page-1,"idAdmin"=>$idAdmin,"search"=>$search])}}">«</a></li>
+                            @for ($i = 1; $i <=$nbCode; $i++)
+                                <li @if($i == $page)class="active"@endif><a href="{{route(Route::currentRouteName(),["page"=>$i,"idAdmin"=>$idAdmin,"search"=>$search])}}">{{$i}}</a></li>
+                            @endfor
+                            <li @if($page == $nbCode)  class="disabled" @endif><a href="{{route(Route::currentRouteName(),["page"=>$page+1,"idAdmin"=>$idAdmin,"search"=>$search])}}">»</a></li>
                         </ul>
                         @if(Auth::user() instanceof \App\Admin)<a href="{{route('getNewHotesse')}}" role="button" class="btn btn-primary" style="margin-top: -22px;">Ajouter une hôtesse</a>@endif
                     </div>

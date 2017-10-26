@@ -103,7 +103,7 @@
                             @endif
                         <div class="col-md-4 col-xs-4">
                             <a href="{{route("reportingCode",["id"=>$code->code])}}" class="friend">
-                                <img src="{{url(elixir("images/catalog/".$code->getPhoto->file))}}">
+                                <img src="@if($code->getPhoto != null){{url(elixir("images/catalog/".$code->getPhoto->file))}}@else {{url(elixir("images/catalog/noImage.jpg"))}} @endif">
                                 <span>{{$code->pseudo." (".$code->code.")"}}</span>
                             </a>
                         </div>

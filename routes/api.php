@@ -20,6 +20,7 @@ Route::get("/hotesses",'HotesseController@APIindex');
 Route::get("/hotesse/{id}",'HotesseController@APIget');
 Route::get("/code/{id}",'CodeController@APIget');
 Route::get("/clients",'ClientController@APIindex');
+Route::get("/client/{id}",'ClientController@APIget');
 Route::get("/client/{id}/credit",'ClientController@APIgetCredit');
 Route::post("/client/{id}/credit",'ClientController@APIpostCredit');
 Route::get("/client/{id}/call",'ClientController@APIcall');

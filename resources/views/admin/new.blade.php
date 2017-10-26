@@ -16,7 +16,7 @@
 
 @section('content')
     <div class="row">
-        <div class="col-md-12">
+        <div class="@isset($admin->id)col-md-8 @else col-md-12 @endif">
             <!-- START DEFAULT DATATABLE -->
             <div class="panel panel-default">
                 <div class="panel-body">
@@ -51,29 +51,29 @@
                             </div>
                         </div>
                         @if($admin->id == null)
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="control-label">Password</label>
-                                    <div class="input-group">
-                                        <span class="input-group-addon"><i class="fa fa-lock"></i></span>
-                                        {{ Form::password('password', array('class' => 'form-control','placeholder'=>'Mot de passe')) }}
-                                        {!! $errors->first('password', '<small class="help-block">:message</small>') !!}
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="control-label">Password</label>
+                                        <div class="input-group">
+                                            <span class="input-group-addon"><i class="fa fa-lock"></i></span>
+                                            {{ Form::password('password', array('class' => 'form-control','placeholder'=>'Mot de passe')) }}
+                                            {!! $errors->first('password', '<small class="help-block">:message</small>') !!}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <!-- name -->
+                                    <div class="form-group">
+                                        <label class="control-label">Password</label>
+                                        <div class="input-group">
+                                            <span class="input-group-addon"><i class="fa fa-lock"></i></span>
+                                            {{ Form::password('passwordConf', array('class' => 'form-control','placeholder'=>'Confirmation')) }}
+                                            {!! $errors->first('passwordConf', '<small class="help-block">:message</small>') !!}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-6">
-                                <!-- name -->
-                                <div class="form-group">
-                                    <label class="control-label">Password</label>
-                                    <div class="input-group">
-                                        <span class="input-group-addon"><i class="fa fa-lock"></i></span>
-                                        {{ Form::password('passwordConf', array('class' => 'form-control','placeholder'=>'Confirmation')) }}
-                                        {!! $errors->first('passwordConf', '<small class="help-block">:message</small>') !!}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                         @endif
                         <div class="row">
                             <div class="col-md-12">
@@ -107,5 +107,40 @@
                 </div>
             </div>
         </div>
+        @isset($admin->id)
+            <div class="col-md-4">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        {{Form::open(array('route' => array('UpdatePassword')))}}
+                        <div class="form-group {!! $errors->first('oldPassword','has-error') !!}">
+                            <label class="control-label">Ancien mot de passe</label>
+                            <div class="input-group">
+                                <span class="input-group-addon"><i class="fa fa-lock"></i> </span>
+                                {{ Form::password('oldPassword', array('class' => 'form-control')) }}
+                            </div>
+                            {!! $errors->first('oldPassword', '<strong class="help-block">Mot de passe incorrect</strong>') !!}
+                        </div>
+                        <div class="form-group {!! $errors->first('newPasswordConf','has-error') !!}">
+                            <label class="control-label">Nouveau mot de passe</label>
+                            <div class="input-group">
+                                <span class="input-group-addon"><i class="fa fa-lock"></i> </span>
+                                {{ Form::password('newPassword', array('class' => 'form-control')) }}
+                            </div>
+                            {!! $errors->first('newPasswordConf', '<strong class="help-block">Les mot de passe ne conrespondent pas</strong>') !!}
+                        </div>
+                        <div class="form-group {!! $errors->first('newPasswordConf','has-error') !!}">
+                            <label class="control-label">Confirmation du mot de passe</label>
+                            <div class="input-group">
+                                <span class="input-group-addon"><i class="fa fa-lock"></i> </span>
+                                {{ Form::password('newPasswordConf', array('class' => 'form-control')) }}
+                            </div>
+                            {!! $errors->first('newPasswordConf', '<strong class="help-block">Les mot de passe ne conrespondent pas</strong>') !!}
+                        </div>
+                        {!! Form::submit('Valider', ['class' => 'btn btn-primary pull-right']) !!}
+                        {{ Form::close() }}
+                    </div>
+                </div>
+            </div>
+        @endisset
     </div>
 @endsection

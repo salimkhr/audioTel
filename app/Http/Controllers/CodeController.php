@@ -9,6 +9,7 @@
 namespace App\Http\Controllers;
 
 
+use App\AccesAPI;
 use App\Admin;
 use App\Annonce;
 use App\API;
@@ -46,14 +47,14 @@ class CodeController extends Controller
                     array_push($listId,$admin->id);
                 }
 
-                $codes = Code::wherein("admin_id",$listId)->where("pseudo","like","%".$search."%")->orWhere("code","like","%".$search."%")->limit(8)->offset(8*($page-1))->orderByDesc("created_at")->get();
-                $nbCodes = Code::wherein("admin_id",$listId)->where("pseudo","like","%".$search."%")->orWhere("code","like","%".$search."%")->count();
+                $codes = Code::wherein("admin_id",$listId)->where("pseudo","like","%".$search."%")->orWherein("admin_id",$listId)->where("code","like","%".$search."%")->limit(8)->offset(8*($page-1))->orderByDesc("created_at")->get();
+                $nbCodes = Code::wherein("admin_id",$listId)->where("pseudo","like","%".$search."%")->orWherein("admin_id",$listId)->where("code","like","%".$search."%")->count();
 
             }
             else
             {
-                $codes= Code::where("admin_id","=",$idAdmin)->where("pseudo","like","%".$search."%")->orWhere("code","like","%".$search."%")->limit(8)->offset(8*($page-1))->orderByDesc("created_at")->get();
-                $nbCodes= Code::where("admin_id","=",$idAdmin)->where("pseudo","like","%".$search."%")->orWhere("code","like","%".$search."%")->count();
+                $codes= Code::where("admin_id","=",$idAdmin)->where("pseudo","like","%".$search."%")->orWhere("admin_id","=",$idAdmin)->where("code","like","%".$search."%")->limit(8)->offset(8*($page-1))->orderByDesc("created_at")->get();
+                $nbCodes= Code::where("admin_id","=",$idAdmin)->where("pseudo","like","%".$search."%")->orWhere("admin_id","=",$idAdmin)->where("code","like","%".$search."%")->count();
             }
         }
         else
@@ -61,8 +62,8 @@ class CodeController extends Controller
             $search = $idAdmin;
             $idAdmin=null;
 
-            $codes = Code::where("hotesse_id","=",Auth::id())->where("pseudo","like","%".$search."%")->orWhere("code","like","%".$search."%")->limit(8)->offset(8*($page-1))->orderByDesc("created_at")->get();
-            $nbCodes = Code::where("hotesse_id","=",Auth::id())->where("pseudo","like","%".$search."%")->orWhere("code","like","%".$search."%")->count();
+            $codes = Code::where("hotesse_id","=",Auth::id())->where("pseudo","like","%".$search."%")->orWhere("hotesse_id","=",Auth::id())->where("code","like","%".$search."%")->limit(8)->offset(8*($page-1))->orderByDesc("created_at")->get();
+            $nbCodes = Code::where("hotesse_id","=",Auth::id())->where("pseudo","like","%".$search."%")->orWhere("hotesse_id","=",Auth::id())->where("code","like","%".$search."%")->count();
         }
 
         if($nbCodes %8 !=0)
@@ -108,7 +109,7 @@ class CodeController extends Controller
         else {
             $code = new Code();
             do
-                $code->code=rand(0,10000);
+                $code->code=rand(1000,9999);
             while($code::find($code->code)!=null);
             $photo = PhotoHotesse::where('admin_id','=',Auth::id())->get();
         }
@@ -182,8 +183,8 @@ class CodeController extends Controller
         if(Auth::user() instanceof Admin)
             if($request->input('hotesse_id') != -1)
                 $code->hotesse_id=$request->input('hotesse_id');
-
-
+            else
+                $code->hotesse_id=null;
         $code->annonce_id=$request->input('annonce_id');
 
         $code->save();
@@ -278,14 +279,14 @@ class CodeController extends Controller
     {
         $api = $this->loginApi($request);
 
-        if (!$api instanceof API)
+        if (!$api instanceof AccesAPI)
             return $api;
 
-        $code = Code::where("code","=",$code)->where("admin_id","=",$api->admin_id)->first();
+        $code = Code::where("code","=",$code)->where("admin_id","=",$api->api->admin_id)->first();
         if($code==null)
             return response()->json(null);
 
 
-        return response()->json(["code"=>$code->code,"pseudo"=>$code->pseudo,"description"=>$code->description,"photo"=>$code->getPhoto!=null?url(elixir("images/catalog/".$code->getPhoto->file)):null,"statut"=>$code->dispo?"Connecter":"Déconnecter","annonce"=>$code->annonce!=null ? url(elixir("audio/annonce/".$code->annonce->file)) : null]);
+        return response()->json(["code"=>$code->code,"pseudo"=>$code->pseudo,"description"=>$code->description,"photo"=>$code->getPhoto!=null?url(elixir("images/catalog/".$code->getPhoto->file)):null,"statut"=>$code->dispo?"Connecté":"Déconnecté","annonce"=>$code->annonce!=null ? url(elixir("audio/annonce/".$code->annonce->file)) : null]);
     }
 }

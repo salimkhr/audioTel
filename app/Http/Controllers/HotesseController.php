@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\AccesAPI;
 use App\Admin;
 use App\API;
 use App\Code;
@@ -115,8 +116,13 @@ class HotesseController extends Controller
             $duree=date_diff(date_create($appel->debut),date_create($appel->fin))->format('%i');
             $dureeAppel+=$duree;
             $nbAppel++;
-            if(isset($appel->tarif->prixMinute))
-                $ca+=$duree*$appel->tarif->prixMinute;
+            switch ($appel->pays)
+            {
+                case "FR" : $ca+=$duree*Hotesse::find($id)->tarif_FR;break;
+                case "BE" : $ca+=$duree*Hotesse::find($id)->tarif_BE;break;
+                case "CH" : $ca+=$duree*Hotesse::find($id)->tarif_CH;break;
+            }
+
         }
 
         return view('index')->with("hotesses",Code::where("hotesse_id","=",$id)->where("dispo","=",1)->get())
@@ -161,8 +167,13 @@ class HotesseController extends Controller
             $duree=date_diff(date_create($appel->debut),date_create($appel->fin))->format('%i');
             $dureeAppel+=$duree;
             $nbAppel++;
-            if(isset($appel->tarif->prixMinute))
-                $ca+=$duree*$appel->tarif->prixMinute;
+            dump($appel->pays);
+            switch ($appel->pays)
+            {
+                case "FR" : $ca+=$duree*Hotesse::find($id)->tarif_FR;break;
+                case "BE" : $ca+=$duree*Hotesse::find($id)->tarif_BE;break;
+                case "CH" : $ca+=$duree*Hotesse::find($id)->tarif_CH;break;
+            }
         }
 
         return view('hotesse.admin')->with("hotesses",Hotesse::all())
@@ -201,11 +212,6 @@ class HotesseController extends Controller
         return view('hotesse.new')->with("hotesse",$hotesse)->with("photos",$photos)->with("password",$this->RandomString());
     }
 
-    /**
-     * @param HotesseRequest $request
-     * @param null $id
-     * @return $this|\Illuminate\Http\RedirectResponse
-     */
     public function postFormHotesse(HotesseRequest $request, $id=null)
     {
 
@@ -232,6 +238,11 @@ class HotesseController extends Controller
             $hotesse->photoHotesse_id=1;
 
         $hotesse->tel=$request->input('tel');
+
+        $hotesse->tarif_FR=$request->input('tarif_FR');
+        $hotesse->tarif_BE=$request->input('tarif_BE');
+        $hotesse->tarif_CH=$request->input('tarif_CH');
+
         if(Auth::user() instanceof Admin)
             $hotesse->admin_id=Auth::id();
         $hotesse->save();
@@ -293,15 +304,14 @@ class HotesseController extends Controller
         return view('code')->with("codes",$codes)->with("nbCode",$nbCodes)->with("page",$page)->with("hotesse",$id);
     }
 
-
     public function APIindex(Request $request)
     {
         $api = $this->loginApi($request);
 
-        if (!$api instanceof API)
+        if (!$api instanceof AccesAPI)
             return $api;
 
-        $hotesses = Hotesse::where("admin_id","=",$api->admin_id)->get();
+        $hotesses = Hotesse::where("admin_id","=",$api->api->admin_id)->get();
         $jsonHotesse = array();
 
         foreach ($hotesses as $hotesse)
@@ -314,10 +324,10 @@ class HotesseController extends Controller
     {
         $api = $this->loginApi($request);
 
-        if (!$api instanceof API)
+        if (!$api instanceof AccesAPI)
             return $api;
 
-        $hotesse = Hotesse::where("id","=",$id)->where("admin_id","=",$api->admin_id)->first();
+        $hotesse = Hotesse::where("id","=",$id)->where("admin_id","=",$api->api->admin_id)->first();
 
         if($hotesse==null)
             return response()->json(null);

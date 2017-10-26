@@ -37,9 +37,9 @@
                         @foreach ($clients as $client)
                             <tr>
                                 <td>{{$client->code}}</td>
-                                <td>{{$client->solde}}€</td>
+                                <td>{{$client->solde}} (min)</td>
                                 <td>{{$client->tel}}</td>
-                                <td>{{$client->active?"Activer":"Désaciver"}}</td>
+                                <td>{{$client->active?"Activé":"Désacivé"}}</td>
                                 <td>{{date_format(date_create($client->created_at), 'd/m/Y H:i:s')}}</td>
                                 <td>{{date_format(date_create($client->updated_at), 'd/m/Y H:i:s')}}</td>
                                 <td><a href="{{route("getClient",["id"=>$client->id])}}" class="btn btn-primary"><i class="fa fa-pencil"></i> </a></td>
@@ -54,4 +54,11 @@
             </div>
         </div>
     </div>
+@endsection
+@section("script")
+    <script>
+        $('.datatable').DataTable({
+            "order": [[ 4, 'desc' ]]
+        });
+    </script>
 @endsection

@@ -64,32 +64,14 @@ class AnnonceController extends Controller
         $annonce->name=$request->input("name")!=null?$request->input("name"):"";
         $annonce->save();
 
-        $code = Code::find($annonce->code);
-        $code->annonce_id=null;
-        $code->save();
-        dump($code);
-
-        $code2 = Code::find($request->input("code"));
-        $code2->annonce_id=$id;
-        $code2->save();
-        dump($code2);
-
-        //return redirect()->route("annonce")->with("message","modification effectué avec succès");
+        return redirect()->back()->with("message","modification effectué avec succès");
     }
 
     public function delete($id)
     {
         $annonce = Annonce::find($id);
-
-        $code=$annonce->code;
-        if($code != null)
-        {
-            $code->annonce_id=null;
-            $code->save();
-        }
-
         $annonce->delete();
-        return redirect()->route("annonce");
+        return redirect()->back()->with("message","annonce supprimé");
     }
 
 

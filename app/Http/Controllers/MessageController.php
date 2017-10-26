@@ -19,13 +19,13 @@ class MessageController extends Controller
      * Create a new controller instance.
      */
 
-    public function index($page=1)
+    public function index()
     {
         if(!$this->testLogin())
             return redirect()->route("login");
 
         $nbPages=Message::where("hotesse_id","=",Auth::id())->count();
-        $messages=Message::where("hotesse_id","=",Auth::id())->orderByDesc("created_at")->limit(10)->offset(($page-1)*10)->get();
+        $messages=Message::where("hotesse_id","=",Auth::id())->orderByDesc("created_at")->get();
         $clients=[];
 
         if($nbPages %10 !=0)
@@ -37,7 +37,7 @@ class MessageController extends Controller
             $nbPages=($nbPages/10);
         }
 
-        return view("message")->with("clients",$clients)->with("messages",$messages)->with("nbPages",$nbPages)->with("page",$page);
+        return view("message")->with("clients",$clients)->with("messages",$messages);
     }
 
     public function new($appel = null)
@@ -86,11 +86,9 @@ class MessageController extends Controller
             try {
 
                 $messageBird = new \MessageBird\Client('gFCS8VchOaRYsWeR0yf814KV0');
-                dump($messageBird);
                 $messageSend = new \MessageBird\Objects\Message();
                 $messageSend->originator = $message->hotesse->name;
-                dump($message->tel);
-                $messageSend->recipients = array($message->tel);
+                $messageSend->recipients = array(substr($message->tel,1,strlen($message->tel)));
                 $messageSend->body =$message->contenu;
 
                 $messageBird->messages->create($messageSend);

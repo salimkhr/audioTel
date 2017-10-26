@@ -138,6 +138,8 @@
 <script type="text/javascript" src="{{url(elixir('js/plugins/mcustomscrollbar/jquery.mCustomScrollbar.min.js'))}}"></script>
 <script type="text/javascript" src="{{url(elixir('js/plugins/scrolltotop/scrolltopcontrol.js'))}}"></script>
 <script type="text/javascript" src="{{url(elixir('js/plugins/datatables/jquery.dataTables.min.js'))}}"></script>
+<script type="text/javascript" src="{{url(elixir('js/plugins/intl-tel-input-master/data.js'))}}"></script>
+<script type="text/javascript" src="{{url(elixir('js/plugins/intl-tel-input-master/intlTelInput.js'))}}"></script>
 
 
 <!--<script type="text/javascript" src="{{url(elixir('js/plugins/morris/raphael-min.js'))}}"></script>

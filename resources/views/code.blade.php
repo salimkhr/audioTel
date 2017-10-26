@@ -39,7 +39,7 @@
                             <div class="panel-body profile">
                                 <div class="profile-image">
                                     <a href="{{route("reportingCode",["id"=>$code->code])}}">
-                                        <img src="@isset($code->getPhoto) {{url(elixir("images/catalog/".$code->getPhoto->file))}} @endisset" alt="{{$code->pseudo}}" style="max-width: 100px; height: 100px;">
+                                        <img src="@isset($code->getPhoto) {{url(elixir("images/catalog/".$code->getPhoto->file))}}@else{{url(elixir("images/catalog/noImage.jpg"))}}@endisset" alt="{{$code->pseudo}}" style="max-width: 100px; height: 100px;">
                                     </a>
                                 </div>
                                 <div class="profile-data">
@@ -59,7 +59,7 @@
                             <div class="panel-body">
                                 <div class="contact-info">
                                     @if(Auth::user() instanceof \App\Admin)<p><small>Hotesse</small><br>@isset($code->hotesse->name){{$code->hotesse->name}}@else <strong class="text-warning">non associé</strong>@endisset</p>@endif
-                                    <p><small>Statut</small><br><span class="{{($code->dispo)?"text-success":"text-danger"}}">{{($code->dispo)?"Connecter":"Déconnecter"}}</span></p>
+                                    <p><small>Statut</small><br><span class="{{(($code->dispo === 0)?"text-danger":"").(($code->dispo === 1)?"text-success":"").(($code->dispo === 2)?"text-warning":"")}}">{{(($code->dispo === 0)?"Déconnecté":"").(($code->dispo === 1)?"Connecté":"").(($code->dispo === 2)?"En ligne":"")}}</span></p>
                                     <p><small>Dernière connexion</small><br><span>@if($code->derniere_connection){{date_format(date_create($code->derniere_connection), 'd/m/Y H:i:s')}}@else code jamais connecté@endif</span></p>
                                 </div>
                             </div>
