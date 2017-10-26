@@ -26,7 +26,6 @@ use Illuminate\Support\MessageBag;
 
 class CodeController extends Controller
 {
-
     public function index($page=1,$idAdmin =null,$search=null)
     {
         if(!$this->testLogin())
@@ -37,7 +36,7 @@ class CodeController extends Controller
             if($idAdmin==null)
                 $idAdmin = Auth::id();
 
-            if(Auth::user()->role == "superAdmin")
+            if(Auth::user()->role == "superAdmin" && $idAdmin==Auth::id())
             {
                 $listAdmin=Admin::where("admin_id","=",Auth::id())->get(['id']);
                 $listId=[Auth::id()];
@@ -158,7 +157,6 @@ class CodeController extends Controller
             ->with("fin",$fin);
     }
 
-
     public function postFormCode(CodeRequest $request,$id=null)
     {
         if(!$this->testLogin())
@@ -254,7 +252,6 @@ class CodeController extends Controller
         }
     }
 
-
     public function deleteCode($id)
     {
         if(!$this->testLogin())
@@ -273,7 +270,6 @@ class CodeController extends Controller
             return redirect()->route("getUpdateCode",["id"=>$id])->withErrors($bag);
         }
     }
-
 
     public function APIget(Request $request,$code)
     {

@@ -140,6 +140,7 @@
 <script type="text/javascript" src="{{url(elixir('js/plugins/datatables/jquery.dataTables.min.js'))}}"></script>
 <script type="text/javascript" src="{{url(elixir('js/plugins/intl-tel-input-master/data.js'))}}"></script>
 <script type="text/javascript" src="{{url(elixir('js/plugins/intl-tel-input-master/intlTelInput.js'))}}"></script>
+<script type="text/javascript" src="{{url(elixir('js/plugins/blueimp/jquery.blueimp-gallery.min.js'))}}"></script>
 
 
 <!--<script type="text/javascript" src="{{url(elixir('js/plugins/morris/raphael-min.js'))}}"></script>

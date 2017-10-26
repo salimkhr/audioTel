@@ -25,4 +25,5 @@ Route::get("/client/{id}/credit",'ClientController@APIgetCredit');
 Route::post("/client/{id}/credit",'ClientController@APIpostCredit');
 Route::get("/client/{id}/call",'ClientController@APIcall');
 Route::post("/client/create",'ClientController@APIpost');
+Route::post("/client/{id}/update",'ClientController@APIpost');
 

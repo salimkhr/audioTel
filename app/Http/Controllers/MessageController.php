@@ -79,7 +79,43 @@ class MessageController extends Controller
 
         if($request->input("photo_id")!=null || $request->input("annonce_id")!=null)
         {
+            $url = 'https://api.smsglobal.com/mms/sendmms.php';
+            $data = array("username"=>"apercu","password"=>"vj408XKz","number"=>$message->tel);
 
+            $i=0;
+            if($request->input("photo_id")!=null)
+            {
+                $photo=PhotoHotesse::find($request->input("photo_id"));
+                $path=url(elixir('/images/catalog/'.$photo->file));
+                $data["attachment0"]=base64_encode(file_get_contents($path));
+                $data["type0"]="image/".pathinfo($path, PATHINFO_EXTENSION);
+                $data["content_name0"]=$photo->file;
+                $i++;
+            }
+            if($request->input("annonce_id")!=null)
+            {
+                $annonce=Annonce::find($request->input("annonce_id"));
+                $path=url(elixir('audio/annonce/'.$annonce->file.'.mp3'));
+                $data["attachment".$i]=base64_encode(file_get_contents($path));
+                $data["type".$i]=pathinfo($path, PATHINFO_EXTENSION);
+                $data["content_name".$i]=$annonce->file;
+            }
+
+            var_dump($data);
+
+        // use key 'http' even if you send the request to https://...
+            $options = array(
+                'http' => array(
+                    'header'  => "Content-type: application/x-www-form-urlencoded\r\n",
+                    'method'  => 'POST',
+                    'content' => http_build_query($data)
+                )
+            );
+            $context  = stream_context_create($options);
+            $result = file_get_contents($url,false,$context);
+            //if ($result === FALSE) { /* Handle error */ }
+
+            var_dump($result);
         }
         else
         {

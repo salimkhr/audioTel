@@ -50,7 +50,7 @@
                             </div>
                         </div>
                             @if(Auth::user() instanceof \App\Admin)
-                        <div class="row">
+                        <div class="row" style="margin: 20px 0">
                             <div class="col-md-4">
                                 <!-- name -->
                                 <div class="form-group {!! $errors->first('name','has-error') !!}">

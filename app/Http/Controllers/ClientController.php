@@ -87,32 +87,32 @@ class ClientController extends Controller
 
         for($i=0;$i<$nbAppel+$nbCredit;$i++)
         {
-           if($dateCredit != null &&  $dateAppel != null && $dateCredit->format('U') < $dateAppel->format('U'))
-           {
-               if(isset($credits[$cptCredit]))
-               {
-                   array_push($listEvent,$credits[$cptCredit]);
-                   $cptCredit++;
+            if($dateCredit != null &&  $dateAppel != null && $dateCredit->format('U') < $dateAppel->format('U'))
+            {
+                if(isset($credits[$cptCredit]))
+                {
+                    array_push($listEvent,$credits[$cptCredit]);
+                    $cptCredit++;
 
-                   if(isset($credits[$cptCredit]))
-                       $dateCredit=new \DateTime($credits[$cptCredit]->created_at);
-                   else
-                       $dateCredit = new \DateTime();
-               }
+                    if(isset($credits[$cptCredit]))
+                        $dateCredit=new \DateTime($credits[$cptCredit]->created_at);
+                    else
+                        $dateCredit = new \DateTime();
+                }
 
-           }
-           else
-           {
-               if(isset($appels[$cptAppel]))
-               {
-                   array_push($listEvent,$appels[$cptAppel]);
-                   $cptAppel++;
-                   if(isset($appels[$cptAppel]))
-                       $dateAppel=new \DateTime($appels[$cptAppel]->debut);
-                   else
-                       $dateAppel = new \DateTime();
-               }
-           }
+            }
+            else
+            {
+                if(isset($appels[$cptAppel]))
+                {
+                    array_push($listEvent,$appels[$cptAppel]);
+                    $cptAppel++;
+                    if(isset($appels[$cptAppel]))
+                        $dateAppel=new \DateTime($appels[$cptAppel]->debut);
+                    else
+                        $dateAppel = new \DateTime();
+                }
+            }
         }
 
         return view("client.index")->with("client",$client)->with("listEvent",array_reverse($listEvent));
@@ -287,15 +287,29 @@ class ClientController extends Controller
         return response()->json($jsonClient);
     }
 
-    public function APIpost(Request $request)
+    public function APIpost(Request $request,$id=null)
     {
         $api = $this->loginApi($request);
 
         if (!$api instanceof AccesAPI)
             return $api;
 
+        if(!$request->has("phone"))
+            return response()->json(["resultat"=>"failed"]);
+
+        if(Client::where("tel","=",$request->input("phone"))->count() != 0)
+            return response()->json(["resultat"=>"already exists"]);
+
         try{
-            $client = new Client();
+            if($id != null)
+            {
+                $client = Client::find($id);
+                if($client == null)
+                    return response()->json(["resultat"=>"failed"]);
+            }
+            else
+                $client = new Client();
+
             $client->tel=$request->input("phone");
             $client->admin_id=$api->api->admin_id;
             $client->code=rand(100000,999999);
@@ -311,4 +325,5 @@ class ClientController extends Controller
         $api->save();
         return response()->json(["resultat"=>"success","id"=>$client->id,"code"=>$client->code]);
     }
+
 }

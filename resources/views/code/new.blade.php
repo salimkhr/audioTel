@@ -114,26 +114,30 @@
                             <h3 class="panel-title">Photo</h3>
                         </div>
                         <div class="panel-body">
-                            <div class="gallery" id="links2">
+                            <div class="gallery" id="links">
                                 @foreach($photos as $photo)
-                                    <div class="gallery-item" data-gallery="" style="width:auto;">
+                                    <a class="gallery-item" data-gallery href="{{url(elixir('images/catalog/'.$photo->file))}}" style="width:auto;">
                                         <div class="image" style="max-height:150px; max-width: 150px">
-                                            <img src="{{url(elixir('images/catalog/'.$photo->file))}}" alt="{{$photo->file}}" class="img-responsive">
+                                            <img src="{{url(elixir('images/catalog/'.$photo->file))}}" alt="{{$photo->file}}" class="img-responsive"/>
                                             <ul class="gallery-item-controls">
                                                 <li>{!!Form::radio("photo_id",$photo->id,$code->photoHotesse_id != null && $photo->id==$code->photoHotesse_id,array('class' => 'icheckbox',"style"=>"position: absolute; opacity: 0;"))!!}</li>
-                                                <li><a href="{{route("deletePhotoHotesse",["id"=>$photo->id])}}"><i class="fa fa-times"></i></a></li>
+                                                <li><span class="gallery-item-remove" data-id="{{$photo->id}}"><i class="fa fa-times"></i></span></li>
                                             </ul>
                                         </div>
-                                    </div>
+                                    </a>
                                 @endforeach
-                                <div class="gallery-item" data-gallery="" style="width:auto;">
+                                <a class="gallery-item" data-gallery="" style="width:auto;">
                                     <div class="image" style="max-height:150px; max-width: 150px">
                                         <img src="{{url(elixir('images/catalog/noImage.jpg'))}}" alt="" class="img-responsive">
                                         <ul class="gallery-item-controls">
                                             <li>{!!Form::radio("photo_id",1,$code->photoHotesse_id == 1,array('class' => 'icheckbox',"style"=>"position: absolute; opacity: 0;"))!!}</li>
                                         </ul>
                                     </div>
-                                </div>
+                                    <div class="meta">
+                                        <strong>Nature image 1</strong>
+                                        <span>Description</span>
+                                    </div>
+                                </a>
                             </div>
                             {{ Form::close() }}
                             <div class="row">
@@ -193,6 +197,15 @@
 
         </div>
     </div>
+    <div id="blueimp-gallery" class="blueimp-gallery blueimp-gallery-controls" style="display: none;">
+        <div class="slides" style="width: 12736px;"></div>
+        <h3 class="title">Nature Image 1</h3>
+        <a class="prev">‹</a>
+        <a class="next">›</a>
+        <a class="close">×</a>
+        <a class="play-pause"></a>
+        <ol class="indicator"></ol>
+    </div>
     {!! $errors->first('err','<div class="message-box message-box-danger animated fadeIn open" data-sound="fail" id="message-box-delete-err">
        <div class="mb-container">
            <div class="mb-middle">
@@ -206,4 +219,13 @@
            </div>
        </div>
    </div>')!!}
+@endsection
+@section("script")
+
+    <script>
+        $(".gallery-item-remove").click(function () {
+            window.location.href="{{url("/photo/delete/hotesse/")}}/"+$(this).attr("data-id");
+        })
+    </script>
+
 @endsection

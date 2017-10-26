@@ -85,8 +85,8 @@
             <div class="panel panel-default">
                 <div class="panel-heading">
 
-                    <div class="col-md-5"><input type="date" id="debut" class="form-control datepicker" value="{{date_format(date_create($debut), 'Y-m-d')}}"></div>
-                    <div class="col-md-5"><input type="date" id="fin" class="form-control datepicker" value="{{date_format(date_create($fin), 'Y-m-d')}}"></div>
+                    <div class="col-md-5"><input type="text" id="debut" class="form-control datepicker" value="{{date_format(date_create($debut), 'Y-m-d')}}"></div>
+                    <div class="col-md-5"><input type="text" id="fin" class="form-control datepicker" value="{{date_format(date_create($fin), 'Y-m-d')}}"></div>
 
                     <div class="col-md-2">
                         <button class="btn btn-primary" id="periode">valider</button>

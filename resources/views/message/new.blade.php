@@ -45,13 +45,13 @@
                         </ul>
 
 
-                        <div class="gallery" id="links">
+                        <div class="gallery">
                             @foreach ($photos as $photo)
-                                <div class="gallery-item" data-gallery="" style="width:auto;">
+                                <div class="gallery-item" style="width:auto;">
                                     <div class="image" style="max-height:150px; max-width: 150px">
                                         <img src="{{url(elixir('images/catalog/'.$photo->file))}}" alt="{{$photo->file}}">
                                         <ul class="gallery-item-controls">
-                                            <li> {!!Form::radio("photo_id",$photo->id,false,array("class"=>"iradio","disabled"=>"disabled"))!!}</li>
+                                            <li> {!!Form::radio("photo_id",$photo->id,false,array("class"=>"iradio"))!!}</li>
                                         </ul>
                                     </div>
                                 </div>
@@ -61,7 +61,7 @@
                     <div class="col-md-4">
                         <ul class="list-group border-bottom">
                             @foreach ($annonces as $annonce)
-                                <li class="list-group-item"><label>{!!Form::radio("annonce_id",$annonce->id,null,array("class"=>"iradio","disabled"=>"disabled")) !!} {{$annonce->name}}</label>
+                                <li class="list-group-item"><label>{!!Form::radio("annonce_id",$annonce->id,null,array("class"=>"iradio")) !!} {{$annonce->name}}</label>
                                     <button class="btn btn-primary btn-rounded pull-right" id="btn-{{$annonce->id}}" onclick="play({{$annonce->id}})"><i class="fa fa-fw fa-play"></i></button>
                                 </li>
                                 <audio id="audio-{{$annonce->id}}" src="{{url(elixir("audio/annonce/".$annonce->file.".mp3"))}}" onended="stop('{{$annonce->id}}')"></audio>

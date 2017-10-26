@@ -31,7 +31,7 @@ class HotesseController extends Controller
             $idAdmin = Auth::id();
 
 
-        if(Auth::user()->role == "superAdmin")
+        if(Auth::user()->role == "superAdmin" && $idAdmin==Auth::id())
         {
             $listAdmin=Admin::where("admin_id","=",Auth::id())->get(['id']);
             $listId=[Auth::id()];

@@ -109,7 +109,6 @@ class AdminController extends Controller
             ->with("fin",$fin);
     }
 
-
     public function getFormAdmin($id=null)
     {
         if(!$this->testLogin())
