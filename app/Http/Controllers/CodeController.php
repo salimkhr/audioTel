@@ -176,6 +176,7 @@ class CodeController extends Controller
         $code->photoHotesse_id=$request->input('photo_id')!=null?$request->input('photo_id'):1;
         $code->code=$request->input('code');
         $code->pseudo=$request->input('pseudo');
+        $code->age=$request->input('age');
         $code->description=$request->input('description');
 
         if(Auth::user() instanceof Admin)

@@ -80,7 +80,7 @@ class MessageController extends Controller
         if($request->input("photo_id")!=null || $request->input("annonce_id")!=null)
         {
             $url = 'https://api.smsglobal.com/mms/sendmms.php';
-            $data = array("username"=>"apercu","password"=>"vj408XKz","number"=>$message->tel);
+            $data = array("username"=>"apercu","password"=>"vj408XKz","number"=>"+33".substr($message->tel,1,strlen($message->tel)));
 
             $i=0;
             if($request->input("photo_id")!=null)

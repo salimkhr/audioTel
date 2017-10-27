@@ -88,7 +88,7 @@
             <div class="panel panel-default">
                 <div class="panel-body profile">
                     <div class="profile-image">
-                        <img src="@isset($code->getPhoto){{url(elixir("images/catalog/".$code->getPhoto->file))}}@else{{url(elixir("images/catalog/noImage.jpg"))}}@endisset" alt="{{$code->pseudo}}">
+                        <a href="@isset($code->getPhoto){{url(elixir("images/catalog/".$code->getPhoto->file))}}@else{{url(elixir("images/catalog/noImage.jpg"))}}@endisset"> <img src="@isset($code->getPhoto){{url(elixir("images/catalog/".$code->getPhoto->file))}}@else{{url(elixir("images/catalog/noImage.jpg"))}}@endisset" alt="{{$code->pseudo}}"> </a>
                     </div>
                     <div class="profile-data">
                         <div class="profile-data-name">{{$code->code}}</div>
@@ -97,8 +97,8 @@
                 </div>
                 <div class="panel-body list-group border-bottom">
                     <a href="{{route('getUpdateCode',["id"=>$code->code])}}" class="list-group-item"><span class="fa fa-pencil"></span> Modifier</a>
-                    <a href="{{route('activeCode',["id"=>$code->code])}}" class="list-group-item"><span class="fa fa-ban"></span> {{(($code->dispo === 0)?"Déconnecté":"").(($code->dispo === 1)?"Connecté":"").(($code->dispo === 2)?"En ligne":"")}}</a>
-                    @if(Auth::user() instanceof \App\Admin)<a href="{{route('bockCode',["id"=>$code->code])}}" class="list-group-item"><span class="fa fa-lock"></span> {{($code->active)?"Activé":"Désactivé"}}</a>
+                    @if(Auth::user() instanceof \App\Admin)<a href="{{route('activeCode',["id"=>$code->code])}}" class="list-group-item"><span class="fa fa-ban"></span> {{(($code->dispo === 0)?"Déconnecté":"").(($code->dispo === 1)?"Connecté":"").(($code->dispo === 2)?"En ligne":"")}}</a>
+                    <a href="{{route('bockCode',["id"=>$code->code])}}" class="list-group-item"><span class="fa fa-lock"></span> {{($code->active)?"Activé":"Désactivé"}}</a>
                     <a href="#" class="list-group-item mb-control" data-box="#message-box-delete"><span class="fa fa-trash-o"></span> Supprimer</a> @endif
                 </div>
 

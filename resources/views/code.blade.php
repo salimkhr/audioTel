@@ -63,11 +63,13 @@
                                     <p><small>Dernière connexion</small><br><span>@if($code->derniere_connection){{date_format(date_create($code->derniere_connection), 'd/m/Y H:i:s')}}@else code jamais connecté@endif</span></p>
                                 </div>
                             </div>
-                            <div class="panel-footer">
-                                <div class="row">
-                                    <a href="{{route("activeCode",["id"=>$code])}}" role="button" class="btn btn-block {{($code->dispo)?"btn-warning":"btn-success" }} @if(!isset($code->hotesse->name))  disabled @endif">{{($code->dispo)?"Déconnecter":"Connecter" }}</a>
+                            @if(Auth::user() instanceof \App\Admin)
+                                <div class="panel-footer">
+                                    <div class="row">
+                                        <a href="{{route("activeCode",["id"=>$code])}}" role="button" class="btn btn-block {{($code->dispo)?"btn-warning":"btn-success" }} @if(!isset($code->hotesse->name))  disabled @endif">{{($code->dispo)?"Déconnecter":"Connecter" }}</a>
+                                    </div>
                                 </div>
-                            </div>
+                            @endif
                         </div>
                         <!-- END CONTACT ITEM -->
                     </div>
