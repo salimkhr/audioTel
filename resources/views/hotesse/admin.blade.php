@@ -89,7 +89,7 @@
                 </div>
                 <div class="panel-body list-group border-bottom">
                     <a href="{{route('getUpdateHotesse',["id"=>$hotesse->id])}}" class="list-group-item"><span class="fa fa-pencil"></span> Modifier</a>
-                    <a href="{{route('activeHotesse',["id"=>$hotesse->id])}}" class="list-group-item"><span class="fa fa-ban"></span> {{$hotesse->active?"Désaciver":"Activer"}}</a>
+                    <a href="{{route('activeHotesse',["id"=>$hotesse->id])}}" class="list-group-item"><span class="fa fa-ban"></span> {{$hotesse->active?"Désactiver":"Activer"}}</a>
                     <a href="#" class="list-group-item mb-control" data-box="#message-box-delete"><span class="fa fa-trash-o"></span> Supprimer</a>
                 </div>
                 <div class="panel-body">

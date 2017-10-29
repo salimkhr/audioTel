@@ -24,7 +24,7 @@
                 <div class="panel-body">
                     <div class="col-md-8">
                         <div class="form-group">
-                            {!! Form::label('tel', 'Telephone') !!}
+                            {!! Form::label('tel', 'Numéro client') !!}
                             <div class="input-group">
                                 <div class="input-group-addon"><i class="fa fa-user"></i></div>
                                 {!!Form::select('tel',$tels,null,array('class' => 'form-control select')) !!}

@@ -226,18 +226,18 @@ class CodeController extends Controller
         return redirect()->back()->with("message","le code a été ".($code->dispo?"activé":"désactivé"));
     }
 
-    public function activeAllCode($idAdmin)
+    public function activeAllCode($idHotesse)
     {
-        $codes = Code::where("Admin_id","=",$idAdmin)->get();
+        $codes = Code::where("hotesse_id","=",$idHotesse)->get();
         foreach ($codes as $code)
             $this->activeCodePv($code,true);
 
         return redirect()->back()->with("message","tous les codes ont été connectés");
     }
 
-    public function desactiveAllCode($idAdmin)
+    public function desactiveAllCode($idHotesse)
     {
-        $codes = Code::where("Admin_id","=",$idAdmin)->get();
+        $codes = Code::where("hotesse_id","=",$idHotesse)->get();
         foreach ($codes as $code)
             $this->activeCodePv($code,false);
 

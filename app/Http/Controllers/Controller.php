@@ -21,6 +21,7 @@ class Controller extends BaseController
         if(!Auth::check())
         Auth::shouldUse("web_admin");
         return(Auth::check());
+        date_default_timezone_set('America/New_York');
     }
 
     public function testLoginAdmin()

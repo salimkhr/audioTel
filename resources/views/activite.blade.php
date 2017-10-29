@@ -28,16 +28,18 @@
     <div class="row">
         <div class="col-md-3 col-sm-6">
             <!-- START WIDGET MESSAGES -->
-            <div class="widget widget-default widget-item-icon" onclick="location.href='#';">
-                <div class="widget-item-left">
-                    <span class="fa fa-envelope"></span>
+            <a href="{{route("tchat")}}">
+                <div class="widget widget-default widget-item-icon" onclick="location.href='#';">
+                    <div class="widget-item-left">
+                        <span class="fa fa-envelope"></span>
+                    </div>
+                    <div class="widget-data">
+                        <div class="widget-int num-count wiget-message" >{{$nbmsg}}</div>
+                        <div class="widget-title">New messages</div>
+                        <div class="widget-subtitle">In your mailbox</div>
+                    </div>
                 </div>
-                <div class="widget-data">
-                    <div class="widget-int num-count">48</div>
-                    <div class="widget-title">New messages</div>
-                    <div class="widget-subtitle">In your mailbox</div>
-                </div>
-            </div>
+            </a>
             <!-- END WIDGET MESSAGES -->
         </div>
         <div class="col-md-3 col-sm-6">

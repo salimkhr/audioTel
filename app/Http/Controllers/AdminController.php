@@ -5,12 +5,12 @@ namespace App\Http\Controllers;
 use App\Admin;
 use App\Appel;
 use App\Hotesse;
+use App\Tchat;
 use App\Http\Requests\AdminRequest;
 use DateTime;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\MessageBag;
-use Mockery\Exception;
 
 
 class AdminController extends Controller
@@ -67,6 +67,7 @@ class AdminController extends Controller
         return view('admin.report')->with("hotesses",Hotesse::all())
             ->with("dureeAppel",$dureeAppel)
             ->with("nbAppel",$nbAppel)
+
             ->with("ca",$ca)
             ->with("appels",$appels)
             ->with("admin",Admin::find($id))
@@ -86,6 +87,7 @@ class AdminController extends Controller
         $appels=Appel::where("admin_id","=",Auth::id())->orderByDesc("debut")->limit(50)->get();
         $appelsToday=Appel::where("admin_id","=",Auth::id())->where('debut',">=",$today->format('Y-m-d'))->get();
         $HotesseCo=Hotesse::where("admin_id","=",Auth::id())->where("co","=","1");
+        $nbmsg=Tchat::where("admin_id","=",Auth::id())->where("read","=","0")->where("expediteur","=","H")->count();
 
         $dureeAppel=0;
         $nbAppel=0;
@@ -104,6 +106,7 @@ class AdminController extends Controller
             ->with("dureeAppel",$dureeAppel)
             ->with("nbAppel",$nbAppel)
             ->with("ca",$ca)
+            ->with("nbmsg",$nbmsg)
             ->with("appels",$appels)
             ->with("debut",$debut)
             ->with("fin",$fin);

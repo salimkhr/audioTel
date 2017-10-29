@@ -41,7 +41,7 @@
                                 </div>
                                 <div class="profile-controls">
                                     <a href="{{route("hotesseAdmin",["id"=>$hotesse->id])}}" class="profile-control-left"><span class="fa fa-info"></span></a>
-                                    <a href="#" class="profile-control-right"><span class="fa fa-comment"></span></a>
+                                    <a href="{{route("tchat.store",["idHotesse"=>$hotesse->id])}}" class="profile-control-right"><span class="fa fa-comment"></span></a>
                                 </div>
                             </div>
                             <div class="panel-body">

@@ -20,7 +20,7 @@ class Message extends Model
 
     public function client()
     {
-        return $this->belongsTo("App\Client",'tel');
+        return $this->belongsTo("App\Client",'tel',"tel");
     }
 
     public function getCode()

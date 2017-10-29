@@ -80,13 +80,26 @@ Route::get('/photo/delete/hotesse/{id}', 'PhotoController@deleteFormPhotoHotesse
 
 Route::get('/message/page/{page?}', 'MessageController@index')->name('message');
 Route::get('/message/{id}', 'MessageController@get')->name('getMessage');
-Route::get('/message/new/{appel?}', 'MessageController@new')->name('newMessage');
+Route::get('/message/new/{appel?}', 'MessageController@newMessage')->name('newMessage');
 Route::post('/message/new', 'MessageController@send')->name('sendMessage');
 Route::get('/logout/', 'Auth\LoginController@logout')->name('logout');
 Route::post('/resetPassword/', 'Auth\LoginController@resetPassword')->name('logout');
 
 Route::get('reporting/admin/{debut?}/{fin?}','HomeController@index')->name('home');
 Route::post('updatePassword/','Auth\LoginController@updatePassword')->name('UpdatePassword');
+
+Route::group(['prefix' => 'tchat'], function () {
+    Route::get('/', ['as' => 'tchat', 'uses' => 'TchatController@index']);
+    Route::get('/general', ['as' => 'tchat.general', 'uses' => 'TchatController@general']);
+    Route::get('/nbmessage', ['as' => 'tchat.nbmessage', 'uses' => 'TchatController@nbmessage']);
+    Route::get('/updateMessage/{idHotesse?}', ['as' => 'tchat.updateMessage', 'uses' => 'TchatController@updateMessage']);
+    Route::get('/updateMessageGeneral/', ['as' => 'tchat.updateMessageGeneral', 'uses' => 'TchatController@updateMessageGeneral']);
+    Route::post('/general', ['as' => 'tchat.store', 'uses' => 'TchatController@generalpost']);
+    Route::post('/{idHotesse?}', ['as' => 'tchat.store', 'uses' => 'TchatController@store']);
+    Route::get('{idHotesse}', ['as' => 'tchat.show', 'uses' => 'TchatController@show']);
+    Route::get('/delete/{id}', ['as' => 'tchat.delete', 'uses' => 'TchatController@delete']);
+
+});
 
 Auth::routes();
 

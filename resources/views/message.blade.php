@@ -39,8 +39,9 @@
                             <tr>
                                 <td>{{date_format(date_create($message->created_at), 'd/m/Y H:i:s')}}</td>
                                 @if(Auth::user() instanceof \App\Admin)<td><a href="{{route("getHotesse",["id"=>$message->hotesse->id])}}">{{$message->hotesse->name}}</a></td>@endif
-                                <td>@if($message->client != null)<a href="{{route("getClient",["id"=>$message->client->id])}}">{{substr($message->client->tel,0,strlen($message->client->tel)-5).'*****'}} </a>@endif</td>
-                                <td><a href="#" class="mail-text btn mb-control" onclick="showAlert({{$message->id}})">{{substr($message->contenu,0,20)." ".(strlen($message->contenu)>40?"...":"")}}</a></td>
+                                <td>@if($message->client != null)<a href="{{route("getClient",["id"=>$message->client->id])}}">{{substr($message->client->tel,0,strlen($message->client->tel)-5).'*****'}} </a>@else {{substr($message->tel,0,strlen($message->tel)-5).'*****'}} @endif</td>
+                                <td>{{substr($message->contenu,0,20)." ".(strlen($message->contenu)>40?"...":"")}}</td>
+                                <td><a href="#" class="mail-text btn mb-control btn-primary" onclick="showAlert({{$message->id}})">Consulter</a></td>
                             </tr>
                         @endforeach
                         </tbody>

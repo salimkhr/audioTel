@@ -16,7 +16,7 @@
 
 @section('content')
     <div class="row">
-        <div class="@isset($hotesse->id)col-md-8 @else col-md-12 @endisset">
+        <div class="@if(Auth::user() instanceof \App\Admin)col-md-8 @else col-md-12 @endif">
             <!-- START DEFAULT DATATABLE -->
             <div class="panel panel-default">
                 <div class="panel-body">
@@ -153,7 +153,7 @@
                 @endif
             </div>
         </div>
-        @isset($hotesse->id)
+        @if(Auth::user() instanceof \App\Admin)
         <div class="col-md-4">
             <div class="panel panel-default">
                 <div class="panel-body">
@@ -190,7 +190,7 @@
                 </div>
             </div>
         </div>
-        @endisset
+        @endif
     </div>
     </div>
     <div class="message-box message-box-danger animated fadeIn" data-sound="alert" id="message-box-delete">

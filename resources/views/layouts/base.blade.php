@@ -4,7 +4,7 @@
     <li @if(Request::segment(1) === 'reporting')class="active" @endif><a href="{{route("home")}}"><span class="fa fa-table"></span> <span class="xn-text">Reporting Général</span></a></li>
     @if(Auth::user() instanceof \App\Admin)<li @if(Request::segment(1) === 'activite')class="active" @endif><a href="{{route("activite")}}"><span class="fa fa-table"></span> <span class="xn-text">Activité</span></a></li>@endif
     <li @if(Request::segment(1) === 'message')class="active" @endif><a href="{{route("message")}}"><span class="fa fa-commenting"></span> <span class="xn-text">Message</span></a></li>
-    <li @if(Request::segment(1) === 'tchat')class="active" @endif><a href="{{route("message")}}"><span class="fa fa-comments"></span> <span class="xn-text">Tchat room</span></a></li>
+    <li @if(Request::segment(1) === 'tchat')class="active" @endif><a href="{{route("tchat.general")}}"><span class="fa fa-comments"></span> <span class="xn-text">Tchat Room</span><span class="pull-right nbMessage"></span></a></li>
     @if(Auth::user() instanceof \App\Admin)<li @if(Request::segment(1) === 'client')class="active" @endif><a href="{{route("client")}}"><span class="fa fa-user-circle"></span> <span class="xn-text">Client</span></a></li>@endif
 
     @isset(Auth::user()->role)
@@ -60,7 +60,7 @@
                     </div>
                     <div class="profile-controls">
                         <a href="@if(Auth::user() instanceof \App\Admin){{route("getUpdateAdmin",["id"=>Auth::id()])}} @else{{route("getUpdateHotesse",["id"=>Auth::id()])}}@endif" class="profile-control-left"><span class="fa fa-info"></span></a>
-                        <a href="pages-messages.html" class="profile-control-right"><span class="fa fa-envelope"></span></a>
+                        <a href="{{route("tchat.general")}}" class="profile-control-right"><span class="fa fa-envelope"></span></a>
                     </div>
                 </div>
             </li>
@@ -198,6 +198,88 @@
 
     function stop(file) {
         $("#btn-"+file+" i").addClass("fa-play").removeClass("fa-pause");
+    }
+
+    var ancienNbMessage =0;
+    nbMessage();
+
+    window.setInterval(function(){
+        nbMessage();
+    }, 1000);
+
+    function nbMessage() {
+
+        @if(Request::route()->getName() == "tchat" || Request::route()->getName() == "tchat.show")
+        $.ajax({
+            @if(Auth::user() instanceof \App\Hotesse)
+                url: "{{route("tchat.updateMessage")}}",				// url du fichier php
+            @else
+                url: "{{route("tchat.updateMessage",["idHotesse"=>$id])}}",				// url du fichier php
+            @endif
+
+            type: "GET",			                // Type d'envoi des données (Soit GET ou POST)
+            success: function(html, statut)			// html contient le résultat du script php
+            {
+                console.log(html);
+                for(message in html )
+                    $(".messages").append("<div class='item  item-visible'>" +
+                        "   <div class='image'>" +
+                        "       <img src='"+html[message].img+"' alt='"+html[message].name+"'>" +
+                        "   </div>" +
+                        "   <div class='text'>" +
+                        "       <div class='heading'>" +
+                        "       <a href='#'>"+html[message].name+"</a>" +
+                        "       <span class='date'>"+html[message].date+"</span>" +
+                        "   </div>" +
+                        "   <span class='message'>"+replaceEmoticons(html[message].message)+"</span>" +
+                        "   </div>" +
+                        "</div>");
+            }
+        });
+        @endif
+
+        @if(Request::route()->getName() == "tchat.general")
+        $.ajax({
+            url: "{{route("tchat.updateMessageGeneral")}}",				// url du fichier php
+            type: "GET",			                // Type d'envoi des données (Soit GET ou POST)
+            success: function(html, statut)			// html contient le résultat du script php
+            {
+                console.log(html);
+                for(message in html )
+                    $(".messages").append("<div class='item item-visible'>" +
+                        "   <div class='image'>" +
+                        "       <img src='"+html[message].img+"' alt='"+html[message].name+"'>" +
+                        "   </div>" +
+                        "   <div class='text'>" +
+                        "       <div class='heading'>" +
+                        "       <a href='#'>"+html[message].name+"</a>" +
+                        "       <span class='date'>"+html[message].date+"</span>" +
+                        "   </div>" +
+                        "   <span class='message'>"+replaceEmoticons(html[message].message)+"</span>" +
+                            @if(Request::route()->getName() == "tchat.general" && Auth::user() instanceof \App\Admin)"<a href='{{route("tchat.delete",["id"=>$tchat->id])}}' class='pull-right btn btn-rounded btn-primary'><i class='fa fa-fw fa-trash'></i></a>"+@endif
+
+                "   </div>" +
+                        "</div>");
+            }
+        });
+        @endif
+
+        $.ajax({
+            url: "{{route("tchat.nbmessage")}}",				// url du fichier php
+            type: "GET",			                // Type d'envoi des données (Soit GET ou POST)
+            success: function(html, statut)			// html contient le résultat du script php
+            {
+                console.log(html);
+                if(html != 0)
+                    $(".nbMessage").html('<span class="badge badge-danger">'+html+'</span>');
+                else if(ancienNbMessage != html)
+                {
+                    ancienNbMessage = html;
+                    $(".nbMessage").html('');
+                }
+                $(".wiget-message").text(html);
+            }
+        });
     }
 
 </script>

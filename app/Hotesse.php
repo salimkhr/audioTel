@@ -4,11 +4,13 @@ namespace App;
 
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
+use Cmgmyr\Messenger\Traits\Messagable;
 
 class Hotesse extends User
 {
     use Notifiable;
     use SoftDeletes;
+    use Messagable;
 
     protected $table = 'hotesse';
     protected $dates = ['deleted_at'];
@@ -36,5 +38,10 @@ class Hotesse extends User
     public function annonces()
     {
         return $this->hasMany('App\Annonce');
+    }
+
+    public function messages()
+    {
+        return $this->hasMany('App\Tchat');
     }
 }

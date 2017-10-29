@@ -101,7 +101,7 @@
                                     <div class="pull-right">
                                         <a href="#" class="btn btn-primary btn-rounded mb-control" id="btn-{{$annonce->id}}" onclick="play({{$annonce->id}})"><i class="fa fa-fw fa-play"></i></a>
                                         <a href="#" class="btn btn-primary btn-rounded mb-control" data-box="#message-box-update-{{$annonce->id}}"><i class="fa fa-fw fa-pencil"></i></a>
-                                        <a href="#" class="btn btn-danger btn-rounded mb-control" data-box="#message-box-delete-{{$annonce->id}}"><i class="fa fa-fw fa-trash"></i></a>
+                                        @if(Auth::user() instanceof \App\Admin)<a href="#" class="btn btn-danger btn-rounded mb-control" data-box="#message-box-delete-{{$annonce->id}}"><i class="fa fa-fw fa-trash"></i></a> @endif
                                     </div>
                                 </span>
 
@@ -187,23 +187,25 @@
                     {{ Form::close() }}
                 </div>
             </div>
-            <div class="message-box message-box-danger animated fadeIn" data-sound="alert" id="message-box-delete-{{$annonce->id}}">
-                <div class="mb-container">
-                    <div class="mb-middle">
-                        <div class="mb-title"><span class="fa fa-trash-o"></span> <strong>Supprimer</strong> ?</div>
-                        <div class="mb-content">
-                            <p>êtes-vous sûr de vouloir supprimer l'annonce ?</p>
-                            <p>Appuyez sur Non si vous souhaitez continuer votre travail. Appuyez sur Oui pour supprimer l'annonce.</p>
-                        </div>
-                        <div class="mb-footer">
-                            <div class="pull-right">
-                                <a href="{{route('deleteAnnonce',['id'=> $annonce->id])}}" class="btn btn-success btn-lg">Oui</a>
-                                <button class="btn btn-default btn-lg mb-control-close">Non</button>
+            @if(Auth::user() instanceof \App\Admin)
+                    <div class="message-box message-box-danger animated fadeIn" data-sound="alert" id="message-box-delete-{{$annonce->id}}">
+                        <div class="mb-container">
+                            <div class="mb-middle">
+                                <div class="mb-title"><span class="fa fa-trash-o"></span> <strong>Supprimer</strong> ?</div>
+                                <div class="mb-content">
+                                    <p>êtes-vous sûr de vouloir supprimer l'annonce ?</p>
+                                    <p>Appuyez sur Non si vous souhaitez continuer votre travail. Appuyez sur Oui pour supprimer l'annonce.</p>
+                                </div>
+                                <div class="mb-footer">
+                                    <div class="pull-right">
+                                        <a href="{{route('deleteAnnonce',['id'=> $annonce->id])}}" class="btn btn-success btn-lg">Oui</a>
+                                        <button class="btn btn-default btn-lg mb-control-close">Non</button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
+                @endif
         @endforeach
 
     </div>

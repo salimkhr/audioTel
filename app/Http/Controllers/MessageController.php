@@ -40,7 +40,7 @@ class MessageController extends Controller
         return view("message")->with("clients",$clients)->with("messages",$messages);
     }
 
-    public function new($appel = null)
+    public function newMessage($appel = null)
     {
         if(!$this->testLogin())
             return redirect()->route("login");
@@ -55,7 +55,8 @@ class MessageController extends Controller
 
         foreach ($tels as $tel)
         {
-            if(isset($tel->appellant) && $tel->appellant != "ANONYME" ) $listTel[$tel->id]=substr($tel->appellant,0,4)."******";
+            if(isset($tel->appellant) && $tel->appellant != "ANONYME" )
+                $listTel[$tel->id]= substr($tel->appellant,0,strlen($tel->appellant)-5).'*****';
         }
 
         $codes=Code::where("hotesse_id","=",Auth::id())->get();
@@ -69,53 +70,83 @@ class MessageController extends Controller
 
     public function send(Request $request)
     {
+        if(!$this->testLogin())
+            return redirect()->route("login");
+
         $message = new Message();
         $appel=Appel::find($request->input("tel"));
-        $message->tel = $appel->appellant;
+
+        if(substr($appel->appellant,0,1)!="+")
+            if(substr($appel->appellant,0,1)=="0")
+                switch($appel->pays)
+                {
+                    case "FR":$message->tel= "+33".substr($appel->appellant,1);break;
+                    case "BE":$message->tel= "+32".substr($appel->appellant,1);break;
+                    case "CH":$message->tel= "+41".substr($appel->appellant,1);break;
+                }
+            else
+                $message->tel="+".$appel->appellant;
+        else
+            $message->tel=$appel->appellant;
+
 
         $message->contenu = $request->input("contenu");
+
+        if($message->contenu == null)
+            $message->contenu = "";
+
         $message->hotesse_id = Auth::id();
         $message->save();
 
         if($request->input("photo_id")!=null || $request->input("annonce_id")!=null)
         {
             $url = 'https://api.smsglobal.com/mms/sendmms.php';
-            $data = array("username"=>"apercu","password"=>"vj408XKz","number"=>"+33".substr($message->tel,1,strlen($message->tel)));
+            $fields = array("username"=>"apercu","password"=>"vj408XKz","number"=>$message->tel,"message"=>$message->contenu,);
 
             $i=0;
             if($request->input("photo_id")!=null)
             {
                 $photo=PhotoHotesse::find($request->input("photo_id"));
                 $path=url(elixir('/images/catalog/'.$photo->file));
-                $data["attachment0"]=base64_encode(file_get_contents($path));
-                $data["type0"]="image/".pathinfo($path, PATHINFO_EXTENSION);
-                $data["content_name0"]=$photo->file;
+                $fields["attachment0"]=base64_encode(file_get_contents($path));
+                $fields["type0"]="image/".pathinfo($path, PATHINFO_EXTENSION);
+                $fields["content_name0"]=$photo->file;
+
+                $message->photoHotesse_id = $request->input("photo_id");
+                $message->save();
+
                 $i++;
             }
             if($request->input("annonce_id")!=null)
             {
                 $annonce=Annonce::find($request->input("annonce_id"));
                 $path=url(elixir('audio/annonce/'.$annonce->file.'.mp3'));
-                $data["attachment".$i]=base64_encode(file_get_contents($path));
-                $data["type".$i]=pathinfo($path, PATHINFO_EXTENSION);
-                $data["content_name".$i]=$annonce->file;
+                $fields["attachment".$i]=base64_encode(file_get_contents($path));
+                $fields["type".$i]="audio/mpeg";
+                $fields["content_name".$i]=$annonce->file.".mp3";
+
+                $message->annonce_id = $request->input("annonce_id");
+                $message->save();
             }
 
-            var_dump($data);
+            //open connection
+            $ch = curl_init($url);
 
-        // use key 'http' even if you send the request to https://...
-            $options = array(
-                'http' => array(
-                    'header'  => "Content-type: application/x-www-form-urlencoded\r\n",
-                    'method'  => 'POST',
-                    'content' => http_build_query($data)
-                )
-            );
-            $context  = stream_context_create($options);
-            $result = file_get_contents($url,false,$context);
-            //if ($result === FALSE) { /* Handle error */ }
+            //set the url, number of POST vars, POST data
+            curl_setopt($ch,CURLOPT_POST, count($fields));
+            curl_setopt($ch,CURLOPT_POSTFIELDS, http_build_query($fields));
+            //curl_setopt($ch,CURLOPT_RETURNTRANSFER, true);
 
-            var_dump($result);
+            //execute post
+            $result = curl_exec($ch);
+
+            //close connection
+            curl_close($ch);
+            if($result)
+                return redirect()->route("message")->with("message","message: '".$message->contenu."' envoyé");
+            else
+                return redirect()->route("message")->with("message","une erreur c'est produite");
+
         }
         else
         {
@@ -128,7 +159,6 @@ class MessageController extends Controller
                 $messageSend->body =$message->contenu;
 
                 $messageBird->messages->create($messageSend);
-
                 return redirect()->route("message")->with("message","message: '".$message->contenu."' envoyé");
             } catch (\MessageBird\Exceptions\AuthenticateException $e) {
                 // Authentication failed. Is this a wrong access_key?
