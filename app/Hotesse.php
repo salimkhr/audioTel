@@ -44,4 +44,16 @@ class Hotesse extends User
     {
         return $this->hasMany('App\Tchat');
     }
+
+    public function nbMessage()
+    {
+        $nbMessage= 0;
+        foreach ($this->messages as $message)
+        {
+            if($message->read == 0 && $message->expediteur == "H")
+                $nbMessage++;
+        }
+
+        return $nbMessage;
+    }
 }

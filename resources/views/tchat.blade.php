@@ -16,7 +16,7 @@
                     @endif
                 </div>
                 <div class="panel-body">
-                    <div class="messages messages-img">
+                    <div class="messages messages-img" style="max-height: 70vh; overflow: auto">
                         @foreach($tchats as $tchat)
                             <div class="item {{$tchat->getClass()}} item-visible">
                                 <div class="image">
@@ -28,7 +28,7 @@
                                         <span class="date">{{date_format(date_create($tchat->created_at), 'd/m/Y H:i:s')}}</span>
                                     </div>
                                     <span class="message">{{$tchat->message}}</span>
-                                    @if(Request::route()->getName() == "tchat.general" && Auth::user() instanceof \App\Admin)<a href="{{route("tchat.delete",["id"=>$tchat->id])}}" class="pull-right btn btn-rounded btn-primary"><i class="fa fa-fw fa-trash"></i></a> @endif
+                                    @if(Request::route()->getName() == "tchat.general" && Auth::user() instanceof \App\Admin)<a href="{{route("tchat.delete",["id"=>$tchat->id])}}" class="pull-right btn btn-danger btn-xs"><i class="fa fa-fw fa-trash"></i></a> @endif
                                 </div>
                             </div>
                         @endforeach
@@ -55,7 +55,7 @@
             </div>
         </div>
 
-            <div class="col-md-offset-7 col-md-3 fixed">
+            <div class="col-md-4">
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         @if(Auth::user() instanceof \App\Admin)
@@ -71,7 +71,7 @@
                                 <a href="{{route("tchat.show",["id"=>$hotesse->id])}}" class="list-group-item @if(isset($id) && $hotesse->id == $id) active @endif">
                                 <div class="list-group-status status-online"></div>
                                 <img src="{{url(elixir("images/catalog/".$hotesse->photo->file))}}" class="pull-left" alt="Dmitry Ivaniuk">
-                                <span class="contacts-title">{{$hotesse->name}}</span>
+                                <span class="contacts-title">{{$hotesse->name}}</span><span id="notif-{{$hotesse->id}}" <?php $var = $hotesse->nbMessage() ?> @if($var!=0)class="label label-danger pull-right">{{$var}} @else > @endif</span>
                                 <p>@isset($hotesse->messages[0]){{$hotesse->messages[count($hotesse->messages)-1]->message}}@else aucun message @endisset</p>
                             </a>
                             @endforeach
@@ -86,7 +86,7 @@
                         </div>
                     </div>
                     <div class="panel-footer">
-                        <a href="{{route("tchat.general")}}" class="btn btn-primary pull-right">tchat général</a>
+                        <a href="{{route("tchat.general")}}" class="btn btn-primary pull-right">Tchat général</a>
                     </div>
                 </div>
             </div>
@@ -100,8 +100,8 @@
         $(this).html(replaceEmoticons($(this).text()));
     });
 
-    $('html, body').animate({
-            scrollTop: $(document).height()-$(window).height()},
+    $('.messages').animate({
+            scrollTop: $('.messages')[0].scrollHeight},
         1400,
         "easeOutQuint"
     );

@@ -270,14 +270,33 @@
             success: function(html, statut)			// html contient le résultat du script php
             {
                 console.log(html);
-                if(html != 0)
-                    $(".nbMessage").html('<span class="badge badge-danger">'+html+'</span>');
-                else if(ancienNbMessage != html)
+                @if(Auth::user() instanceof \App\Admin)
+                var nbMessage = 0;
+                    for(var i in html)
+                    {
+                        nbMessage += html[i];
+                        $("#notif-"+i).text(html[i]).addClass("label label-danger pull-right");
+                    }
+
+                if(nbMessage != 0)
+                    $(".nbMessage").html('<span class="badge badge-danger">'+nbMessage+'</span>');
+                else if(ancienNbMessage != nbMessage)
                 {
-                    ancienNbMessage = html;
+                    ancienNbMessage = nbMessage;
                     $(".nbMessage").html('');
                 }
-                $(".wiget-message").text(html);
+                $(".wiget-message").text(nbMessage);
+                @else
+                    if(html != 0)
+                        $(".nbMessage").html('<span class="badge badge-danger">'+html+'</span>');
+                    else if(ancienNbMessage != html)
+                    {
+                        ancienNbMessage = html;
+                        $(".nbMessage").html('');
+                    }
+                    $(".wiget-message").text(html);
+                @endif
+
             }
         });
     }

@@ -23,18 +23,18 @@ class TchatG extends Model
 
     public function getClass()
     {
-        if($this->admin_id !=null)
-            return (Auth::user() instanceof Admin && $this->id_admin == Auth::id())?"in":"";
-       else
+        if($this->id_hotesse !=null)
             return (Auth::user() instanceof Hotesse && $this->id_hotesse == Auth::id())?"in":"";
+        else
+            return (Auth::user() instanceof Admin && $this->id_admin == Auth::id())?"in":"";
     }
 
     public function getAuteur()
     {
-        if($this->id_admin !=null)
-            return $this->admin;
-        else
+        if($this->id_hotesse !=null)
             return $this->hotesse;
+        else
+            return $this->admin;
     }
 
     public function reads()

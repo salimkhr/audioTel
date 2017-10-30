@@ -61,7 +61,7 @@ class TchatController extends Controller
 
         if(Auth::user() instanceof Hotesse)
         {
-            $tchats = TchatG::all();
+            $tchats = TchatG::where("id_admin","=",Auth::user()->admin_id)->get();
             foreach($tchats as $tchat)
             {
                 if(ReadMessage::where("hotesse_id","=",Auth::id())->where("message_id","=",$tchat->id)->count() == 0)
@@ -74,7 +74,7 @@ class TchatController extends Controller
             }
         }
         else {
-            $tchats = TchatG::all();
+            $tchats = TchatG::where("id_admin","=",Auth::id())->get();
             foreach($tchats as $tchat)
             {
                 if(ReadMessage::where("admin_id","=",Auth::id())->where("message_id","=",$tchat->id)->count() == 0)
@@ -98,7 +98,10 @@ class TchatController extends Controller
         if(Auth::user() instanceof Admin)
             $tchatg->id_admin=Auth::id();
         else
+        {
+            $tchatg->id_admin=Auth::user()->admin_id;
             $tchatg->id_hotesse=Auth::id();
+        }
 
         $tchatg->message=$request->input("subject");
 
@@ -161,8 +164,15 @@ class TchatController extends Controller
             {
                 array_push($tabread,$read->message_id);
             }
-            $tchats = TchatG::wherenotin("id",$tabread)->count();
-            return response()->json(Tchat::where("admin_id","=",Auth::id())->where("read","=","0")->where("expediteur","=","H")->count()+$tchats);
+            $tchats = TchatG::where("id_admin","=",Auth::id())->wherenotin("id",$tabread)->count();
+            $messages=Tchat::where("admin_id","=",Auth::id())->groupBy(["hotesse_id"])->where("read","=","0")->where("expediteur","=","H")->get(["hotesse_id"]);
+
+            $nbmessage=[];
+            foreach($messages as $message)
+            {
+                $nbmessage[$message->hotesse_id]=Hotesse::find($message->hotesse_id)->nbMessage();
+            }
+            return response()->json($nbmessage);
 
         }
         else
@@ -174,7 +184,7 @@ class TchatController extends Controller
                 array_push($tabread,$read->message_id);
             }
 
-            $tchats = TchatG::wherenotin("id",$tabread)->count();
+            $tchats = TchatG::where("id_admin","=",Auth::user()->admin_id)->wherenotin("id",$tabread)->count();
             return response()->json(Tchat::where("hotesse_id","=",Auth::id())->where("read","=","0")->where("expediteur","=","A")->count()+$tchats);
         }
     }
@@ -231,7 +241,7 @@ class TchatController extends Controller
                 array_push($tabread,$read->message_id);
             }
 
-            $tchats = TchatG::wherenotin("id",$tabread)->get();
+            $tchats = TchatG::where("id_admin","=",Auth::user()->admin_id)->wherenotin("id",$tabread)->get();
             foreach($tchats as $tchat)
             {
                 $rm = new ReadMessage();
@@ -251,7 +261,7 @@ class TchatController extends Controller
                 array_push($tabread,$read->message_id);
             }
 
-            $tchats = TchatG::wherenotin("id",$tabread)->get();
+            $tchats =TchatG::where("id_admin","=",Auth::id())->wherenotin("id",$tabread)->get();
             foreach($tchats as $tchat)
             {
                 $rm = new ReadMessage();

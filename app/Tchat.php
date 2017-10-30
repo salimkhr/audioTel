@@ -34,4 +34,5 @@ class Tchat extends Model
         else
             return $this->hotesse;
     }
+
 }

@@ -35,8 +35,8 @@
                     </div>
                     <div class="widget-data">
                         <div class="widget-int num-count wiget-message" >{{$nbmsg}}</div>
-                        <div class="widget-title">New messages</div>
-                        <div class="widget-subtitle">In your mailbox</div>
+                        <div class="widget-title">Nouveaux messages</div>
+                        <div class="widget-subtitle">dans la tchat room</div>
                     </div>
                 </div>
             </a>
