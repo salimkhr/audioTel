@@ -38,21 +38,31 @@ class HomeController extends Controller
             $dateFin=new DateTime($fin);
         }
         $dateFin->modify('+1 day');
-
-
-
         $appels=Appel::where("admin_id","=",Auth::id())->where('debut',">=",$dateDebut->format('Y-m-d'))->where("debut","<=",$dateFin->format('Y-m-d'))->orderBy("debut")->get();
-
         $dureeAppel=0;
         $nbAppel=0;
         $ca=0;
         foreach($appels as $appel)
         {
+            if($appel->type == 1)
+            {
+                $appelTmp = Appel::where("asterisk_id","=",$appel->link_id)->first();
+                if($appelTmp != null)
+                {
+                    $appel->tarif = $appelTmp->tarif;
+                    $appel->client_id=$appelTmp->client_id;
+                    $appel->appellant=$appelTmp->appellant;
+                    //$appel->code=$appelTmp->code;
+                }
+            }
+            if(isset($appel->tarif->prixMinute))
             $duree=date_diff(date_create($appel->debut),date_create($appel->fin))->format('%i');
             $dureeAppel+=$duree;
             $nbAppel++;
             if(isset($appel->tarif->prixMinute))
-                $ca+=$duree*$appel->tarif->prixMinute;
+                $appel->ca=$duree*$appel->tarif->prixMinute;
+
+                $ca+=$appel->ca;
         }
 
         foreach ($appels as $appel)
@@ -60,7 +70,7 @@ class HomeController extends Controller
             $appel->client=Client::where("tel","=","33".substr($appel->appellant,1))->first();
         }
 
-        $hotesses = Code::where("admin_id","=",Auth::id())->where("dispo","=","1")->get();
+        $hotesses = Hotesse::where("admin_id","=",Auth::id())->where("co","=","1")->get();
 
         return view('index')->with("hotesses",$hotesses)
             ->with("nbHotesseCo",Hotesse::where("co",">","0")->where("admin_id","=",Auth::id())->count())

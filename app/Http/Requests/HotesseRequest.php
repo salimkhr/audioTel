@@ -24,7 +24,7 @@ class HotesseRequest extends FormRequest
     public function rules()
     {
         if($this->segment(2)=="new")
-            return ['name' => 'required|unique:hotesse','password' => 'required','passwordConf' => 'required|same:password','tel'=>array('required','regex:/^(?!06|07).*/')];
+            return ['name' => 'required|unique:hotesse','tarif_FR' => 'required','tarif_BE' => 'required','tarif_CH' => 'required','password' => 'required','passwordConf' => 'required|same:password','tel'=>array('required','regex:/^(?!06|07).*/')];
         else
             return ['name' => 'required','tel'=>array('required','regex:/^(?!06|07).*/')];
     }

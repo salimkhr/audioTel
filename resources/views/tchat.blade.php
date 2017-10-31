@@ -6,7 +6,7 @@
             <div class="panel panel-default">
                 <div class="panel-heading">
                     @if(Request::route()->getName() == "tchat.general")
-                        Tchat général
+                        Tchat Room
                     @else
                         @if(Auth::user() instanceof \App\Admin)
                             Tchat hôtesse {{\App\Hotesse::find($id)->name}}
@@ -79,14 +79,14 @@
                                 <a href="{{route("tchat")}}" class="list-group-item">
                                     <div class="list-group-status status-online"></div>
                                     <img src="{{url(elixir("images/catalog/".Auth::user()->admin->photo->file))}}" class="pull-left" alt="Dmitry Ivaniuk">
-                                    <span class="contacts-title">{{Auth::user()->admin->name}}</span>
+                                    <span class="contacts-title">{{Auth::user()->admin->name}}</span><span <?php $var = Auth::user()->admin->nbMessage() ?> @if($var!=0)class="label label-danger pull-right">{{$var}} @else > @endif</span>
                                     <p>@isset(Auth::user()->messages[0]){{Auth::user()->messages[count(Auth::user()->messages)-1]->message}}@else aucun message @endisset</p>
                                 </a>
                             @endif
                         </div>
                     </div>
                     <div class="panel-footer">
-                        <a href="{{route("tchat.general")}}" class="btn btn-primary pull-right">Tchat général</a>
+                        <a href="{{route("tchat.general")}}" class="btn btn-primary pull-right">Tchat Room</a>
                     </div>
                 </div>
             </div>

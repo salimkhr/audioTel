@@ -11,6 +11,7 @@ use App\Appel;
 use App\Http\Requests\HotesseRequest;
 use App\PhotoCode;
 use App\PhotoHotesse;
+use function Couchbase\defaultEncoder;
 use DateTime;
 use Illuminate\Contracts\Session\Session;
 use Illuminate\Database\QueryException;
@@ -111,22 +112,34 @@ class HotesseController extends Controller
         $dureeAppel=0;
         $nbAppel=0;
         $ca=0;
-        foreach($appels as $appel)
-        {
+        foreach($appels as $appel) {
+            if ($appel->type == 1) {
+                $appelTmp = Appel::where("asterisk_id", "=", $appel->link_id)->first();
+                if ($appelTmp != null) {
+                    $appel->pays = $appelTmp->pays;
+                    $appel->client_id = $appelTmp->client_id;
+                    $appel->appellant = $appelTmp->appellant;
+                    $appels->add($appelTmp);
+                }
+            }
+        }
+        foreach($appels as $appel) {
             $duree=date_diff(date_create($appel->debut),date_create($appel->fin))->format('%i');
             $dureeAppel+=$duree;
             $nbAppel++;
             switch ($appel->pays)
             {
-                case "FR" : $ca+=$duree*Hotesse::find($id)->tarif_FR;break;
-                case "BE" : $ca+=$duree*Hotesse::find($id)->tarif_BE;break;
-                case "CH" : $ca+=$duree*Hotesse::find($id)->tarif_CH;break;
+                case "FR" : $appel->ca=$duree*Hotesse::find($id)->tarif_FR;break;
+                case "BE" : $appel->ca=$duree*Hotesse::find($id)->tarif_BE;break;
+                case "CH" : $appel->ca=$duree*Hotesse::find($id)->tarif_CH;break;
+                default: $appel->ca="NC";
             }
-
+            if($appel->ca != "NC")
+                $ca+=$appel->ca;
         }
 
         return view('index')->with("hotesses",Code::where("hotesse_id","=",$id)->where("dispo","=",1)->get())
-            ->with("nbHotesseCo",Hotesse::where("co","<>","0")->count())
+            ->with("nbHotesseCo",Hotesse::where("co","<>","0")->where("admin_id","=",Auth::user()->admin_id)->count())
             ->with("dureeAppel",$dureeAppel)
             ->with("nbAppel",$nbAppel)
             ->with("ca",$ca)
@@ -157,23 +170,33 @@ class HotesseController extends Controller
         }
         $dateFin->modify('+1 day');
         $appels=Appel::where("hotesse_id","=",$id)->where('debut',">=",$dateDebut->format('Y-m-d'))->where("debut","<=",$dateFin->format('Y-m-d'))->get();
-
-
         $dureeAppel=0;
         $nbAppel=0;
         $ca=0;
-        foreach($appels as $appel)
-        {
+        foreach($appels as $appel) {
+            if ($appel->type == 1) {
+                $appelTmp = Appel::where("asterisk_id", "=", $appel->link_id)->first();
+                if ($appelTmp != null) {
+                    $appel->pays = $appelTmp->pays;
+                    $appel->client_id = $appelTmp->client_id;
+                    $appel->appellant = $appelTmp->appellant;
+                    $appels->add($appelTmp);
+                }
+            }
+        }
+        foreach($appels as $appel) {
             $duree=date_diff(date_create($appel->debut),date_create($appel->fin))->format('%i');
             $dureeAppel+=$duree;
             $nbAppel++;
-            dump($appel->pays);
             switch ($appel->pays)
             {
-                case "FR" : $ca+=$duree*Hotesse::find($id)->tarif_FR;break;
-                case "BE" : $ca+=$duree*Hotesse::find($id)->tarif_BE;break;
-                case "CH" : $ca+=$duree*Hotesse::find($id)->tarif_CH;break;
+                case "FR" : $appel->ca=$duree*Hotesse::find($id)->tarif_FR;break;
+                case "BE" : $appel->ca=$duree*Hotesse::find($id)->tarif_BE;break;
+                case "CH" : $appel->ca=$duree*Hotesse::find($id)->tarif_CH;break;
+                default: $appel->ca="NC";
             }
+            if($appel->ca != "NC")
+                $ca+=$appel->ca;
         }
 
         return view('hotesse.admin')->with("hotesses",Hotesse::all())
@@ -239,9 +262,12 @@ class HotesseController extends Controller
 
         $hotesse->tel=$request->input('tel');
 
-        $hotesse->tarif_FR=$request->input('tarif_FR');
-        $hotesse->tarif_BE=$request->input('tarif_BE');
-        $hotesse->tarif_CH=$request->input('tarif_CH');
+        if($request->has('tarif_FR'))
+            $hotesse->tarif_FR=$request->input('tarif_FR');
+        if($request->has('tarif_BE'))
+            $hotesse->tarif_BE=$request->input('tarif_BE');
+        if($request->has('tarif_CH'))
+            $hotesse->tarif_CH=$request->input('tarif_CH');
 
         if(Auth::user() instanceof Admin)
             $hotesse->admin_id=Auth::id();
@@ -333,10 +359,15 @@ class HotesseController extends Controller
             return response()->json(null);
 
         $listCode=array();
+        $statut="déconnectée";
 
         foreach ($hotesse->code as $code)
+        {
             array_push($listCode,$code->code);
+            if($code->dispo == 1)
+                $statut="connectée";
+        }
 
-        return response()->json(["id"=>$hotesse->id,"username"=>$hotesse->name,"code"=>$listCode]);
+        return response()->json(["id"=>$hotesse->id,"username"=>$hotesse->name,"code"=>$listCode,"statut"=>$statut]);
     }
 }

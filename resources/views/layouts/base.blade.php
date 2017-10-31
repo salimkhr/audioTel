@@ -1,11 +1,11 @@
 @section('menu')
-    @if(Auth::user() instanceof \App\Admin)<li @if(Request::segment(1) === 'hotesse')class="active" @endif><a href="{{route("hotesse")}}"><span class="fa fa-users"></span> <span class="xn-text">Hôtesse</span></a></li>@endif
-    <li @if(Request::segment(1) === 'code')class="active" @endif><a href="{{route("code")}}"><span class="fa fa-list-ol"></span> <span class="xn-text">Code</span></a></li>
+    @if(Auth::user() instanceof \App\Admin)<li @if(Request::segment(1) === 'hotesse')class="active" @endif><a href="{{route("hotesse")}}"><span class="fa fa-users"></span> <span class="xn-text">Hôtesses</span></a></li>@endif
+    <li @if(Request::segment(1) === 'code')class="active" @endif><a href="{{route("code")}}"><span class="fa fa-list-ol"></span> <span class="xn-text">Codes</span></a></li>
     <li @if(Request::segment(1) === 'reporting')class="active" @endif><a href="{{route("home")}}"><span class="fa fa-table"></span> <span class="xn-text">Reporting Général</span></a></li>
     @if(Auth::user() instanceof \App\Admin)<li @if(Request::segment(1) === 'activite')class="active" @endif><a href="{{route("activite")}}"><span class="fa fa-table"></span> <span class="xn-text">Activité</span></a></li>@endif
-    <li @if(Request::segment(1) === 'message')class="active" @endif><a href="{{route("message")}}"><span class="fa fa-commenting"></span> <span class="xn-text">Message</span></a></li>
+    <li @if(Request::segment(1) === 'message')class="active" @endif><a href="{{route("message")}}"><span class="fa fa-commenting"></span> <span class="xn-text">@if(Auth::user() instanceof \App\Hotesse)Messages @else Messages envoyés @endif</span></a></li>
     <li @if(Request::segment(1) === 'tchat')class="active" @endif><a href="{{route("tchat.general")}}"><span class="fa fa-comments"></span> <span class="xn-text">Tchat Room</span><span class="pull-right nbMessage"></span></a></li>
-    @if(Auth::user() instanceof \App\Admin)<li @if(Request::segment(1) === 'client')class="active" @endif><a href="{{route("client")}}"><span class="fa fa-user-circle"></span> <span class="xn-text">Client</span></a></li>@endif
+    @if(Auth::user() instanceof \App\Admin)<li @if(Request::segment(1) === 'client')class="active" @endif><a href="{{route("client")}}"><span class="fa fa-user-circle"></span> <span class="xn-text">Clients</span></a></li>@endif
 
     @isset(Auth::user()->role)
         <li @if(Request::segment(1) === 'api')class="active" @endif><a href="{{route("api")}}"><span class="fa fa-server"></span> <span class="xn-text">API</span></a></li>
@@ -18,7 +18,7 @@
 <html lang="{{ app()->getLocale() }}">
 <head>
     <!-- META SECTION -->
-    <title>Opiumlove - Interface de gestion audiotel</title>
+    <title>OpiumLove - Interface de gestion audiotel</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -40,7 +40,7 @@
         <!-- START X-NAVIGATION -->
         <ul class="x-navigation">
             <li class="xn-logo">
-                <a href="{{route("home")}}">Opium love</a>
+                <a href="{{route("home")}}">OpiumLove</a>
                 <a href="#" class="x-navigation-control"></a>
             </li>
             <li class="xn-profile">
@@ -256,7 +256,7 @@
                         "       <span class='date'>"+html[message].date+"</span>" +
                         "   </div>" +
                         "   <span class='message'>"+replaceEmoticons(html[message].message)+"</span>" +
-                            @if(Request::route()->getName() == "tchat.general" && Auth::user() instanceof \App\Admin)"<a href='{{route("tchat.delete",["id"=>$tchat->id])}}' class='pull-right btn btn-rounded btn-primary'><i class='fa fa-fw fa-trash'></i></a>"+@endif
+                            @if(Request::route()->getName() == "tchat.general" && Auth::user() instanceof \App\Admin)"<a href='{{URL::to('/tchat/delete/')}}/"+html[message].id+"' class='pull-right btn btn-xs btn-danger'><i class='fa fa-fw fa-trash'></i></a>"+@endif
 
                 "   </div>" +
                         "</div>");

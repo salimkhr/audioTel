@@ -83,7 +83,6 @@
     <!-- END WIDGETS -->
     <div class="row">
         <div class="col-md-3">
-
             <div class="panel panel-default">
                 <div class="panel-body profile">
                     <div class="profile-image">
@@ -143,7 +142,7 @@
                                 @if(Auth::guard('web_admin')->check())<td>@isset($appel->hotesse)<a href="{{route("hotesseAdmin",["id"=>$appel->hotesse->id])}}">{{$appel->hotesse->name}}</a>@endisset</td>@endif
                                 <td><button class="btn btn-primary btn-rounded" @if($appel->file == "NULL") disabled @else id="btn-{{$appel->file}}" @endif><i class="fa fa-play" onclick="play('{{$appel->file}}')"></i></button></td>
                                 <td><a href="" role="button" class="btn btn-primary btn-rounded" ><i class="fa fa-comment"></i></a></td>
-                                <td>@isset($appel->tarif->prixMinute){{(date_diff(date_create($appel->debut),date_create($appel->fin))->format('%i')*$appel->tarif->prixMinute)." €"}}@else NC @endisset</td>
+                                <td>{{$appel->debut}}</td>
                             </tr>
                         @endforeach
                         </tbody>

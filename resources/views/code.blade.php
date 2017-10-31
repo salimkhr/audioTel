@@ -25,8 +25,8 @@
             </div>
             <div class="col-md-6">
                 <div class="pull-right">
-                    <a href="{{route("activeAllCode",["idHotesse"=>Auth::id()])}}"  role="button" class="btn btn-primary">Connecter tous les codes</a>
-                    <a href="{{route("desactiveAllCode",["idHotesse"=>Auth::id()])}}"  role="button" class="btn btn-primary">Déconnecter tous les codes</a>
+                    <a href="{{route("activeAllCode",["idHotesse"=>Auth::id()])}}"  role="button" class="btn btn-success">Connecter</a>
+                    <a href="{{route("desactiveAllCode",["idHotesse"=>Auth::id()])}}"  role="button" class="btn btn-warning">Déconnecter</a>
                 </div>
             </div>
         </div>

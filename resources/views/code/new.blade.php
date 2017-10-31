@@ -33,9 +33,9 @@
         @else
             {{ Form::open(array('route' => 'postNewCode')) }}
         @endif
-
         <div class="row">
-            <div class="col-md-8">
+            @if(Auth::user() instanceof \App\Admin)
+                <div class="col-md-8">
                 <!-- START DEFAULT DATATABLE -->
                 <div class="panel panel-default">
                     <div class="panel-heading">
@@ -90,6 +90,7 @@
                     </div>
                 </div>
             </div>
+            @endif
             <div class="col-md-4">
                 <div class="panel panel-default"  style="max-height: 448px; overflow: auto;">
                     <div class="panel-heading">
@@ -118,52 +119,52 @@
             </div>
         </div>
 
-        <div class="row" style="margin-top: 20px">
-            <div class="col-md-12">
-                <div class="panel panel-default"  style="max-height: 485px; overflow: auto;">
-                    <div class="panel-heading">
-                        <h3 class="panel-title">Photo</h3>
-                    </div>
-                    <div class="panel-body">
-                        <div class="gallery" id="links">
-                            @foreach($photos as $photo)
-                                <a class="gallery-item" data-gallery href="{{url(elixir('images/catalog/'.$photo->file))}}" style="width:auto;">
+            @if(Auth::user() instanceof \App\Admin)
+                <div class="row" style="margin-top: 20px">
+                <div class="col-md-12">
+                    <div class="panel panel-default"  style="max-height: 485px; overflow: auto;">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Photo</h3>
+                        </div>
+                        <div class="panel-body">
+                            <div class="gallery" id="links">
+                                @foreach($photos as $photo)
+                                    <a class="gallery-item" data-gallery href="{{url(elixir('images/catalog/'.$photo->file))}}" style="width:auto;">
+                                        <div class="image" style="max-height:150px; max-width: 150px">
+                                            <img src="{{url(elixir('images/catalog/'.$photo->file))}}" alt="{{$photo->file}}" class="img-responsive"/>
+                                            <ul class="gallery-item-controls">
+                                                <li>{!!Form::radio("photo_id",$photo->id,$code->photoHotesse_id != null && $photo->id==$code->photoHotesse_id,array('class' => 'icheckbox',"style"=>"position: absolute; opacity: 0;"))!!}</li>
+                                                <li><span class="gallery-item-remove" data-id="{{$photo->id}}"><i class="fa fa-times"></i></span></li>
+                                            </ul>
+                                        </div>
+                                    </a>
+                                @endforeach
+                                <a class="gallery-item" data-gallery="" style="width:auto;">
                                     <div class="image" style="max-height:150px; max-width: 150px">
-                                        <img src="{{url(elixir('images/catalog/'.$photo->file))}}" alt="{{$photo->file}}" class="img-responsive"/>
+                                        <img src="{{url(elixir('images/catalog/noImage.jpg'))}}" alt="" class="img-responsive">
                                         <ul class="gallery-item-controls">
-                                            <li>{!!Form::radio("photo_id",$photo->id,$code->photoHotesse_id != null && $photo->id==$code->photoHotesse_id,array('class' => 'icheckbox',"style"=>"position: absolute; opacity: 0;"))!!}</li>
-                                            <li><span class="gallery-item-remove" data-id="{{$photo->id}}"><i class="fa fa-times"></i></span></li>
+                                            <li>{!!Form::radio("photo_id",1,$code->photoHotesse_id == 1,array('class' => 'icheckbox',"style"=>"position: absolute; opacity: 0;"))!!}</li>
                                         </ul>
                                     </div>
+                                    <div class="meta">
+                                        <strong>Nature image 1</strong>
+                                        <span>Description</span>
+                                    </div>
                                 </a>
-                            @endforeach
-                            <a class="gallery-item" data-gallery="" style="width:auto;">
-                                <div class="image" style="max-height:150px; max-width: 150px">
-                                    <img src="{{url(elixir('images/catalog/noImage.jpg'))}}" alt="" class="img-responsive">
-                                    <ul class="gallery-item-controls">
-                                        <li>{!!Form::radio("photo_id",1,$code->photoHotesse_id == 1,array('class' => 'icheckbox',"style"=>"position: absolute; opacity: 0;"))!!}</li>
-                                    </ul>
-                                </div>
-                                <div class="meta">
-                                    <strong>Nature image 1</strong>
-                                    <span>Description</span>
-                                </div>
-                            </a>
-                        </div>
-                        {{ Form::close() }}
-                        <div class="row">
+                            </div>
+                            <div class="row">
 
-                            {{Form::open(array('route' => 'postNewPhotoHotesse','files'=> true))}}
-                            {!! Form::file('image',["class"=>"","accept"=>"image/*","id"=>'image'])!!}
-                            {!! Form::submit('Ajouter la photo', ['class' => 'btn btn-primary pull-right']) !!}
-                            {{ Form::close() }}
+                                {{Form::open(array('route' => 'postNewPhotoHotesse','files'=> true))}}
+                                {!! Form::file('image',["class"=>"","accept"=>"image/*","id"=>'image'])!!}
+                                {!! Form::submit('Ajouter la photo', ['class' => 'btn btn-primary pull-right']) !!}
+                                {{ Form::close() }}
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-
-
+        @endif
+            {{ Form::close() }}
 
         @foreach ($code->annonces as $annonce)
             <audio id="audio-{{$annonce->id}}" src="{{url(elixir("audio/annonce/".$annonce->file.".mp3"))}}" onended="stop({{$annonce->id}})"></audio>

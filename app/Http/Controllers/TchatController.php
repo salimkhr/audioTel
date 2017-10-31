@@ -154,7 +154,7 @@ class TchatController extends Controller
     public function nbmessage()
     {
         if(!$this->testLogin())
-            return redirect()->route("login");
+            return response(403);
 
         if(Auth::user() instanceof Admin)
         {
@@ -192,7 +192,7 @@ class TchatController extends Controller
     public function updateMessage($hotesse_id=null)
     {
         if(!$this->testLogin())
-            return redirect()->route("login");
+            return response(403);
 
         if(Auth::user() instanceof Admin)
         {
@@ -229,7 +229,7 @@ class TchatController extends Controller
     public function updateMessageGeneral()
     {
         if(!$this->testLogin())
-            return redirect()->route("login");
+            return response(403);
 
         if(Auth::user() instanceof Hotesse)
         {

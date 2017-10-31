@@ -108,7 +108,7 @@ class CodeController extends Controller
         else {
             $code = new Code();
             do
-                $code->code=rand(1000,9999);
+                $code->code=rand(100000,999999);
             while($code::find($code->code)!=null);
             $photo = PhotoHotesse::where('admin_id','=',Auth::id())->get();
         }
@@ -138,13 +138,32 @@ class CodeController extends Controller
         $dureeAppel=0;
         $nbAppel=0;
         $ca=0;
-        foreach($appels as $appel)
-        {
+        foreach($appels as $appel) {
+            if ($appel->type == 1) {
+                $appelTmp = Appel::where("asterisk_id", "=", $appel->link_id)->first();
+                if ($appelTmp != null) {
+                    $appelTmp->pays = $appel->pays;
+                    $appelTmp->hotesse_id = $appel->hotesse_id;
+                    $appelTmp->client_id = $appel->client_id;
+                    $appel->appellant = $appelTmp->appellant;
+                    $appels->add($appelTmp);
+                }
+            }
+        }
+        foreach($appels as $appel) {
             $duree=date_diff(date_create($appel->debut),date_create($appel->fin))->format('%i');
             $dureeAppel+=$duree;
             $nbAppel++;
-            if(isset($appel->tarif->prixMinute))
-                $ca+=$duree*$appel->tarif->prixMinute;
+            if($appel->hotesse_id != null)
+            switch ($appel->pays)
+            {
+                case "FR" : $appel->ca=$duree*Hotesse::find($appel->hotesse_id)->tarif_FR;break;
+                case "BE" : $appel->ca=$duree*Hotesse::find($appel->hotesse_id)->tarif_BE;break;
+                case "CH" : $appel->ca=$duree*Hotesse::find($appel->hotesse_id)->tarif_CH;break;
+                default: $appel->ca="NC";
+            }
+            if($appel->ca != "NC")
+                $ca+=$appel->ca;
         }
 
         return view('code.report')->with("hotesses",Hotesse::all())
@@ -173,28 +192,24 @@ class CodeController extends Controller
             $message="ajout effectué avec succès";
         }
 
-        $code->photoHotesse_id=$request->input('photo_id')!=null?$request->input('photo_id'):1;
-        $code->code=$request->input('code');
-        $code->pseudo=$request->input('pseudo');
-        $code->age=$request->input('age');
-        $code->description=$request->input('description');
-
         if(Auth::user() instanceof Admin)
+        {
+            $code->photoHotesse_id=$request->input('photo_id')!=null?$request->input('photo_id'):1;
+            $code->code=$request->input('code');
+            $code->pseudo=$request->input('pseudo');
+            $code->age=$request->input('age');
+            $code->description=$request->input('description');
+
+
             if($request->input('hotesse_id') != -1)
                 $code->hotesse_id=$request->input('hotesse_id');
             else
                 $code->hotesse_id=null;
+        }
         $code->annonce_id=$request->input('annonce_id');
 
         $code->save();
 
-        /*$photos=PhotoCode::where('code','=',null)->orWhere('code','=',$code->code)->get();
-
-        foreach ($photos as $photo)
-        {
-                $photo->code=($request->input("photo".$photo->id)!=null)?$id:null;
-                $photo->save();
-        }*/
         return redirect()->route("code")->with("message",$message);
     }
 
@@ -246,7 +261,7 @@ class CodeController extends Controller
 
     private function activeCodePv(Code $code,$active)
     {
-        if($code->hotesse != null && $code->active) {
+        if($code->hotesse != null && $code->active && $code->annonce_id != null) {
             $code->dispo = $active;
             $code->derniere_connection = date_create();
             $code->save();
@@ -284,6 +299,6 @@ class CodeController extends Controller
             return response()->json(null);
 
 
-        return response()->json(["code"=>$code->code,"pseudo"=>$code->pseudo,"description"=>$code->description,"photo"=>$code->getPhoto!=null?url(elixir("images/catalog/".$code->getPhoto->file)):null,"statut"=>$code->dispo?"Connecté":"Déconnecté","annonce"=>$code->annonce!=null ? url(elixir("audio/annonce/".$code->annonce->file)) : null]);
+        return response()->json(["code"=>$code->code,"pseudo"=>$code->pseudo,"description"=>$code->description,"photo"=>$code->getPhoto!=null?url(elixir("images/catalog/".$code->getPhoto->file)):null,"statut"=>(($code->dispo === 0)?"Déconnecté":"").(($code->dispo === 1)?"Connecté":"").(($code->dispo === 2)?"En ligne":""),"annonce"=>$code->annonce!=null ? url(elixir("audio/annonce/".$code->annonce->file.".mp3")) : null]);
     }
 }

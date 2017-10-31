@@ -45,8 +45,9 @@
                                     <div class="input-group">
                                         {!! Form::tel('tel', null, array('class' => 'form-control', 'placeholder' => 'tel',"id"=>"phone")) !!}
                                     </div>
+                                    {!! $errors->first('tel', '<strong class="help-block">Les numéros de mobile ne sont pas autorisés</strong>') !!}
+
                                 </div>
-                                {!! $errors->first('tel', '<strong class="help-block">Les numéros de mobile ne sont pas autorisés</strong>') !!}
                             </div>
                         </div>
                             @if(Auth::user() instanceof \App\Admin)
@@ -59,7 +60,7 @@
                                         <span class="input-group-addon"><i class="fa fa-money"></i></span>
                                         {{ Form::text('tarif_FR',null, array('class' => 'form-control','placeholder'=>'tarif')) }}
                                     </div>
-                                    {!! $errors->first('tarif_FR', '<strong class="help-block">pseudo déja utilisé</strong>') !!}
+                                    {!! $errors->first('tarif_FR', '<strong class="help-block">Tarif/minute FR requis</strong>') !!}
                                 </div>
                             </div>
                             <div class="col-md-4">
@@ -70,7 +71,7 @@
                                         <span class="input-group-addon"><i class="fa fa-money"></i></span>
                                         {{ Form::text('tarif_BE',null, array('class' => 'form-control','placeholder'=>'tarif')) }}
                                     </div>
-                                    {!! $errors->first('tarif_BE', '<strong class="help-block">pseudo déja utilisé</strong>') !!}
+                                    {!! $errors->first('tarif_BE', '<strong class="help-block">Tarif/minute BE requis</strong>') !!}
                                 </div>
                             </div>
                             <div class="col-md-4">
@@ -81,7 +82,7 @@
                                         <span class="input-group-addon"><i class="fa fa-money"></i></span>
                                         {{ Form::text('tarif_CH',null, array('class' => 'form-control','placeholder'=>'tarif')) }}
                                     </div>
-                                    {!! $errors->first('tarif_CH', '<strong class="help-block">pseudo déja utilisé</strong>') !!}
+                                    {!! $errors->first('tarif_CH', '<strong class="help-block">Tarif/minute CH requis</strong>') !!}
                                 </div>
                             </div>
                         </div>
@@ -220,7 +221,7 @@
             {
                 if($tel.charAt(0)=="0")
                     $tel.substring(1);
-                $("#phone").val("+"+countryData.dialCode+" "+$tel);
+                $("#phone").val("+"+countryData.dialCode+$tel);
             }
         });
     </script>

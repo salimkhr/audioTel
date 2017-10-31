@@ -15,15 +15,18 @@
     </li>
 @endsection
 @section('content')
-    @if(Auth::user() instanceof \App\Hotesse && \App\Hotesse::where("co","=","1")->count() < 3)
-        <div class="row">
-            <div class="col-md-6 col-md-offset-3">
-                <div class="alert alert-danger" role="alert">
-                    <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
-                    <p class="text-center">Il y a <strong>{{\App\Hotesse::where("co","=","1")->count()}}</strong> hotesse de connecté</p>
+    @if(Auth::user() instanceof \App\Hotesse)
+        <?php $var = \App\Code::where("hotesse_id","=",Auth::id())->where("dispo","=","1")->count(); ?>
+        @if($var < 3)
+            <div class="row">
+                <div class="col-md-6 col-md-offset-3">
+                    <div class="alert alert-danger" role="alert">
+                        <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                        <p class="text-center">Il y a <strong>{{$var}}</strong> code hôtesse de connecté</p>
+                    </div>
                 </div>
             </div>
-        </div>
+        @endif
     @endif
     <div class="row">
         <div class="col-md-3 col-sm-6">
@@ -120,7 +123,7 @@
                                 @if(Auth::guard('web_admin')->check())<td>@isset($appel->hotesse)<a href="{{route("hotesseAdmin",["id"=>$appel->hotesse->id])}}">{{$appel->hotesse->name}}</a>@endisset</td>@endif
                                 <td><button class="btn btn-primary btn-rounded" @if($appel->file == "NULL") disabled @else id="btn-{{$appel->file}}" @endif><i class="fa fa-play" onclick="play('{{$appel->file}}')"></i></button></td>
                                 @if(Auth::user() instanceof \App\Hotesse)<td><a href="{{route("newMessage",["appel"=>$appel->id])}}" role="button" class="btn btn-primary btn-rounded @if($appel->appellant == "ANONYME") disabled @endif" ><i class="fa fa-comment"></i></a></td>@endif
-                                <td>@isset($appel->tarif->prixMinute){{(date_diff(date_create($appel->debut),date_create($appel->fin))->format('%i')*$appel->tarif->prixMinute)." €"}}@else NC @endisset</td>
+                                <td>{{$appel->ca}}</td>
                             </tr>
                         @endforeach
                         </tbody>
@@ -133,7 +136,7 @@
             <div class="col-md-3">
                 <div class="panel panel-default"  style="max-height: 46vh; overflow: auto;">
                     <div class="panel-heading ui-draggable-handle">
-                        <h3 class="panel-title">Codes connectés</h3>
+                        <h3 class="panel-title">@if(isset($hotesses[0]) && $hotesses[0] instanceof \App\Code) Codes @else Hôtesses @endif connectés</h3>
                     </div>
                     <div class="panel-body list-group list-group-contacts">
                         @foreach ($hotesses as $hotesse)

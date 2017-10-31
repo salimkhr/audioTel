@@ -94,9 +94,21 @@
                         <div class="profile-data-name">{{$code->code}}</div>
                         <div class="profile-data-title">{{$code->pseudo}}</div>
                     </div>
+                    <div class="profile-controls">
+                        <a href="#" class="profile-control-right @if($code->annonce == null) disabled @endif mb-control" @if($code->annonce != null) id="btn-{{$code->annonce->id}}" onclick="play({{$code->annonce->id}})"@endif ><i class="fa fa-play"></i></a>
+                        @if($code->annonce != null)
+                            <audio id="audio-{{$code->annonce->id}}" src="{{url(elixir("audio/annonce/".$code->annonce->file.".mp3"))}}" onended="stop({{$code->annonce->id}})"></audio>
+                        @endif
+                    </div>
+                </div>
+                <div class="panel-body border-bottom">
+                    <strong>Age</strong>
+                    <p>{{$code->age}}</p>
+                    <strong>Description</strong>
+                    <p>{{$code->description}}</p>
                 </div>
                 <div class="panel-body list-group border-bottom">
-                    <a href="{{route('getUpdateCode',["id"=>$code->code])}}" class="list-group-item"><span class="fa fa-pencil"></span> Modifier</a>
+                    <a href="{{route('getUpdateCode',["id"=>$code->code])}}" class="list-group-item"><span class="fa fa-pencil"></span> @if(Auth::user() instanceof \App\Admin)Modifier @else Modifier l'annonce @endif</a>
                     @if(Auth::user() instanceof \App\Admin)<a href="{{route('activeCode',["id"=>$code->code])}}" class="list-group-item"><span class="fa fa-ban"></span> {{(($code->dispo === 0)?"Déconnecté":"").(($code->dispo === 1)?"Connecté":"").(($code->dispo === 2)?"En ligne":"")}}</a>
                     <a href="{{route('bockCode',["id"=>$code->code])}}" class="list-group-item"><span class="fa fa-lock"></span> {{($code->active)?"Activé":"Désactivé"}}</a>
                     <a href="#" class="list-group-item mb-control" data-box="#message-box-delete"><span class="fa fa-trash-o"></span> Supprimer</a> @endif
@@ -142,7 +154,7 @@
                                 @if(Auth::guard('web_admin')->check())<td>@isset($appel->hotesse)<a href="{{route("hotesseAdmin",["id"=>$appel->hotesse->id])}}">{{$appel->hotesse->name}}</a>@endisset</td>@endif
                                 <td><button class="btn btn-primary btn-rounded" @if($appel->file == "NULL") disabled @else id="btn-{{$appel->file}}" @endif><i class="fa fa-play" onclick="play('{{$appel->file}}')"></i></button></td>
                                 <td><a href="" role="button" class="btn btn-primary btn-rounded" ><i class="fa fa-comment"></i></a></td>
-                                <td>@isset($appel->tarif->prixMinute){{(date_diff(date_create($appel->debut),date_create($appel->fin))->format('%i')*$appel->tarif->prixMinute)." €"}}@else NC @endisset</td>
+                                <td>{{$appel->ca}}</td>
                             </tr>
                         @endforeach
                         </tbody>
@@ -153,7 +165,7 @@
         </div>
     </div>
     @foreach ($appels as $appel)
-        @if($appel->file != "NULL")
+        @if($appel->file != "NULL" && $appel->file!=null)
             <audio id="audio-{{$appel->file}}" src="{{url(elixir("audio/log_appel/".$appel->file.".mp3"))}}" onended="stop('{{$appel->file}}')"></audio>
         @endif
     @endforeach

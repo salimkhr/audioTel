@@ -57,6 +57,18 @@ class AdminController extends Controller
         $ca=0;
         foreach($appels as $appel)
         {
+            dump($appel);
+            if($appel->type == 1)
+            {
+                $appelTmp = Appel::where("asterisk_id","=",$appel->link_id)->first();
+                if($appelTmp != null)
+                {
+                    $appel->pays=$appelTmp->pays;
+                    $appel->client_id=$appelTmp->client_id;
+                    $appel->appellant=$appelTmp->appellant;
+                    $appel->tarif=$appelTmp->tarif;
+                }
+            }
             $duree=date_diff(date_create($appel->debut),date_create($appel->fin))->format('%i');
             $dureeAppel+=$duree;
             $nbAppel++;
@@ -67,7 +79,6 @@ class AdminController extends Controller
         return view('admin.report')->with("hotesses",Hotesse::all())
             ->with("dureeAppel",$dureeAppel)
             ->with("nbAppel",$nbAppel)
-
             ->with("ca",$ca)
             ->with("appels",$appels)
             ->with("admin",Admin::find($id))

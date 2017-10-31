@@ -43,8 +43,6 @@
                                 <li><a href="#" class="mb-control" onclick="addCode('{{$code->code}}')">{{$code->pseudo." (".$code->code.")"}}</a></li>
                             @endforeach
                         </ul>
-
-
                         <div class="gallery">
                             @foreach ($photos as $photo)
                                 <div class="gallery-item" style="width:auto;">
@@ -59,6 +57,7 @@
                         </div>
                     </div>
                     <div class="col-md-4">
+
                         <ul class="list-group border-bottom">
                             @foreach ($annonces as $annonce)
                                 <li class="list-group-item"><label>{!!Form::radio("annonce_id",$annonce->id,null,array("class"=>"iradio")) !!} {{$annonce->name}}</label>

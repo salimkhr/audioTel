@@ -148,7 +148,7 @@
                                 <td>@isset($appel->code)<a href="{{route("reportingCode",["id"=>$appel->getcode])}}">{{$appel->getcode->pseudo}} ({{$appel->code}})</a>@endisset</td>
                                 @if(Auth::user() instanceof \App\Admin)<td>@isset($appel->client)<a href="{{route("getClient",["id"=>$appel->client->id])}}">{{$appel->client->code}}</a>@endisset</td>@endif
                                 <td><button class="btn btn-primary btn-rounded" @if($appel->file == "NULL") disabled @else id="btn-{{$appel->file}}" @endif><i class="fa fa-play" onclick="play('{{$appel->file}}')"></i></button></td>
-                                <td>@isset($appel->tarif->prixMinute){{(date_diff(date_create($appel->debut),date_create($appel->fin))->format('%i')*$appel->tarif->prixMinute)." €"}}@else NC @endisset</td>
+                                <td>{{$appel->ca}}</td>
                             </tr>
                         @endforeach
                         </tbody>
@@ -159,7 +159,7 @@
         </div>
     </div>
     @foreach ($appels as $appel)
-        @if($appel->file != "NULL")
+        @if($appel->file != "NULL" && $appel->file!=null)
             <audio id="audio-{{$appel->file}}" src="{{url(elixir("audio/log_appel/".$appel->file.".mp3"))}}" onended="stop('{{$appel->file}}')"></audio>
         @endif
     @endforeach

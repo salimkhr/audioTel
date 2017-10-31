@@ -60,12 +60,16 @@ class MessageController extends Controller
         }
 
         $codes=Code::where("hotesse_id","=",Auth::id())->get();
+        $annonces=Annonce::where("hotesse_id","=",Auth::id())->orWherein("code",$codes)->get();
+        $photos=PhotoHotesse::where("hotesse_id","=",Auth::id())->get();
+
         foreach ($codes as $code)
         {
             $listCode[$code->code]=$code->pseudo." (".$code->code.")";
+            $photos->add($code->getPhoto);
         }
 
-        return view("message.new")->with("tels",$listTel)->with("codes",$listCode)->with("photos",Auth::user()->photos)->with("annonces",Auth::user()->annonces);
+        return view("message.new")->with("tels",$listTel)->with("codes",$listCode)->with("photos",$photos)->with("annonces",$annonces);
     }
 
     public function send(Request $request)
